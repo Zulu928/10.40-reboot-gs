@@ -607,7 +607,7 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 	const FVector ZoneCenterLocation = SafeZoneLocations.at(3);
 
 	FVector LocationToStartAircraft = ZoneCenterLocation;
-	LocationToStartAircraft.Z += 5000;
+	LocationToStartAircraft.Z += 8000;
 	LocationToStartAircraft.Y += 1000;
 
 	auto GetAircrafts = [&]() -> std::vector<AActor*>
@@ -676,7 +676,7 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 	{
 		auto CurrentAircraft = Aircrafts.at(i);
 
-		std::this_thread::sleep_for(std::chrono::seconds(30));
+		std::this_thread::sleep_for(std::chrono::seconds(100) / MaxTickRate);
 
 		if (CurrentAircraft)
 		{
@@ -723,16 +723,16 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 
 	if (Globals::bStarted == true)
 	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+		std::this_thread::sleep_for(std::chrono::milliseconds(6000));
 		auto GameState = Cast<AFortGameStateAthena>(GetWorld()->GetGameState());
 		GameState->SkipAircraft();
 		GameState->GetGamePhaseStep();
 	}
-
+	/*
 	auto GS = EAthenaGamePhase::SafeZones;
 	GameState->GetGamePhase() = GS;
 	GameState->OnRep_GamePhase();
-
+	*/
 	static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
 	auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
 	auto& ClientConnections = WorldNetDriver->GetClientConnections();
