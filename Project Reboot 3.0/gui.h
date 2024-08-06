@@ -258,15 +258,15 @@ static inline void InitStyle()
 	ImGuiStyle& style = mStyle;
 	style.Colors[ImGuiCol_Text] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); //WHITE
 	style.Colors[ImGuiCol_TextDisabled] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-	style.Colors[ImGuiCol_WindowBg] = ImVec4(0.13f, 0.14f, 0.17f, 1.00f); // blue
+	style.Colors[ImGuiCol_WindowBg] = ImVec4(0.05f, 0.10f, 0.20f, 1.00f); // dark blue
 	style.Colors[ImGuiCol_ChildBg] = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
 	style.Colors[ImGuiCol_PopupBg] = ImVec4(0.12f, 0.12f, 0.12f, 0.94f);
 	style.Colors[ImGuiCol_Border] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
 	style.Colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-	style.Colors[ImGuiCol_FrameBg] = ImVec4(0.2f, 0.2f, 0.2f, 1.0f); // Darker Grey
+	style.Colors[ImGuiCol_FrameBg] = ImVec4(0.6f, 0.4f, 0.8f, 1.0f); // Purple with a touch of white
 	style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
 	style.Colors[ImGuiCol_FrameBgActive] = ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
-	style.Colors[ImGuiCol_FrameBg] = ImVec4(0.2f, 0.2f, 0.2f, 1.0f); // Darker Grey
+	style.Colors[ImGuiCol_FrameBg] = ImVec4(0.6f, 0.4f, 0.8f, 1.0f); // Purple with a touch of white
 	style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.08f, 0.08f, 0.08f, 1.00f);
 	style.Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.00f, 0.00f, 0.00f, 0.51f);
 	style.Colors[ImGuiCol_MenuBarBg] = ImVec4(0.16f, 0.16f, 0.16f, 1.00f);
@@ -276,8 +276,8 @@ static inline void InitStyle()
 	style.Colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.08f, 0.08f, 0.08f, 1.00f);
 	style.Colors[ImGuiCol_CheckMark] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); //WHITE
 	style.Colors[ImGuiCol_SliderGrab] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-	style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); // Black
-	style.Colors[ImGuiCol_Button] = ImVec4(0.5f, 0.5f, 0.5f, 1.0f); // Grey
+	style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(0.1f, 0.2f, 0.5f, 1.0f); // Dark Blue
+	style.Colors[ImGuiCol_Button] = ImVec4(0.6f, 0.4f, 0.8f, 1.0f); // Grey
 	style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
 	style.Colors[ImGuiCol_ButtonActive] = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
 	style.Colors[ImGuiCol_Header] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -289,9 +289,9 @@ static inline void InitStyle()
 	style.Colors[ImGuiCol_ResizeGrip] = ImVec4(0.30f, 0.30f, 0.30f, 0.25f);
 	style.Colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.30f, 0.30f, 0.30f, 0.67f);
 	style.Colors[ImGuiCol_ResizeGripActive] = ImVec4(0.30f, 0.30f, 0.30f, 0.95f);
-	style.Colors[ImGuiCol_Tab] = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
-	style.Colors[ImGuiCol_TabHovered] = ImVec4(0.18f, 0.18f, 0.18f, 0.80f);
-	style.Colors[ImGuiCol_TabActive] = ImVec4(0.18f, 0.18f, 0.18f, 1.00f);
+	style.Colors[ImGuiCol_Tab] = ImVec4(0.6f, 0.4f, 0.8f, 1.0f);
+	style.Colors[ImGuiCol_TabHovered] = ImVec4(0.1f, 0.2f, 0.5f, 1.0f);
+	style.Colors[ImGuiCol_TabActive] = ImVec4(0.1f, 0.2f, 0.5f, 1.0f);
 	style.Colors[ImGuiCol_TabUnfocused] = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
 	style.Colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
 	style.Colors[ImGuiCol_PlotLines] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
@@ -668,14 +668,25 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 
 	auto Aircrafts = GetAircrafts();
 
-	float FlightSpeed = 500.0f;
+	float FlightSpeed = 0.0f;
 
 	float DropStartTime = GameState->GetServerWorldTimeSeconds() + 1.0f;
 
 	for (int i = 0; i < Aircrafts.size(); ++i)
 	{
 		auto CurrentAircraft = Aircrafts.at(i);
-		CurrentAircraft->TeleportTo(LocationToStartAircraft, FRotator());
+
+		std::this_thread::sleep_for(std::chrono::seconds(30));
+
+		if (CurrentAircraft)
+		{
+			LOG_INFO(LogLateGame, "Attempting to teleport aircraft %d to location: %s", i, *LocationToStartAircraft.ToString());
+
+			CurrentAircraft->TeleportTo(LocationToStartAircraft, FRotator());
+
+			FVector NewLocation = CurrentAircraft->GetActorLocation();
+			LOG_INFO(LogLateGame, "New Location of Aircraft %d: %s", i, *NewLocation.ToString());
+		}
 
 
 		static auto FlightInfoOffset = CurrentAircraft->GetOffset("FlightInfo", false);
