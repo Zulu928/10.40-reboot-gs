@@ -4,7 +4,7 @@
 
 void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMaybeIDFK)
 {
-	static auto ZoneDurationsOffset = Fortnite_Version >= 13.40 && Fortnite_Version < 18 ? 0x258
+	static auto ZoneDurationsOffset = Fortnite_Version >= 16.40 && Fortnite_Version < 18 ? 0x258
 		: std::floor(Fortnite_Version) >= 18 ? 0x248
 		: 0x1F8; // S13-S14
 
@@ -22,7 +22,7 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
 
 	LOG_INFO(LogDev, "NewLateGameSafeZonePhase: {}", NewLateGameSafeZonePhase);
 
-	if (Fortnite_Version < 10)
+	if (Fortnite_Version < 16)
 	{
 		if (Globals::bLateGame.load())
 		{
