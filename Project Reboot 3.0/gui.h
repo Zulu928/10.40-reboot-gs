@@ -711,28 +711,6 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 		}
 	}
 
-	auto GS = EAthenaGamePhase::SafeZones;
-	GameState->GetGamePhase() = GS;
-	GameState->OnRep_GamePhase();
-
-	while (GameState->GetGamePhase() != EAthenaGamePhase::Aircraft)
-	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000) / MaxTickRate);
-	}
-
-	while (Globals::bStarted == false)
-	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000) / MaxTickRate);
-	}
-
-	if (Globals::bStarted == true)
-	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(6000));
-		auto GameState = Cast<AFortGameStateAthena>(GetWorld()->GetGameState());
-		GameState->SkipAircraft();
-		GameState->GetGamePhaseStep();
-	}
-	
 	static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
 	auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
 	auto& ClientConnections = WorldNetDriver->GetClientConnections();
@@ -922,6 +900,28 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 		WorldInventory->AddItem(Heavy, nullptr, 30);
 
 		WorldInventory->Update();
+	}
+
+	auto GS = EAthenaGamePhase::SafeZones;
+	GameState->GetGamePhase() = GS;
+	GameState->OnRep_GamePhase();
+
+	while (GameState->GetGamePhase() != EAthenaGamePhase::Aircraft)
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000) / MaxTickRate);
+	}
+
+	while (Globals::bStarted == false)
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000) / MaxTickRate);
+	}
+
+	if (Globals::bStarted == true)
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(6000));
+		auto GameState = Cast<AFortGameStateAthena>(GetWorld()->GetGameState());
+		GameState->SkipAircraft();
+		GameState->GetGamePhaseStep();
 	}
 
 	static auto SafeZonesStartTimeOffset = GameState->GetOffset("SafeZonesStartTime");
