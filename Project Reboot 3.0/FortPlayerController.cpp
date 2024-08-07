@@ -1748,6 +1748,65 @@ bool IsOkForEditing(ABuildingSMActor* BuildingActor, AFortPlayerController* Cont
 		Idk(BuildingActor);
 }
 
+static void ClearAllInventory()
+{
+	if (Globals::bStartedBus == true)
+	{
+		static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
+		auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
+		auto& ClientConnections = WorldNetDriver->GetClientConnections();
+
+		for (int z = 0; z < ClientConnections.Num(); z++)
+		{
+			auto ClientConnection = ClientConnections.at(z);
+			auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController());
+
+			if (!FortPC)
+				continue;
+
+			auto WorldInventory = FortPC->GetWorldInventory();
+
+			if (!WorldInventory)
+				continue;
+
+			static auto FortEditToolItemDefinitionClass = FindObject<UClass>(L"/Script/FortniteGame.FortEditToolItemDefinition");
+			static auto FortBuildingItemDefinitionClass = FindObject<UClass>(L"/Script/FortniteGame.FortBuildingItemDefinition");
+			bool bCheckShouldBeDropped = true;
+			std::vector<std::pair<FGuid, int>> GuidsAndCountsToRemove;
+			const auto& ItemInstances = WorldInventory->GetItemList().GetItemInstances();
+			auto PickaxeInstance = WorldInventory->GetPickaxeInstance();
+
+			for (int i = 0; i < ItemInstances.Num(); ++i)
+			{
+				auto ItemInstance = ItemInstances.at(i);
+				const auto ItemDefinition = Cast<UFortWorldItemDefinition>(ItemInstance->GetItemEntry()->GetItemDefinition());
+
+				if (bCheckShouldBeDropped
+					? ItemDefinition->CanBeDropped()
+					: !ItemDefinition->IsA(FortBuildingItemDefinitionClass)
+					&& !ItemDefinition->IsA(FortEditToolItemDefinitionClass)
+					&& ItemInstance != PickaxeInstance
+					)
+				{
+					bool IsPrimary = IsPrimaryQuickbar(ItemDefinition);
+
+					if ((true && IsPrimary) || (true && !IsPrimary))
+					{
+						GuidsAndCountsToRemove.push_back({ ItemInstance->GetItemEntry()->GetItemGuid(), ItemInstance->GetItemEntry()->GetCount() });
+					}
+				}
+			}
+
+			for (auto& [Guid, Count] : GuidsAndCountsToRemove)
+			{
+				WorldInventory->RemoveItem(Guid, nullptr, Count, true);
+			}
+
+			WorldInventory->Update();
+		}
+	}
+}
+
 /*
 
 The editing dilemma:

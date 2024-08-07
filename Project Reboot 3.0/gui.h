@@ -240,63 +240,92 @@ static inline void KillGameserver()
 */
 static inline void InitStyle()
 {
-	auto& mStyle = ImGui::GetStyle();
-	mStyle.FramePadding = ImVec2(4, 2);
-	mStyle.ItemSpacing = ImVec2(6, 2);
-	mStyle.ItemInnerSpacing = ImVec2(6, 4);
-	mStyle.Alpha = 0.95f;
-	mStyle.WindowRounding = 4.0f;
-	mStyle.FrameRounding = 2.0f;
-	mStyle.IndentSpacing = 6.0f;
-	mStyle.ItemInnerSpacing = ImVec2(2, 4);
-	mStyle.ColumnsMinSpacing = 50.0f;
-	mStyle.GrabMinSize = 14.0f;
-	mStyle.GrabRounding = 16.0f;
-	mStyle.ScrollbarSize = 12.0f;
-	mStyle.ScrollbarRounding = 16.0f;
+	ImGuiStyle& style = ImGui::GetStyle();
 
-	ImGuiStyle& style = mStyle;
-	style.Colors[ImGuiCol_Text] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); //WHITE
-	style.Colors[ImGuiCol_TextDisabled] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-	style.Colors[ImGuiCol_WindowBg] = ImVec4(0.05f, 0.10f, 0.20f, 1.00f); // dark blue
-	style.Colors[ImGuiCol_ChildBg] = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
-	style.Colors[ImGuiCol_PopupBg] = ImVec4(0.12f, 0.12f, 0.12f, 0.94f);
-	style.Colors[ImGuiCol_Border] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
-	style.Colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-	style.Colors[ImGuiCol_FrameBg] = ImVec4(0.6f, 0.4f, 0.8f, 1.0f); // Purple with a touch of white
-	style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
-	style.Colors[ImGuiCol_FrameBgActive] = ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
-	style.Colors[ImGuiCol_FrameBg] = ImVec4(0.6f, 0.4f, 0.8f, 1.0f); // Purple with a touch of white
-	style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.08f, 0.08f, 0.08f, 1.00f);
-	style.Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.00f, 0.00f, 0.00f, 0.51f);
-	style.Colors[ImGuiCol_MenuBarBg] = ImVec4(0.16f, 0.16f, 0.16f, 1.00f);
-	style.Colors[ImGuiCol_ScrollbarBg] = ImVec4(0.05f, 0.05f, 0.05f, 0.39f);
-	style.Colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.22f, 0.22f, 0.22f, 1.00f);
-	style.Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
-	style.Colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.08f, 0.08f, 0.08f, 1.00f);
-	style.Colors[ImGuiCol_CheckMark] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); //WHITE
-	style.Colors[ImGuiCol_SliderGrab] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-	style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(0.1f, 0.2f, 0.5f, 1.0f); // Dark Blue
-	style.Colors[ImGuiCol_Button] = ImVec4(0.6f, 0.4f, 0.8f, 1.0f); // Grey
-	style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
-	style.Colors[ImGuiCol_ButtonActive] = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
-	style.Colors[ImGuiCol_Header] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
-	style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0.25f, 0.25f, 0.25f, 0.80f);
-	style.Colors[ImGuiCol_HeaderActive] = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
-	style.Colors[ImGuiCol_Separator] = ImVec4(0.18f, 0.18f, 0.18f, 1.00f);
-	style.Colors[ImGuiCol_SeparatorHovered] = ImVec4(0.10f, 0.40f, 0.75f, 0.78f);
-	style.Colors[ImGuiCol_SeparatorActive] = ImVec4(0.10f, 0.40f, 0.75f, 1.00f);
-	style.Colors[ImGuiCol_ResizeGrip] = ImVec4(0.30f, 0.30f, 0.30f, 0.25f);
-	style.Colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.30f, 0.30f, 0.30f, 0.67f);
-	style.Colors[ImGuiCol_ResizeGripActive] = ImVec4(0.30f, 0.30f, 0.30f, 0.95f);
-	style.Colors[ImGuiCol_Tab] = ImVec4(0.6f, 0.4f, 0.8f, 1.0f);
-	style.Colors[ImGuiCol_TabHovered] = ImVec4(0.1f, 0.2f, 0.5f, 1.0f);
-	style.Colors[ImGuiCol_TabActive] = ImVec4(0.1f, 0.2f, 0.5f, 1.0f);
-	style.Colors[ImGuiCol_TabUnfocused] = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
-	style.Colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
-	style.Colors[ImGuiCol_PlotLines] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
-	style.Colors[ImGuiCol_PlotLinesHovered] = ImVec4(0.90f, 0.55f, 0.45f, 1.00f);
-	style.Colors[ImGuiCol_PlotHistogram] = ImVec4(0.70f, 0.50f, 0.10f, 1.00f);
+	style.Alpha = 1.0f;
+	style.DisabledAlpha = 0.1000000014901161f;
+	style.WindowPadding = ImVec2(8.0f, 8.0f);
+	style.WindowRounding = 12.0f;
+	style.WindowBorderSize = 0.0f;
+	style.WindowMinSize = ImVec2(30.0f, 30.0f);
+	style.WindowTitleAlign = ImVec2(0.5f, 0.5f);
+	style.WindowMenuButtonPosition = ImGuiDir_Right;
+	style.ChildRounding = 5.0f;
+	style.ChildBorderSize = 1.0f;
+	style.PopupRounding = 10.0f;
+	style.PopupBorderSize = 0.0f;
+	style.FramePadding = ImVec2(5.0f, 3.5f);
+	style.FrameRounding = 5.0f;
+	style.FrameBorderSize = 0.0f;
+	style.ItemSpacing = ImVec2(5.0f, 4.0f);
+	style.ItemInnerSpacing = ImVec2(5.0f, 5.0f);
+	style.CellPadding = ImVec2(4.0f, 2.0f);
+	style.IndentSpacing = 5.0f;
+	style.ColumnsMinSpacing = 5.0f;
+	style.ScrollbarSize = 15.0f;
+	style.ScrollbarRounding = 9.0f;
+	style.GrabMinSize = 15.0f;
+	style.GrabRounding = 5.0f;
+	style.TabRounding = 5.0f;
+	style.TabBorderSize = 0.0f;
+	style.TabMinWidthForCloseButton = 0.0f;
+	style.ColorButtonPosition = ImGuiDir_Right;
+	style.ButtonTextAlign = ImVec2(0.5f, 0.5f);
+	style.SelectableTextAlign = ImVec2(0.0f, 0.0f);
+
+	style.Colors[ImGuiCol_Text] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+	style.Colors[ImGuiCol_TextDisabled] = ImVec4(1.0f, 1.0f, 1.0f, 0.3605149984359741f);
+	style.Colors[ImGuiCol_WindowBg] = ImVec4(0.09803921729326248f, 0.09803921729326248f, 0.09803921729326248f, 1.0f);
+	style.Colors[ImGuiCol_ChildBg] = ImVec4(1.0f, 0.0f, 0.0f, 0.0f);
+	style.Colors[ImGuiCol_PopupBg] = ImVec4(0.09803921729326248f, 0.09803921729326248f, 0.09803921729326248f, 1.0f);
+	style.Colors[ImGuiCol_Border] = ImVec4(0.4235294163227081f, 0.3803921639919281f, 0.572549045085907f, 0.54935622215271f);
+	style.Colors[ImGuiCol_BorderShadow] = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
+	style.Colors[ImGuiCol_FrameBg] = ImVec4(0.1568627506494522f, 0.1568627506494522f, 0.1568627506494522f, 1.0f);
+	style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.3803921639919281f, 0.4235294163227081f, 0.572549045085907f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_FrameBgActive] = ImVec4(0.6196078658103943f, 0.5764706134796143f, 0.7686274647712708f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_TitleBg] = ImVec4(0.09803921729326248f, 0.09803921729326248f, 0.09803921729326248f, 1.0f);
+	style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.09803921729326248f, 0.09803921729326248f, 0.09803921729326248f, 1.0f);
+	style.Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.2588235437870026f, 0.2588235437870026f, 0.2588235437870026f, 0.0f);
+	style.Colors[ImGuiCol_MenuBarBg] = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
+	style.Colors[ImGuiCol_ScrollbarBg] = ImVec4(0.1568627506494522f, 0.1568627506494522f, 0.1568627506494522f, 0.0f);
+	style.Colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.1568627506494522f, 0.1568627506494522f, 0.1568627506494522f, 1.0f);
+	style.Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.2352941185235977f, 0.2352941185235977f, 0.2352941185235977f, 1.0f);
+	style.Colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.294117659330368f, 0.294117659330368f, 0.294117659330368f, 1.0f);
+	style.Colors[ImGuiCol_CheckMark] = ImVec4(0.294117659330368f, 0.294117659330368f, 0.294117659330368f, 1.0f);
+	style.Colors[ImGuiCol_SliderGrab] = ImVec4(0.6196078658103943f, 0.5764706134796143f, 0.7686274647712708f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(0.8156862854957581f, 0.772549033164978f, 0.9647058844566345f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_Button] = ImVec4(0.6196078658103943f, 0.5764706134796143f, 0.7686274647712708f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.7372549176216125f, 0.6941176652908325f, 0.886274516582489f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_ButtonActive] = ImVec4(0.8156862854957581f, 0.772549033164978f, 0.9647058844566345f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_Header] = ImVec4(0.6196078658103943f, 0.5764706134796143f, 0.7686274647712708f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0.7372549176216125f, 0.6941176652908325f, 0.886274516582489f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_HeaderActive] = ImVec4(0.8156862854957581f, 0.772549033164978f, 0.9647058844566345f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_Separator] = ImVec4(0.6196078658103943f, 0.5764706134796143f, 0.7686274647712708f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_SeparatorHovered] = ImVec4(0.7372549176216125f, 0.6941176652908325f, 0.886274516582489f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_SeparatorActive] = ImVec4(0.8156862854957581f, 0.772549033164978f, 0.9647058844566345f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_ResizeGrip] = ImVec4(0.6196078658103943f, 0.5764706134796143f, 0.7686274647712708f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.7372549176216125f, 0.6941176652908325f, 0.886274516582489f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_ResizeGripActive] = ImVec4(0.8156862854957581f, 0.772549033164978f, 0.9647058844566345f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_Tab] = ImVec4(0.6196078658103943f, 0.5764706134796143f, 0.7686274647712708f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_TabHovered] = ImVec4(0.7372549176216125f, 0.6941176652908325f, 0.886274516582489f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_TabActive] = ImVec4(0.8156862854957581f, 0.772549033164978f, 0.9647058844566345f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_TabUnfocused] = ImVec4(0.0f, 0.4509803950786591f, 1.0f, 0.0f);
+	style.Colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.1333333402872086f, 0.2588235437870026f, 0.4235294163227081f, 0.0f);
+	style.Colors[ImGuiCol_PlotLines] = ImVec4(0.294117659330368f, 0.294117659330368f, 0.294117659330368f, 1.0f);
+	style.Colors[ImGuiCol_PlotLinesHovered] = ImVec4(0.7372549176216125f, 0.6941176652908325f, 0.886274516582489f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_PlotHistogram] = ImVec4(0.6196078658103943f, 0.5764706134796143f, 0.7686274647712708f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_PlotHistogramHovered] = ImVec4(0.7372549176216125f, 0.6941176652908325f, 0.886274516582489f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_TableHeaderBg] = ImVec4(0.1882352977991104f, 0.1882352977991104f, 0.2000000029802322f, 1.0f);
+	style.Colors[ImGuiCol_TableBorderStrong] = ImVec4(0.4235294163227081f, 0.3803921639919281f, 0.572549045085907f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_TableBorderLight] = ImVec4(0.4235294163227081f, 0.3803921639919281f, 0.572549045085907f, 0.2918455004692078f);
+	style.Colors[ImGuiCol_TableRowBg] = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
+	style.Colors[ImGuiCol_TableRowBgAlt] = ImVec4(1.0f, 1.0f, 1.0f, 0.03433477878570557f);
+	style.Colors[ImGuiCol_TextSelectedBg] = ImVec4(0.7372549176216125f, 0.6941176652908325f, 0.886274516582489f, 0.5490196347236633f);
+	style.Colors[ImGuiCol_DragDropTarget] = ImVec4(1.0f, 1.0f, 0.0f, 0.8999999761581421f);
+	style.Colors[ImGuiCol_NavHighlight] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
+	style.Colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.0f, 1.0f, 1.0f, 0.699999988079071f);
+	style.Colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.800000011920929f, 0.800000011920929f, 0.800000011920929f, 0.2000000029802322f);
+	style.Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.800000011920929f, 0.800000011920929f, 0.800000011920929f, 0.3499999940395355f);
 }
 
 static inline void TextCentered(const std::string& text, bool bNewLine = true) {
@@ -372,49 +401,12 @@ static int playerTabTab = MAIN_PLAYERTAB;
 
 static inline void StaticUI()
 {
-	if (IsRestartingSupported())
-	{
-		// ImGui::Checkbox("Auto Restart", &Globals::bAutoRestart);
-
-		if (Globals::bAutoRestart)
-		{
-			ImGui::InputFloat(std::format("How long after {} players join the bus will start", NumRequiredPlayersToStart).c_str(), &AutoBusStartSeconds);
-			ImGui::InputInt("Num Players required for bus auto timer", &NumRequiredPlayersToStart);
-		}
-	}
-
-	ImGui::InputInt("Shield/Health for siphon", &AmountOfHealthSiphon);
-
-	ImGui::Checkbox("Enable Developer Mode", &Globals::bDeveloperMode);
-
-	if (Globals::bDeveloperMode)
-	{
-		if (ImGui::Checkbox("Log ProcessEvent", &Globals::bLogProcessEvent))
-		{
-			// todo toggle hook
-			Hooking::MinHook::Hook((PVOID)Addresses::ProcessEvent, ProcessEventHook, (PVOID*)&UObject::ProcessEventOriginal);
-		}
-	}
-
-	// ImGui::InputInt("Amount of bots to spawn", &AmountOfBotsToSpawn);
-
 	ImGui::Checkbox("Infinite Ammo", &Globals::bInfiniteAmmo);
 	ImGui::Checkbox("Infinite Materials", &Globals::bInfiniteMaterials);
-
-	ImGui::Checkbox("Private IP's are operator", &Globals::bPrivateIPsAreOperator);
-
-	ImGui::Checkbox("No MCP (Don't change unless you know what this is)", &Globals::bNoMCP);
-
-	if (Addresses::ApplyGadgetData && Addresses::RemoveGadgetData && Engine_Version < 424)
-	{
-		ImGui::Checkbox("Enable AGIDs (Don't change unless you know what this is)", &Globals::bEnableAGIDs);
-	}
 }
 
 static inline void MainTabs()
 {
-	// std::ofstream bannedStream(Moderation::Banning::GetFilePath());
-
 	if (ImGui::BeginTabBar(""))
 	{
 		if (ImGui::BeginTabItem("Game"))
@@ -423,15 +415,6 @@ static inline void MainTabs()
 			PlayerTab = -1;
 			bInformationTab = false;
 			ImGui::EndTabItem();
-		}
-
-		// if (serverStatus == EServerStatus::Up)
-		{
-			/* if (ImGui::BeginTabItem("Players"))
-			{
-				Tab = PLAYERS_TAB;
-				ImGui::EndTabItem();
-			} */
 		}
 
 		if (Globals::bStartedListening)
@@ -443,108 +426,9 @@ static inline void MainTabs()
 			}
 		}
 
-		if (false && ImGui::BeginTabItem("Gamemode"))
-		{
-			Tab = GAMEMODE_TAB;
-			PlayerTab = -1;
-			bInformationTab = false;
-			ImGui::EndTabItem();
-		}
-
-		// if (Events::HasEvent())
-		if (Globals::bGoingToPlayEvent)
-		{
-			if (ImGui::BeginTabItem(("Event")))
-			{
-				Tab = EVENT_TAB;
-				PlayerTab = -1;
-				bInformationTab = false;
-				ImGui::EndTabItem();
-			}
-		}
-
-		if (HasAnyCalendarModification() && ImGui::BeginTabItem("Calendar Events"))
-		{
-			Tab = CALENDAR_TAB;
-			PlayerTab = -1;
-			bInformationTab = false;
-			ImGui::EndTabItem();
-		}
-
-		if (ImGui::BeginTabItem(("Zone")))
-		{
-			Tab = ZONE_TAB;
-			PlayerTab = -1;
-			bInformationTab = false;
-			ImGui::EndTabItem();
-		}
-
-		if (ImGui::BeginTabItem("Dump"))
-		{
-			Tab = DUMP_TAB;
-			PlayerTab = -1;
-			bInformationTab = false;
-			ImGui::EndTabItem();
-		}
-
-		if (ImGui::BeginTabItem("Fun"))
+		if (ImGui::BeginTabItem("Other"))
 		{
 			Tab = FUN_TAB;
-			PlayerTab = -1;
-			bInformationTab = false;
-			ImGui::EndTabItem();
-		}
-
-		if (Globals::bLateGame.load() && ImGui::BeginTabItem("Lategame"))
-		{
-			Tab = LATEGAME_TAB;
-			PlayerTab = -1;
-			bInformationTab = false;
-			ImGui::EndTabItem();
-		}
-
-#if 0
-		if (bannedStream.is_open() && ImGui::BeginTabItem("Unban")) // skunked
-		{
-			Tab = UNBAN_TAB;
-			PlayerTab = -1;
-			bInformationTab = false;
-			ImGui::EndTabItem();
-		}
-#endif
-
-		/* if (ImGui::BeginTabItem(("Settings")))
-		{
-			Tab = SETTINGS_TAB;
-			PlayerTab = -1;
-			bInformationTab = false;
-			ImGui::EndTabItem();
-		} */
-
-		// maybe a Replication Stats for >3.3?
-
-		if (Globals::bDeveloperMode)
-		{
-			if (ImGui::BeginTabItem("Developer"))
-			{
-				Tab = DEVELOPER_TAB;
-				PlayerTab = -1;
-				bInformationTab = false;
-				ImGui::EndTabItem();
-			}
-
-			if (ImGui::BeginTabItem("Debug Logs"))
-			{
-				Tab = DEBUGLOG_TAB;
-				PlayerTab = -1;
-				bInformationTab = false;
-				ImGui::EndTabItem();
-			}
-		}
-
-		if (false && ImGui::BeginTabItem(("Credits")))
-		{
-			Tab = CREDITS_TAB;
 			PlayerTab = -1;
 			bInformationTab = false;
 			ImGui::EndTabItem();
