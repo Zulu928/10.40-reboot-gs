@@ -924,6 +924,29 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 		GameState->GetGamePhaseStep();
 	}
 
+	int NumPlayers = GameState->GetPlayersLeft();
+
+	if (NumPlayers == 1 && Globals::bStartedBus == false)
+	{
+		Globals::LateGame = true;
+	}
+
+	if (NumPlayers == 30 && Globals::bStartedBus == false)
+	{
+		const int MaxPlayers = 30;
+		auto GameSession = GameMode->GetOffset("GameSession");
+		auto GameSession2 = GameMode->Get<UClass*>("GameSession");
+		auto maxplayersOffset = GameSession2->GetOffset("MaxPlayers");
+		auto MaxPlayersValue = GameSession2->Get<int32>(MaxPlayers);
+		int NumPlayers = GameState->GetPlayersLeft();
+
+		if (MaxPlayersValue > Globals::bMaxPlayersForLategame)
+		{
+			Globals::LateGame = false;
+			LOG_WARN(LogLateGame, "full map switched.");
+		}
+	}
+
 	static auto SafeZonesStartTimeOffset = GameState->GetOffset("SafeZonesStartTime");
 	GameState->Get<float>(SafeZonesStartTimeOffset) = 0.001f;
 

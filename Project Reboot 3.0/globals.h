@@ -22,7 +22,6 @@ namespace Globals
 
 	extern inline bool tesplease = false;
 	extern inline bool bSendWebhook = true;
-	extern inline std::string rewardsApiKey = "GlobalsISfuckingLifeIamTellingYouGangOnGODalsoFUCKFEMBOYS";
 
 	extern inline bool bCreative = false;
 	extern inline bool bGoingToPlayEvent = false;

@@ -36,8 +36,10 @@ void AFortPlayerState::EndDBNOAbilities()
 void AFortPlayerState::SiphonEffect()
 {
 	static auto BGAClass = FindObject<UClass>(L"/Script/Engine.BlueprintGeneratedClass");
-	UClass* GE_Class = LoadObject<UClass>(L"/Game/Athena/Items/Consumables/ChillBronco/GE_Athena_ChillBronco_Shields.GE_Athena_ChillBronco_Shields_C", BGAClass);
+	UClass* GE_Class = LoadObject<UClass>(L"/Game/Athena/Items/Consumables/Flopper/JellyFish/GE_Athena_Flopper_JellyFish_Heal.GE_Athena_Flopper_JellyFish_Heal_C", BGAClass);
 	GetAbilitySystemComponent()->ApplyGameplayEffectToSelf(GE_Class, -1.f);
+	// Game / Athena / Items / Consumables / Flopper / JellyFish / GE_Athena_Flopper_JellyFish_Heal.GE_Athena_Flopper_JellyFish_Heal_C
+	// Game / Athena / Items / Consumables / ChillBronco / GE_Athena_ChillBronco_Shields.GE_Athena_ChillBronco_Shields_C
 }
 
 bool AFortPlayerState::AreUniqueIDsIdentical(FUniqueNetIdRepl* A, FUniqueNetIdRepl* B)

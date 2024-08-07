@@ -1455,6 +1455,55 @@ void AFortPlayerController::ClientOnPawnDiedHook(AFortPlayerController* PlayerCo
 		}
 	}
 
+	static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
+	auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
+	auto& ClientConnections = WorldNetDriver->GetClientConnections();
+
+	if (Fortnite_Version == 19.10)
+	{
+		if (Globals::bSpawnCrownOnKill && Globals::SpawnCrown > 0)
+		{
+			if (Globals::AlivePlayers == 2)
+			{
+				static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
+				auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
+				auto& ClientConnections = WorldNetDriver->GetClientConnections();
+
+				for (int z = 0; z < ClientConnections.Num(); z++)
+				{
+					auto ClientConnection = ClientConnections.at(z);
+					auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController());
+
+					if (!FortPC)
+						continue;
+
+					auto AllPlayerStates = UGameplayStatics::GetAllActorsOfClass(GetWorld(), AFortPlayerStateAthena::StaticClass());
+
+					for (int i = 0; i < AllPlayerStates.Num(); ++i)
+					{
+						auto CurrentPlayerState = (AFortGameStateAthena*)AllPlayerStates.at(i);
+
+						auto WorldInventory = FortPC->GetWorldInventory();
+
+						if (!WorldInventory)
+							continue;
+
+						static auto CrownSpawn = FindObject<UFortItemDefinition>(L"/VictoryCrownsGameplay/Items/AGID_VictoryCrown.AGID_VictoryCrown");
+
+						GameState->GetActorLocation();
+						KillerPlayerState->GetPlayerName().ToString();
+						WorldInventory->AddItem(CrownSpawn, nullptr, Globals::SpawnCrown);
+						WorldInventory->Update();
+
+						LOG_INFO(LogDev, "Crown Given")
+
+							break;
+					}
+				}
+			}
+		}
+	}
+
 	if (KillerPawn)
 	{
 		auto KillerState = Cast<AFortPlayerStateAthena>(KillerPawn->GetPlayerState());

@@ -128,8 +128,8 @@ UClass* AFortGameModeAthena::GetVehicleClassOverride(UClass* DefaultClass)
 	if (!GetVehicleClassOverrideFn)
 		return DefaultClass;
 
-	struct { UClass* DefaultClass; UClass* ReturnValue; } GetVehicleClassOverride_Params{DefaultClass};
-	
+	struct { UClass* DefaultClass; UClass* ReturnValue; } GetVehicleClassOverride_Params{ DefaultClass };
+
 	this->ProcessEvent(GetVehicleClassOverrideFn, &GetVehicleClassOverride_Params);
 
 	return GetVehicleClassOverride_Params.ReturnValue;
@@ -1400,6 +1400,7 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 			bool bDestroyFloorLootActor = false;
 			bool bPrintWarmup = bDebugPrintFloorLoot;
 
+			/*
 			for (int i = 0; i < SpawnIsland_FloorLoot_Actors.Num(); i++)
 			{
 				ABuildingContainer* CurrentActor = (ABuildingContainer*)SpawnIsland_FloorLoot_Actors.at(i);
@@ -1420,9 +1421,10 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 					auto Pickup = AFortPickup::SpawnPickup(CreateData);
 				}
 
-				if (!bDestroyFloorLootActor)
+				if (!bTest)
 					CurrentActor->K2_DestroyActor();
 			}
+			*/
 
 			bool bPrintIsland = bDebugPrintFloorLoot;
 
@@ -1464,7 +1466,7 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 		}
 	}
 
-	if (Engine_Version >= 423 && Fortnite_Version <= 12.61) // 423+ we need to spawn manually and vehicle sync doesn't work on >S13.
+	if (Engine_Version >= 423 && Fortnite_Version <= 16.40) // 423+ we need to spawn manually and vehicle sync doesn't work on >S13.
 	{
 		static int LastNum420 = 114;
 
@@ -1472,7 +1474,7 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 		{
 			LastNum420 = Globals::AmountOfListens;
 
-			SpawnVehicles2();
+			SpawnVehicles();
 		}
 	}
 
