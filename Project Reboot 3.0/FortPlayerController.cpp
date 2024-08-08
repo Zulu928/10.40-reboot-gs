@@ -1750,62 +1750,64 @@ bool IsOkForEditing(ABuildingSMActor* BuildingActor, AFortPlayerController* Cont
 
 static void ClearAllInventory()
 {
-	if (Globals::bStartedBus == true)
+	if (!Globals::bStartedBus)
+		return;
+
+	static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
+	auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
+	auto& ClientConnections = WorldNetDriver->GetClientConnections();
+
+	static auto FortEditToolItemDefinitionClass = FindObject<UClass>(L"/Script/FortniteGame.FortEditToolItemDefinition");
+	static auto FortBuildingItemDefinitionClass = FindObject<UClass>(L"/Script/FortniteGame.FortBuildingItemDefinition");
+
+	for (int z = 0; z < ClientConnections.Num(); z++)
 	{
-		static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
-		auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
-		auto& ClientConnections = WorldNetDriver->GetClientConnections();
+		auto ClientConnection = ClientConnections.at(z);
+		auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController());
 
-		for (int z = 0; z < ClientConnections.Num(); z++)
+		if (!FortPC)
+			continue;
+
+		auto WorldInventory = FortPC->GetWorldInventory();
+
+		if (!WorldInventory)
+			continue;
+
+		bool bCheckShouldBeDropped = true;
+		std::vector<std::pair<FGuid, int>> GuidsAndCountsToRemove;
+
+		const auto& ItemInstances = WorldInventory->GetItemList().GetItemInstances();
+		auto PickaxeInstance = WorldInventory->GetPickaxeInstance();
+
+		for (int i = 0; i < ItemInstances.Num(); ++i)
 		{
-			auto ClientConnection = ClientConnections.at(z);
-			auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController());
+			auto ItemInstance = ItemInstances.at(i);
+			const auto ItemDefinition = Cast<UFortWorldItemDefinition>(ItemInstance->GetItemEntry()->GetItemDefinition());
 
-			if (!FortPC)
-				continue;
-
-			auto WorldInventory = FortPC->GetWorldInventory();
-
-			if (!WorldInventory)
-				continue;
-
-			static auto FortEditToolItemDefinitionClass = FindObject<UClass>(L"/Script/FortniteGame.FortEditToolItemDefinition");
-			static auto FortBuildingItemDefinitionClass = FindObject<UClass>(L"/Script/FortniteGame.FortBuildingItemDefinition");
-			bool bCheckShouldBeDropped = true;
-			std::vector<std::pair<FGuid, int>> GuidsAndCountsToRemove;
-			const auto& ItemInstances = WorldInventory->GetItemList().GetItemInstances();
-			auto PickaxeInstance = WorldInventory->GetPickaxeInstance();
-
-			for (int i = 0; i < ItemInstances.Num(); ++i)
+			if (bCheckShouldBeDropped
+				? ItemDefinition->CanBeDropped()
+				: !ItemDefinition->IsA(FortBuildingItemDefinitionClass)
+				&& !ItemDefinition->IsA(FortEditToolItemDefinitionClass)
+				&& ItemInstance != PickaxeInstance)
 			{
-				auto ItemInstance = ItemInstances.at(i);
-				const auto ItemDefinition = Cast<UFortWorldItemDefinition>(ItemInstance->GetItemEntry()->GetItemDefinition());
+				bool IsPrimary = IsPrimaryQuickbar(ItemDefinition);
 
-				if (bCheckShouldBeDropped
-					? ItemDefinition->CanBeDropped()
-					: !ItemDefinition->IsA(FortBuildingItemDefinitionClass)
-					&& !ItemDefinition->IsA(FortEditToolItemDefinitionClass)
-					&& ItemInstance != PickaxeInstance
-					)
+				if ((true && IsPrimary) || (true && !IsPrimary))
 				{
-					bool IsPrimary = IsPrimaryQuickbar(ItemDefinition);
-
-					if ((true && IsPrimary) || (true && !IsPrimary))
-					{
-						GuidsAndCountsToRemove.push_back({ ItemInstance->GetItemEntry()->GetItemGuid(), ItemInstance->GetItemEntry()->GetCount() });
-					}
+					GuidsAndCountsToRemove.push_back({ ItemInstance->GetItemEntry()->GetItemGuid(), ItemInstance->GetItemEntry()->GetCount() });
 				}
 			}
-
-			for (auto& [Guid, Count] : GuidsAndCountsToRemove)
-			{
-				WorldInventory->RemoveItem(Guid, nullptr, Count, true);
-			}
-
-			WorldInventory->Update();
 		}
+
+		for (auto& [Guid, Count] : GuidsAndCountsToRemove)
+		{
+			WorldInventory->RemoveItem(Guid, nullptr, Count, true);
+		}
+
+		WorldInventory->Update();
 	}
 }
+
 
 /*
 

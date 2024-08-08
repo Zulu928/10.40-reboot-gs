@@ -472,7 +472,11 @@ static inline void PlayerTabs()
 
 static inline DWORD WINAPI LateGameThread(LPVOID)
 {
-	float MaxTickRate = 30;
+	const float MaxTickRate = 30.0f;
+	const float Duration = 10.0f;
+	const float EarlyDuration = Duration;
+	const float DropDelay = 1.0f;
+	const int InitialSleepSeconds = 10;
 
 	auto GameMode = Cast<AFortGameModeAthena>(GetWorld()->GetGameMode());
 	auto GameState = Cast<AFortGameStateAthena>(GameMode->GetGameState());
@@ -487,12 +491,9 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 		return 0;
 	}
 
-
 	const FVector ZoneCenterLocation = SafeZoneLocations.at(3);
-
 	FVector LocationToStartAircraft = ZoneCenterLocation;
 	LocationToStartAircraft.Z += 10000;
-	//LocationToStartAircraft.Y += 1000;
 
 	auto GetAircrafts = [&]() -> std::vector<AActor*>
 		{
@@ -501,8 +502,6 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 
 			if (AircraftsOffset == -1)
 			{
-				// GameState->Aircraft
-
 				static auto FortAthenaAircraftClass = FindObject<UClass>(L"/Script/FortniteGame.FortAthenaAircraft");
 				auto AllAircrafts = UGameplayStatics::GetAllActorsOfClass(GetWorld(), FortAthenaAircraftClass);
 
@@ -516,7 +515,6 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 			else
 			{
 				const auto& GameStateAircrafts = GameState->Get<TArray<AActor*>>(AircraftsOffset);
-
 				for (int i = 0; i < GameStateAircrafts.Num(); i++)
 				{
 					Aircrafts.push_back(GameStateAircrafts.at(i));
@@ -526,35 +524,23 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 			return Aircrafts;
 		};
 
-
-
 	static auto WarmupCountdownEndTimeOffset = GameState->GetOffset("WarmupCountdownEndTime");
-	// GameState->Get<float>(WarmupCountdownEndTimeOffset) = UGameplayStatics::GetTimeSeconds(GetWorld()) + 10;
-
-	float TimeSeconds = GameState->GetServerWorldTimeSeconds(); // UGameplayStatics::GetTimeSeconds(GetWorld());
-	float Duration = 10;
-	float EarlyDuration = Duration;
-
-	static auto WarmupCountdownStartTimeOffset = GameState->GetOffset("WarmupCountdownStartTime");
 	static auto WarmupCountdownDurationOffset = GameMode->GetOffset("WarmupCountdownDuration");
 	static auto WarmupEarlyCountdownDurationOffset = GameMode->GetOffset("WarmupEarlyCountdownDuration");
 
+	float TimeSeconds = GameState->GetServerWorldTimeSeconds();
 	GameState->Get<float>(WarmupCountdownEndTimeOffset) = TimeSeconds + Duration;
 	GameMode->Get<float>(WarmupCountdownDurationOffset) = Duration;
-
-	// GameState->Get<float>(WarmupCountdownStartTimeOffset) = TimeSeconds;
 	GameMode->Get<float>(WarmupEarlyCountdownDurationOffset) = EarlyDuration;
 
-	while (GetAircrafts().size() <= 0)
+	while (GetAircrafts().empty())
 	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(10000) / MaxTickRate);
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000) / MaxTickRate);
 	}
 
 	auto Aircrafts = GetAircrafts();
-
 	float FlightSpeed = 0.0f;
-
-	float DropStartTime = GameState->GetServerWorldTimeSeconds() + 1.0f;
+	float DropStartTime = GameState->GetServerWorldTimeSeconds() + DropDelay;
 
 	for (int i = 0; i < Aircrafts.size(); ++i)
 	{
@@ -570,28 +556,25 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 
 			FVector NewLocation = CurrentAircraft->GetActorLocation();
 			LOG_INFO(LogLateGame, "New Location of Aircraft %d: %s", i, *NewLocation.ToString());
-		}
 
+			static auto FlightInfoOffset = CurrentAircraft->GetOffset("FlightInfo", false);
+			if (FlightInfoOffset == -1)
+			{
+				static auto FlightStartLocationOffset = CurrentAircraft->GetOffset("FlightStartLocation");
+				static auto FlightSpeedOffset = CurrentAircraft->GetOffset("FlightSpeed");
+				static auto DropStartTimeOffset = CurrentAircraft->GetOffset("DropStartTime");
 
-		static auto FlightInfoOffset = CurrentAircraft->GetOffset("FlightInfo", false);
-
-		if (FlightInfoOffset == -1)
-		{
-			static auto FlightStartLocationOffset = CurrentAircraft->GetOffset("FlightStartLocation");
-			static auto FlightSpeedOffset = CurrentAircraft->GetOffset("FlightSpeed");
-			static auto DropStartTimeOffset = CurrentAircraft->GetOffset("DropStartTime");
-
-			CurrentAircraft->Get<FVector>(FlightStartLocationOffset) = LocationToStartAircraft;
-			CurrentAircraft->Get<float>(FlightSpeedOffset) = FlightSpeed;
-			CurrentAircraft->Get<float>(DropStartTimeOffset) = DropStartTime;
-		}
-		else
-		{
-			auto FlightInfo = CurrentAircraft->GetPtr<FAircraftFlightInfo>(FlightInfoOffset);
-
-			FlightInfo->GetFlightSpeed() = FlightSpeed;
-			FlightInfo->GetFlightStartLocation() = LocationToStartAircraft;
-			FlightInfo->GetTimeTillDropStart() = DropStartTime;
+				CurrentAircraft->Get<FVector>(FlightStartLocationOffset) = LocationToStartAircraft;
+				CurrentAircraft->Get<float>(FlightSpeedOffset) = FlightSpeed;
+				CurrentAircraft->Get<float>(DropStartTimeOffset) = DropStartTime;
+			}
+			else
+			{
+				auto FlightInfo = CurrentAircraft->GetPtr<FAircraftFlightInfo>(FlightInfoOffset);
+				FlightInfo->GetFlightSpeed() = FlightSpeed;
+				FlightInfo->GetFlightStartLocation() = LocationToStartAircraft;
+				FlightInfo->GetTimeTillDropStart() = DropStartTime;
+			}
 		}
 	}
 
@@ -603,185 +586,62 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 	{
 		auto ClientConnection = ClientConnections.at(z);
 		auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController());
-
-		if (!FortPC)
-			continue;
+		if (!FortPC) continue;
 
 		auto WorldInventory = FortPC->GetWorldInventory();
+		if (!WorldInventory) continue;
 
-		if (!WorldInventory)
-			continue;
+		std::unordered_map<int, UFortItemDefinition*> RifleOptions{
+			{0, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_SR_Ore_T03.WID_Assault_AutoHigh_Athena_SR_Ore_T03")},
+			{1, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_VR_Ore_T03.WID_Assault_AutoHigh_Athena_VR_Ore_T03")},
+			{2, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03")},
+			{3, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_UC_Ore_T03.WID_Assault_Auto_Athena_UC_Ore_T03")},
+			{4, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_SR_Ore_T03.WID_Assault_AutoHigh_Athena_SR_Ore_T03")},
+			{5, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03")},
+			{6, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_VR_Ore_T03.WID_Assault_AutoHigh_Athena_VR_Ore_T03")}
+		};
 
-		static auto WoodItemData = FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/WoodItemData.WoodItemData");
-		static auto StoneItemData = FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/StoneItemData.StoneItemData");
-		static auto MetalItemData = FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/MetalItemData.MetalItemData");
+		std::unordered_map<int, UFortItemDefinition*> ShotgunOptions{
+			{0, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_SR_Ore_T03.WID_Shotgun_Standard_Athena_SR_Ore_T03")},
+			{1, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_VR_Ore_T03.WID_Shotgun_Standard_Athena_VR_Ore_T03")},
+			{2, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03")}
+		};
 
-		auto AR0 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_SR_Ore_T03.WID_Assault_AutoHigh_Athena_SR_Ore_T03");
-		auto AR1 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_VR_Ore_T03.WID_Assault_AutoHigh_Athena_VR_Ore_T03");
-		auto AR2 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03");
-		auto AR6 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_UC_Ore_T03.WID_Assault_Auto_Athena_UC_Ore_T03");
-		auto AR7 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_SR_Ore_T03.WID_Assault_AutoHigh_Athena_SR_Ore_T03");
-		auto AR8 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03");
-		auto AR9 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_VR_Ore_T03.WID_Assault_AutoHigh_Athena_VR_Ore_T03");
-		auto ARNum = rand() % 7;
-		UFortItemDefinition* Rifle = nullptr;
+		std::unordered_map<int, UFortItemDefinition*> SMGOptions{
+			{0, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_SR_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_SR_Ore_T03")},
+			{1, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_VR_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_VR_Ore_T03")},
+			{2, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_R_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_R_Ore_T03")},
+			{3, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/ChillBronco/Athena_ChillBronco.Athena_ChillBronco")},
+			{4, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/PurpleStuff/Athena_PurpleStuff.Athena_PurpleStuff")},
+			{5, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/SuperMedkit/Athena_SuperMedkit.Athena_SuperMedkit")},
+			{6, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Flopper/WID_Athena_Flopper.WID_Athena_Flopper")},
+			{7, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Flopper/Effective/WID_Athena_Flopper_Effective.WID_Athena_Flopper_Effective")}
+		};
 
-		auto Shotgun0 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_SR_Ore_T03.WID_Shotgun_Standard_Athena_SR_Ore_T03");
-		auto Shotgun1 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_VR_Ore_T03.WID_Shotgun_Standard_Athena_VR_Ore_T03");
-		auto Shotgun2 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03");
-		auto SHNum = rand() % 3;
-		UFortItemDefinition* Shotgun = nullptr;
+		std::unordered_map<int, UFortItemDefinition*> ShieldOptions{
+			{0, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Shields/Athena_Shields.Athena_Shields")},
+			{1, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/ShieldSmall/Athena_ShieldSmall.Athena_ShieldSmall")},
+			{2, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Flopper/WID_Athena_Flopper.WID_Athena_Flopper")},
+			{3, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Flopper/Effective/WID_Athena_Flopper_Effective.WID_Athena_Flopper_Effective")},
+			{4, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Flopper/ShieldFlopper/WID_Athena_Flopper_Shield.WID_Athena_Flopper_Shield")}
+		};
 
-		if (ARNum == 0)
-		{
-			Rifle = AR0;
-		}
-		else if (ARNum == 1)
-		{
-			Rifle = AR1;
-		}
-		else if (ARNum == 2)
-		{
-			Rifle = AR2;
-		}
-		else if (ARNum == 3)
-		{
-			Rifle = AR6;
-		}
-		else if (ARNum == 4)
-		{
-			Rifle = AR7;
-		}
-		else if (ARNum == 5)
-		{
-			Rifle = AR8;
-		}
-		else if (ARNum == 6)
-		{
-			Rifle = AR9;
-		}
+		int RifleIndex = rand() % RifleOptions.size();
+		int ShieldIndex = rand() % ShotgunOptions.size();
 
-		if (SHNum == 0)
-		{
-			Shotgun = Shotgun0;
-		}
-		else if (SHNum == 1)
-		{
-			Shotgun = Shotgun1;
-		}
-		else if (SHNum == 2)
-		{
-			Shotgun = Shotgun2;
-		}
+		UFortItemDefinition* Rifle = RifleOptions[RifleIndex];
+		UFortItemDefinition* Shield = ShotgunOptions[ShieldIndex];
 
-		auto SMG1 = FindObject<UFortItemDefinition>(L"");
-		auto SMG2 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_VR_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_VR_Ore_T03");
-		auto SMG3 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_SR_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_SR_Ore_T03");
-		auto SMG4 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/ChillBronco/Athena_ChillBronco.Athena_ChillBronco");
-		auto SMG5 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/PurpleStuff/Athena_PurpleStuff.Athena_PurpleStuff");
-		auto SMG6 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/SuperMedkit/Athena_SuperMedkit.Athena_SuperMedkit");
-		auto SMG7 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_SR_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_SR_Ore_T03");
-		auto SMG8 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_R_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_R_Ore_T03");
-		auto SMGNum = rand() % 8;
-		UFortItemDefinition* SMG = nullptr;
-
-		if (SMGNum == 1)
-		{
-			SMG = SMG1;
-		}
-		else if (SMGNum == 2)
-		{
-			SMG = SMG2;
-		}
-		else if (SMGNum == 3)
-		{
-			SMG = SMG3;
-		}
-		else if (SMGNum == 4)
-		{
-			SMG = SMG4;
-		}
-		else if (SMGNum == 5)
-		{
-			SMG = SMG5;
-		}
-		else if (SMGNum == 6)
-		{
-			SMG = SMG6;
-		}
-		else if (SMGNum == 7)
-		{
-			SMG = SMG7;
-		}
-		else if (SMGNum == 8)
-		{
-			SMG = SMG8;
-		}
-
-		auto Shields1 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Gameplay/Lotus/Mustache/AGID_Lotus_MustacheSpyTech.AGID_Lotus_MustacheSpyTech");
-		auto Shields2 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Shields/Athena_Shields.Athena_Shields");
-		auto Shields3 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/ShieldSmall/Athena_ShieldSmall.Athena_ShieldSmall");
-		auto Shields4 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Flopper/WID_Athena_Flopper.WID_Athena_Flopper");
-		auto Shields5 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Flopper/Effective/WID_Athena_Flopper_Effective.WID_Athena_Flopper_Effective");
-		auto Shields6 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Flopper/ShieldFlopper/WID_Athena_Flopper_Shield.WID_Athena_Flopper_Shield");
-		auto Shields7 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Shields/Athena_Shields.Athena_Shields");
-		auto Shields8 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/ShieldSmall/Athena_ShieldSmall.Athena_ShieldSmall");
-		auto SheildsNum = rand() % 8;
-		UFortItemDefinition* Sheilds = nullptr;
-
-		if (SheildsNum == 1)
-		{
-			Sheilds = Shields1;
-		}
-		else if (SheildsNum == 2)
-		{
-			Sheilds = Shields2;
-		}
-		else if (SheildsNum == 3)
-		{
-			Sheilds = Shields3;
-		}
-		else if (SheildsNum == 4)
-		{
-			Sheilds = Shields4;
-		}
-		else if (SheildsNum == 5)
-		{
-			Sheilds = Shields5;
-		}
-		else if (SheildsNum == 6)
-		{
-			Sheilds = Shields6;
-		}
-		else if (SheildsNum == 7)
-		{
-			Sheilds = Shields7;
-		}
-		else if (SheildsNum == 8)
-		{
-			Sheilds = Shields8;
-		}
-
-		static auto MiniShields = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/ShieldSmall/Athena_ShieldSmall.Athena_ShieldSmall");
-
-		static auto Shells = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataShells.AthenaAmmoDataShells");
-		static auto Medium = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsMedium.AthenaAmmoDataBulletsMedium");
-		static auto Light = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsLight.AthenaAmmoDataBulletsLight");
-		static auto Heavy = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsHeavy.AthenaAmmoDataBulletsHeavy");
-
-		WorldInventory->AddItem(WoodItemData, nullptr, 500);
-		WorldInventory->AddItem(StoneItemData, nullptr, 500);
-		WorldInventory->AddItem(MetalItemData, nullptr, 500);
+		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/WoodItemData.WoodItemData"), nullptr, 500);
+		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/StoneItemData.StoneItemData"), nullptr, 500);
+		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/MetalItemData.MetalItemData"), nullptr, 500);
 		WorldInventory->AddItem(Rifle, nullptr, 1);
-		WorldInventory->AddItem(Shotgun, nullptr, 1);
-		WorldInventory->AddItem(SMG, nullptr, 1);
-		WorldInventory->AddItem(Sheilds, nullptr, 3);
-		WorldInventory->AddItem(MiniShields, nullptr, 3);
-		//WorldInventory->AddItem(ChugSplash, nullptr, 6);
-		WorldInventory->AddItem(Shells, nullptr, 50);
-		WorldInventory->AddItem(Medium, nullptr, 250);
-		WorldInventory->AddItem(Light, nullptr, 250);
-		WorldInventory->AddItem(Heavy, nullptr, 30);
+		WorldInventory->AddItem(Shield, nullptr, 3);
+		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/ShieldSmall/Athena_ShieldSmall.Athena_ShieldSmall"), nullptr, 3);
+		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataShells.AthenaAmmoDataShells"), nullptr, 50);
+		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsMedium.AthenaAmmoDataBulletsMedium"), nullptr, 250);
+		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsLight.AthenaAmmoDataBulletsLight"), nullptr, 250);
+		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsHeavy.AthenaAmmoDataBulletsHeavy"), nullptr, 30);
 
 		WorldInventory->Update();
 	}
