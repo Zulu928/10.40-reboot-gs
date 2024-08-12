@@ -1698,6 +1698,67 @@ bool IsOkForEditing(ABuildingSMActor* BuildingActor, AFortPlayerController* Cont
 		// BuildingActor->GetWorld() &&
 		Idk(BuildingActor);
 }
+<<<<<<< Updated upstream
+=======
+/*
+static void ClearAllInventory()
+{
+	if (!Globals::bStartedBus)
+		return;
+
+	static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
+	auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
+	auto& ClientConnections = WorldNetDriver->GetClientConnections();
+
+	if (!WorldNetDriver)
+		return;
+
+	
+
+   for (int z = 0; z < ClientConnections.Num(); ++z)
+	{
+	   auto ClientConnection = ClientConnections.at(z);
+	   auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController);
+
+		if (!FortPC)
+			continue;
+
+		auto* WorldInventory = FortPC->GetWorldInventory();
+
+		if (!WorldInventory)
+			continue;
+
+		// Get a list of all items in the inventory
+		auto& ItemInstances = WorldInventory->GetItemList().GetItemInstances();
+
+		// Remove all items except for the pickaxe
+		auto* PickaxeInstance = WorldInventory->GetPickaxeInstance();
+		for (auto* ItemInstance : ItemInstances)
+		{
+			if (ItemInstance == PickaxeInstance)
+				continue;
+
+			const auto& ItemGuid = ItemInstance->GetItemEntry()->GetItemGuid();
+			const auto ItemCount = ItemInstance->GetItemEntry()->GetCount();
+			WorldInventory->RemoveItem(ItemGuid, nullptr, ItemCount, true);
+		}
+
+		// Ensure the pickaxe is not removed
+		if (PickaxeInstance)
+		{
+			const auto& PickaxeGuid = PickaxeInstance->GetItemEntry()->GetItemGuid();
+			const auto PickaxeCount = PickaxeInstance->GetItemEntry()->GetCount();
+			WorldInventory->AddItem(PickaxeGuid, PickaxeCount, true); // Re-add pickaxe to ensure it's retained
+		}
+
+		// Update the inventory after modifications
+		WorldInventory->Update();
+	}
+}
+*/
+
+
+>>>>>>> Stashed changes
 
 /*
 

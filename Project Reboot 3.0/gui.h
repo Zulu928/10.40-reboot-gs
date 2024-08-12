@@ -647,6 +647,81 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 		}
 	}
 
+<<<<<<< Updated upstream
+=======
+	static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
+	auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
+	auto& ClientConnections = WorldNetDriver->GetClientConnections();
+
+	for (int z = 0; z < ClientConnections.Num(); z++)
+	{
+		auto ClientConnection = ClientConnections.at(z);
+		auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController());
+		if (!FortPC) continue;
+
+		auto WorldInventory = FortPC->GetWorldInventory();
+		if (!WorldInventory) continue;
+
+		std::unordered_map<int, UFortItemDefinition*> RifleOptions{
+			{0, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_SR_Ore_T03.WID_Assault_AutoHigh_Athena_SR_Ore_T03")},
+			{1, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_VR_Ore_T03.WID_Assault_AutoHigh_Athena_VR_Ore_T03")},
+			{2, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03")},
+			{3, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_UC_Ore_T03.WID_Assault_Auto_Athena_UC_Ore_T03")},
+			{4, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_SR_Ore_T03.WID_Assault_AutoHigh_Athena_SR_Ore_T03")},
+			{5, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03")},
+			{6, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_VR_Ore_T03.WID_Assault_AutoHigh_Athena_VR_Ore_T03")}
+		};
+
+		std::unordered_map<int, UFortItemDefinition*> ShotgunOptions{
+			{0, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_SR_Ore_T03.WID_Shotgun_Standard_Athena_SR_Ore_T03")},
+			{1, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_VR_Ore_T03.WID_Shotgun_Standard_Athena_VR_Ore_T03")},
+			{2, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03")}
+		};
+
+		std::unordered_map<int, UFortItemDefinition*> SMGOptions{
+			{0, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_SR_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_SR_Ore_T03")},
+			{1, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_VR_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_VR_Ore_T03")},
+			{2, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_R_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_R_Ore_T03")},
+			{3, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/ChillBronco/Athena_ChillBronco.Athena_ChillBronco")},
+			{4, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/PurpleStuff/Athena_PurpleStuff.Athena_PurpleStuff")},
+			{5, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/SuperMedkit/Athena_SuperMedkit.Athena_SuperMedkit")},
+			{6, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Flopper/WID_Athena_Flopper.WID_Athena_Flopper")},
+			{7, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Flopper/Effective/WID_Athena_Flopper_Effective.WID_Athena_Flopper_Effective")}
+		};
+
+		std::unordered_map<int, UFortItemDefinition*> ShieldOptions{
+			{0, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Shields/Athena_Shields.Athena_Shields")},
+			{1, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/ShieldSmall/Athena_ShieldSmall.Athena_ShieldSmall")},
+			{2, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Flopper/WID_Athena_Flopper.WID_Athena_Flopper")},
+			{3, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Flopper/Effective/WID_Athena_Flopper_Effective.WID_Athena_Flopper_Effective")},
+			{4, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Flopper/ShieldFlopper/WID_Athena_Flopper_Shield.WID_Athena_Flopper_Shield")}
+		};
+
+		int RifleIndex = rand() % RifleOptions.size();
+		int ShieldIndex = rand() % ShotgunOptions.size();
+
+		UFortItemDefinition* Rifle = RifleOptions[RifleIndex];
+		UFortItemDefinition* Shield = ShotgunOptions[ShieldIndex];
+
+		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/WoodItemData.WoodItemData"), nullptr, 500);
+		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/StoneItemData.StoneItemData"), nullptr, 500);
+		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/MetalItemData.MetalItemData"), nullptr, 500);
+		WorldInventory->AddItem(Rifle, nullptr, 1);
+		WorldInventory->AddItem(Shield, nullptr, 3);
+		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/ShieldSmall/Athena_ShieldSmall.Athena_ShieldSmall"), nullptr, 3);
+		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataShells.AthenaAmmoDataShells"), nullptr, 50);
+		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsMedium.AthenaAmmoDataBulletsMedium"), nullptr, 250);
+		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsLight.AthenaAmmoDataBulletsLight"), nullptr, 250);
+		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsHeavy.AthenaAmmoDataBulletsHeavy"), nullptr, 30);
+
+		WorldInventory->Update();
+	}
+	/*
+	auto GS = EAthenaGamePhase::SafeZones;
+	GameState->GetGamePhase() = GS;
+	GameState->OnRep_GamePhase();
+	*/
+>>>>>>> Stashed changes
 	while (GameState->GetGamePhase() != EAthenaGamePhase::Aircraft)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000) / MaxTickRate);
