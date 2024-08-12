@@ -1455,6 +1455,55 @@ void AFortPlayerController::ClientOnPawnDiedHook(AFortPlayerController* PlayerCo
 		}
 	}
 
+	static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
+	auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
+	auto& ClientConnections = WorldNetDriver->GetClientConnections();
+
+	if (Fortnite_Version == 19.10)
+	{
+		if (Globals::bSpawnCrownOnKill && Globals::SpawnCrown > 0)
+		{
+			if (Globals::AlivePlayers == 2)
+			{
+				static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
+				auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
+				auto& ClientConnections = WorldNetDriver->GetClientConnections();
+
+				for (int z = 0; z < ClientConnections.Num(); z++)
+				{
+					auto ClientConnection = ClientConnections.at(z);
+					auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController());
+
+					if (!FortPC)
+						continue;
+
+					auto AllPlayerStates = UGameplayStatics::GetAllActorsOfClass(GetWorld(), AFortPlayerStateAthena::StaticClass());
+
+					for (int i = 0; i < AllPlayerStates.Num(); ++i)
+					{
+						auto CurrentPlayerState = (AFortGameStateAthena*)AllPlayerStates.at(i);
+
+						auto WorldInventory = FortPC->GetWorldInventory();
+
+						if (!WorldInventory)
+							continue;
+
+						static auto CrownSpawn = FindObject<UFortItemDefinition>(L"/VictoryCrownsGameplay/Items/AGID_VictoryCrown.AGID_VictoryCrown");
+
+						GameState->GetActorLocation();
+						KillerPlayerState->GetPlayerName().ToString();
+						WorldInventory->AddItem(CrownSpawn, nullptr, Globals::SpawnCrown);
+						WorldInventory->Update();
+
+						LOG_INFO(LogDev, "Crown Given")
+
+							break;
+					}
+				}
+			}
+		}
+	}
+
 	if (KillerPawn)
 	{
 		auto KillerState = Cast<AFortPlayerStateAthena>(KillerPawn->GetPlayerState());
@@ -1698,9 +1747,7 @@ bool IsOkForEditing(ABuildingSMActor* BuildingActor, AFortPlayerController* Cont
 		// BuildingActor->GetWorld() &&
 		Idk(BuildingActor);
 }
-<<<<<<< Updated upstream
-=======
-/*
+
 static void ClearAllInventory()
 {
 	if (!Globals::bStartedBus)
@@ -1710,55 +1757,57 @@ static void ClearAllInventory()
 	auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
 	auto& ClientConnections = WorldNetDriver->GetClientConnections();
 
-	if (!WorldNetDriver)
-		return;
+	static auto FortEditToolItemDefinitionClass = FindObject<UClass>(L"/Script/FortniteGame.FortEditToolItemDefinition");
+	static auto FortBuildingItemDefinitionClass = FindObject<UClass>(L"/Script/FortniteGame.FortBuildingItemDefinition");
 
-	
-
-   for (int z = 0; z < ClientConnections.Num(); ++z)
+	for (int z = 0; z < ClientConnections.Num(); z++)
 	{
-	   auto ClientConnection = ClientConnections.at(z);
-	   auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController);
+		auto ClientConnection = ClientConnections.at(z);
+		auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController());
 
 		if (!FortPC)
 			continue;
 
-		auto* WorldInventory = FortPC->GetWorldInventory();
+		auto WorldInventory = FortPC->GetWorldInventory();
 
 		if (!WorldInventory)
 			continue;
 
-		// Get a list of all items in the inventory
-		auto& ItemInstances = WorldInventory->GetItemList().GetItemInstances();
+		bool bCheckShouldBeDropped = true;
+		std::vector<std::pair<FGuid, int>> GuidsAndCountsToRemove;
 
-		// Remove all items except for the pickaxe
-		auto* PickaxeInstance = WorldInventory->GetPickaxeInstance();
-		for (auto* ItemInstance : ItemInstances)
+		const auto& ItemInstances = WorldInventory->GetItemList().GetItemInstances();
+		auto PickaxeInstance = WorldInventory->GetPickaxeInstance();
+
+		for (int i = 0; i < ItemInstances.Num(); ++i)
 		{
-			if (ItemInstance == PickaxeInstance)
-				continue;
+			auto ItemInstance = ItemInstances.at(i);
+			const auto ItemDefinition = Cast<UFortWorldItemDefinition>(ItemInstance->GetItemEntry()->GetItemDefinition());
 
-			const auto& ItemGuid = ItemInstance->GetItemEntry()->GetItemGuid();
-			const auto ItemCount = ItemInstance->GetItemEntry()->GetCount();
-			WorldInventory->RemoveItem(ItemGuid, nullptr, ItemCount, true);
+			if (bCheckShouldBeDropped
+				? ItemDefinition->CanBeDropped()
+				: !ItemDefinition->IsA(FortBuildingItemDefinitionClass)
+				&& !ItemDefinition->IsA(FortEditToolItemDefinitionClass)
+				&& ItemInstance != PickaxeInstance)
+			{
+				bool IsPrimary = IsPrimaryQuickbar(ItemDefinition);
+
+				if ((true && IsPrimary) || (true && !IsPrimary))
+				{
+					GuidsAndCountsToRemove.push_back({ ItemInstance->GetItemEntry()->GetItemGuid(), ItemInstance->GetItemEntry()->GetCount() });
+				}
+			}
 		}
 
-		// Ensure the pickaxe is not removed
-		if (PickaxeInstance)
+		for (auto& [Guid, Count] : GuidsAndCountsToRemove)
 		{
-			const auto& PickaxeGuid = PickaxeInstance->GetItemEntry()->GetItemGuid();
-			const auto PickaxeCount = PickaxeInstance->GetItemEntry()->GetCount();
-			WorldInventory->AddItem(PickaxeGuid, PickaxeCount, true); // Re-add pickaxe to ensure it's retained
+			WorldInventory->RemoveItem(Guid, nullptr, Count, true);
 		}
 
-		// Update the inventory after modifications
 		WorldInventory->Update();
 	}
 }
-*/
 
-
->>>>>>> Stashed changes
 
 /*
 

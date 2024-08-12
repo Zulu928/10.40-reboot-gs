@@ -326,64 +326,6 @@ static inline void InitStyle()
 	style.Colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.0f, 1.0f, 1.0f, 0.699999988079071f);
 	style.Colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.800000011920929f, 0.800000011920929f, 0.800000011920929f, 0.2000000029802322f);
 	style.Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.800000011920929f, 0.800000011920929f, 0.800000011920929f, 0.3499999940395355f);
-
-	//auto& mStyle = ImGui::GetStyle();
-	//mStyle.FramePadding = ImVec2(4, 2);
-	//mStyle.ItemSpacing = ImVec2(6, 2);
-	//mStyle.ItemInnerSpacing = ImVec2(6, 4);
-	//mStyle.Alpha = 0.95f;
-	//mStyle.WindowRounding = 4.0f;
-	//mStyle.FrameRounding = 2.0f;
-	//mStyle.IndentSpacing = 6.0f;
-	//mStyle.ItemInnerSpacing = ImVec2(2, 4);
-	//mStyle.ColumnsMinSpacing = 50.0f;
-	//mStyle.GrabMinSize = 14.0f;
-	//mStyle.GrabRounding = 16.0f;
-	//mStyle.ScrollbarSize = 12.0f;
-	//mStyle.ScrollbarRounding = 16.0f;
-
-	//ImGuiStyle& style = mStyle;
-	//style.Colors[ImGuiCol_Text] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); //WHITE
-	//style.Colors[ImGuiCol_TextDisabled] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-	//style.Colors[ImGuiCol_WindowBg] = ImVec4(0.05f, 0.10f, 0.20f, 1.00f); // dark blue
-	//style.Colors[ImGuiCol_ChildBg] = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
-	//style.Colors[ImGuiCol_PopupBg] = ImVec4(0.12f, 0.12f, 0.12f, 0.94f);
-	//style.Colors[ImGuiCol_Border] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
-	//style.Colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-	//style.Colors[ImGuiCol_FrameBg] = ImVec4(0.6f, 0.4f, 0.8f, 1.0f); // Purple with a touch of white
-	//style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
-	//style.Colors[ImGuiCol_FrameBgActive] = ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
-	//style.Colors[ImGuiCol_FrameBg] = ImVec4(0.6f, 0.4f, 0.8f, 1.0f); // Purple with a touch of white
-	//style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.08f, 0.08f, 0.08f, 1.00f);
-	//style.Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.00f, 0.00f, 0.00f, 0.51f);
-	//style.Colors[ImGuiCol_MenuBarBg] = ImVec4(0.16f, 0.16f, 0.16f, 1.00f);
-	//style.Colors[ImGuiCol_ScrollbarBg] = ImVec4(0.05f, 0.05f, 0.05f, 0.39f);
-	//style.Colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.22f, 0.22f, 0.22f, 1.00f);
-	//style.Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
-	//style.Colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.08f, 0.08f, 0.08f, 1.00f);
-	//style.Colors[ImGuiCol_CheckMark] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); //WHITE
-	//style.Colors[ImGuiCol_SliderGrab] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-	//style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(0.1f, 0.2f, 0.5f, 1.0f); // Dark Blue
-	//style.Colors[ImGuiCol_Button] = ImVec4(0.6f, 0.4f, 0.8f, 1.0f); // Grey
-	//style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
-	//style.Colors[ImGuiCol_ButtonActive] = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
-	//style.Colors[ImGuiCol_Header] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
-	//style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0.25f, 0.25f, 0.25f, 0.80f);
-	//style.Colors[ImGuiCol_HeaderActive] = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
-	//style.Colors[ImGuiCol_Separator] = ImVec4(0.18f, 0.18f, 0.18f, 1.00f);
-	//style.Colors[ImGuiCol_SeparatorHovered] = ImVec4(0.10f, 0.40f, 0.75f, 0.78f);
-	//style.Colors[ImGuiCol_SeparatorActive] = ImVec4(0.10f, 0.40f, 0.75f, 1.00f);
-	//style.Colors[ImGuiCol_ResizeGrip] = ImVec4(0.30f, 0.30f, 0.30f, 0.25f);
-	//style.Colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.30f, 0.30f, 0.30f, 0.67f);
-	//style.Colors[ImGuiCol_ResizeGripActive] = ImVec4(0.30f, 0.30f, 0.30f, 0.95f);
-	//style.Colors[ImGuiCol_Tab] = ImVec4(0.6f, 0.4f, 0.8f, 1.0f);
-	//style.Colors[ImGuiCol_TabHovered] = ImVec4(0.1f, 0.2f, 0.5f, 1.0f);
-	//style.Colors[ImGuiCol_TabActive] = ImVec4(0.1f, 0.2f, 0.5f, 1.0f);
-	//style.Colors[ImGuiCol_TabUnfocused] = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
-	//style.Colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
-	//style.Colors[ImGuiCol_PlotLines] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
-	//style.Colors[ImGuiCol_PlotLinesHovered] = ImVec4(0.90f, 0.55f, 0.45f, 1.00f);
-	//style.Colors[ImGuiCol_PlotHistogram] = ImVec4(0.70f, 0.50f, 0.10f, 1.00f);
 }
 
 static inline void TextCentered(const std::string& text, bool bNewLine = true) {
@@ -530,7 +472,11 @@ static inline void PlayerTabs()
 
 static inline DWORD WINAPI LateGameThread(LPVOID)
 {
-	float MaxTickRate = 30;
+	const float MaxTickRate = 30.0f;
+	const float Duration = 10.0f;
+	const float EarlyDuration = Duration;
+	const float DropDelay = 1.0f;
+	const int InitialSleepSeconds = 10;
 
 	auto GameMode = Cast<AFortGameModeAthena>(GetWorld()->GetGameMode());
 	auto GameState = Cast<AFortGameStateAthena>(GameMode->GetGameState());
@@ -545,12 +491,9 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 		return 0;
 	}
 
-
 	const FVector ZoneCenterLocation = SafeZoneLocations.at(3);
-
 	FVector LocationToStartAircraft = ZoneCenterLocation;
-	LocationToStartAircraft.Z += 8000;
-	LocationToStartAircraft.Y += 1000;
+	LocationToStartAircraft.Z += 10000;
 
 	auto GetAircrafts = [&]() -> std::vector<AActor*>
 		{
@@ -559,8 +502,6 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 
 			if (AircraftsOffset == -1)
 			{
-				// GameState->Aircraft
-
 				static auto FortAthenaAircraftClass = FindObject<UClass>(L"/Script/FortniteGame.FortAthenaAircraft");
 				auto AllAircrafts = UGameplayStatics::GetAllActorsOfClass(GetWorld(), FortAthenaAircraftClass);
 
@@ -574,7 +515,6 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 			else
 			{
 				const auto& GameStateAircrafts = GameState->Get<TArray<AActor*>>(AircraftsOffset);
-
 				for (int i = 0; i < GameStateAircrafts.Num(); i++)
 				{
 					Aircrafts.push_back(GameStateAircrafts.at(i));
@@ -585,28 +525,22 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 		};
 
 	static auto WarmupCountdownEndTimeOffset = GameState->GetOffset("WarmupCountdownEndTime");
-	float TimeSeconds = GameState->GetServerWorldTimeSeconds();
-	float Duration = 10;
-	float EarlyDuration = Duration;
-
-	static auto WarmupCountdownStartTimeOffset = GameState->GetOffset("WarmupCountdownStartTime");
 	static auto WarmupCountdownDurationOffset = GameMode->GetOffset("WarmupCountdownDuration");
 	static auto WarmupEarlyCountdownDurationOffset = GameMode->GetOffset("WarmupEarlyCountdownDuration");
 
+	float TimeSeconds = GameState->GetServerWorldTimeSeconds();
 	GameState->Get<float>(WarmupCountdownEndTimeOffset) = TimeSeconds + Duration;
 	GameMode->Get<float>(WarmupCountdownDurationOffset) = Duration;
 	GameMode->Get<float>(WarmupEarlyCountdownDurationOffset) = EarlyDuration;
 
-	while (GetAircrafts().size() <= 0)
+	while (GetAircrafts().empty())
 	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(10000) / MaxTickRate);
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000) / MaxTickRate);
 	}
 
 	auto Aircrafts = GetAircrafts();
-
 	float FlightSpeed = 0.0f;
-
-	float DropStartTime = GameState->GetServerWorldTimeSeconds() + 1.0f;
+	float DropStartTime = GameState->GetServerWorldTimeSeconds() + DropDelay;
 
 	for (int i = 0; i < Aircrafts.size(); ++i)
 	{
@@ -622,33 +556,28 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 
 			FVector NewLocation = CurrentAircraft->GetActorLocation();
 			LOG_INFO(LogLateGame, "New Location of Aircraft %d: %s", i, *NewLocation.ToString());
-		}
 
+			static auto FlightInfoOffset = CurrentAircraft->GetOffset("FlightInfo", false);
+			if (FlightInfoOffset == -1)
+			{
+				static auto FlightStartLocationOffset = CurrentAircraft->GetOffset("FlightStartLocation");
+				static auto FlightSpeedOffset = CurrentAircraft->GetOffset("FlightSpeed");
+				static auto DropStartTimeOffset = CurrentAircraft->GetOffset("DropStartTime");
 
-		static auto FlightInfoOffset = CurrentAircraft->GetOffset("FlightInfo", false);
-
-		if (FlightInfoOffset == -1)
-		{
-			static auto FlightStartLocationOffset = CurrentAircraft->GetOffset("FlightStartLocation");
-			static auto FlightSpeedOffset = CurrentAircraft->GetOffset("FlightSpeed");
-			static auto DropStartTimeOffset = CurrentAircraft->GetOffset("DropStartTime");
-
-			CurrentAircraft->Get<FVector>(FlightStartLocationOffset) = LocationToStartAircraft;
-			CurrentAircraft->Get<float>(FlightSpeedOffset) = FlightSpeed;
-			CurrentAircraft->Get<float>(DropStartTimeOffset) = DropStartTime;
-		}
-		else
-		{
-			auto FlightInfo = CurrentAircraft->GetPtr<FAircraftFlightInfo>(FlightInfoOffset);
-
-			FlightInfo->GetFlightSpeed() = FlightSpeed;
-			FlightInfo->GetFlightStartLocation() = LocationToStartAircraft;
-			FlightInfo->GetTimeTillDropStart() = DropStartTime;
+				CurrentAircraft->Get<FVector>(FlightStartLocationOffset) = LocationToStartAircraft;
+				CurrentAircraft->Get<float>(FlightSpeedOffset) = FlightSpeed;
+				CurrentAircraft->Get<float>(DropStartTimeOffset) = DropStartTime;
+			}
+			else
+			{
+				auto FlightInfo = CurrentAircraft->GetPtr<FAircraftFlightInfo>(FlightInfoOffset);
+				FlightInfo->GetFlightSpeed() = FlightSpeed;
+				FlightInfo->GetFlightStartLocation() = LocationToStartAircraft;
+				FlightInfo->GetTimeTillDropStart() = DropStartTime;
+			}
 		}
 	}
 
-<<<<<<< Updated upstream
-=======
 	static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
 	auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
 	auto& ClientConnections = WorldNetDriver->GetClientConnections();
@@ -716,12 +645,11 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 
 		WorldInventory->Update();
 	}
-	/*
+
 	auto GS = EAthenaGamePhase::SafeZones;
 	GameState->GetGamePhase() = GS;
 	GameState->OnRep_GamePhase();
-	*/
->>>>>>> Stashed changes
+
 	while (GameState->GetGamePhase() != EAthenaGamePhase::Aircraft)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000) / MaxTickRate);
@@ -739,200 +667,28 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 		GameState->SkipAircraft();
 		GameState->GetGamePhaseStep();
 	}
-	/*
-	auto GS = EAthenaGamePhase::SafeZones;
-	GameState->GetGamePhase() = GS;
-	GameState->OnRep_GamePhase();
-	*/
-	static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
-	auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
-	auto& ClientConnections = WorldNetDriver->GetClientConnections();
 
-	for (int z = 0; z < ClientConnections.Num(); z++)
+	int NumPlayers = GameState->GetPlayersLeft();
+
+	if (NumPlayers == 1 && Globals::bStartedBus == false)
 	{
-		auto ClientConnection = ClientConnections.at(z);
-		auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController());
+		Globals::LateGame = true;
+	}
 
-		if (!FortPC)
-			continue;
+	if (NumPlayers == 30 && Globals::bStartedBus == false)
+	{
+		const int MaxPlayers = 30;
+		auto GameSession = GameMode->GetOffset("GameSession");
+		auto GameSession2 = GameMode->Get<UClass*>("GameSession");
+		auto maxplayersOffset = GameSession2->GetOffset("MaxPlayers");
+		auto MaxPlayersValue = GameSession2->Get<int32>(MaxPlayers);
+		int NumPlayers = GameState->GetPlayersLeft();
 
-		auto WorldInventory = FortPC->GetWorldInventory();
-
-		if (!WorldInventory)
-			continue;
-
-		static auto WoodItemData = FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/WoodItemData.WoodItemData");
-		static auto StoneItemData = FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/StoneItemData.StoneItemData");
-		static auto MetalItemData = FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/MetalItemData.MetalItemData");
-
-		auto AR0 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_SR_Ore_T03.WID_Assault_AutoHigh_Athena_SR_Ore_T03");
-		auto AR1 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_VR_Ore_T03.WID_Assault_AutoHigh_Athena_VR_Ore_T03");
-		auto AR2 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03");
-		auto AR6 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_UC_Ore_T03.WID_Assault_Auto_Athena_UC_Ore_T03");
-		auto AR7 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_SR_Ore_T03.WID_Assault_AutoHigh_Athena_SR_Ore_T03");
-		auto AR8 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03");
-		auto AR9 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_VR_Ore_T03.WID_Assault_AutoHigh_Athena_VR_Ore_T03");
-		auto ARNum = rand() % 7;
-		UFortItemDefinition* Rifle = nullptr;
-
-		auto Shotgun0 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_SR_Ore_T03.WID_Shotgun_Standard_Athena_SR_Ore_T03");
-		auto Shotgun1 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_VR_Ore_T03.WID_Shotgun_Standard_Athena_VR_Ore_T03");
-		auto Shotgun2 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03");
-		auto SHNum = rand() % 3;
-		UFortItemDefinition* Shotgun = nullptr;
-
-		if (ARNum == 0)
+		if (MaxPlayersValue > Globals::bMaxPlayersForLategame)
 		{
-			Rifle = AR0;
+			Globals::LateGame = false;
+			LOG_WARN(LogLateGame, "full map switched.");
 		}
-		else if (ARNum == 1)
-		{
-			Rifle = AR1;
-		}
-		else if (ARNum == 2)
-		{
-			Rifle = AR2;
-		}
-		else if (ARNum == 3)
-		{
-			Rifle = AR6;
-		}
-		else if (ARNum == 4)
-		{
-			Rifle = AR7;
-		}
-		else if (ARNum == 5)
-		{
-			Rifle = AR8;
-		}
-		else if (ARNum == 6)
-		{
-			Rifle = AR9;
-		}
-
-		if (SHNum == 0)
-		{
-			Shotgun = Shotgun0;
-		}
-		else if (SHNum == 1)
-		{
-			Shotgun = Shotgun1;
-		}
-		else if (SHNum == 2)
-		{
-			Shotgun = Shotgun2;
-		}
-
-		auto SMG1 = FindObject<UFortItemDefinition>(L"");
-		auto SMG2 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_VR_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_VR_Ore_T03");
-		auto SMG3 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_SR_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_SR_Ore_T03");
-		auto SMG4 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/ChillBronco/Athena_ChillBronco.Athena_ChillBronco");
-		auto SMG5 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/PurpleStuff/Athena_PurpleStuff.Athena_PurpleStuff");
-		auto SMG6 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/SuperMedkit/Athena_SuperMedkit.Athena_SuperMedkit");
-		auto SMG7 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_SR_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_SR_Ore_T03");
-		auto SMG8 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_R_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_R_Ore_T03");
-		auto SMGNum = rand() % 8;
-		UFortItemDefinition* SMG = nullptr;
-
-		if (SMGNum == 1)
-		{
-			SMG = SMG1;
-		}
-		else if (SMGNum == 2)
-		{
-			SMG = SMG2;
-		}
-		else if (SMGNum == 3)
-		{
-			SMG = SMG3;
-		}
-		else if (SMGNum == 4)
-		{
-			SMG = SMG4;
-		}
-		else if (SMGNum == 5)
-		{
-			SMG = SMG5;
-		}
-		else if (SMGNum == 6)
-		{
-			SMG = SMG6;
-		}
-		else if (SMGNum == 7)
-		{
-			SMG = SMG7;
-		}
-		else if (SMGNum == 8)
-		{
-			SMG = SMG8;
-		}
-
-		auto Shields1 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Gameplay/Lotus/Mustache/AGID_Lotus_MustacheSpyTech.AGID_Lotus_MustacheSpyTech");
-		auto Shields2 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Shields/Athena_Shields.Athena_Shields");
-		auto Shields3 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/ShieldSmall/Athena_ShieldSmall.Athena_ShieldSmall");
-		auto Shields4 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Flopper/WID_Athena_Flopper.WID_Athena_Flopper");
-		auto Shields5 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Flopper/Effective/WID_Athena_Flopper_Effective.WID_Athena_Flopper_Effective");
-		auto Shields6 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Flopper/ShieldFlopper/WID_Athena_Flopper_Shield.WID_Athena_Flopper_Shield");
-		auto Shields7 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Shields/Athena_Shields.Athena_Shields");
-		auto Shields8 = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/ShieldSmall/Athena_ShieldSmall.Athena_ShieldSmall");
-		auto SheildsNum = rand() % 8;
-		UFortItemDefinition* Sheilds = nullptr;
-
-		if (SheildsNum == 1)
-		{
-			Sheilds = Shields1;
-		}
-		else if (SheildsNum == 2)
-		{
-			Sheilds = Shields2;
-		}
-		else if (SheildsNum == 3)
-		{
-			Sheilds = Shields3;
-		}
-		else if (SheildsNum == 4)
-		{
-			Sheilds = Shields4;
-		}
-		else if (SheildsNum == 5)
-		{
-			Sheilds = Shields5;
-		}
-		else if (SheildsNum == 6)
-		{
-			Sheilds = Shields6;
-		}
-		else if (SheildsNum == 7)
-		{
-			Sheilds = Shields7;
-		}
-		else if (SheildsNum == 8)
-		{
-			Sheilds = Shields8;
-		}
-
-		static auto MiniShields = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/ShieldSmall/Athena_ShieldSmall.Athena_ShieldSmall");
-
-		static auto Shells = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataShells.AthenaAmmoDataShells");
-		static auto Medium = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsMedium.AthenaAmmoDataBulletsMedium");
-		static auto Light = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsLight.AthenaAmmoDataBulletsLight");
-		static auto Heavy = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsHeavy.AthenaAmmoDataBulletsHeavy");
-
-		WorldInventory->AddItem(WoodItemData, nullptr, 500);
-		WorldInventory->AddItem(StoneItemData, nullptr, 500);
-		WorldInventory->AddItem(MetalItemData, nullptr, 500);
-		WorldInventory->AddItem(Rifle, nullptr, 1);
-		WorldInventory->AddItem(Shotgun, nullptr, 1);
-		WorldInventory->AddItem(SMG, nullptr, 1);
-		WorldInventory->AddItem(Sheilds, nullptr, 3);
-		WorldInventory->AddItem(MiniShields, nullptr, 3);
-		//WorldInventory->AddItem(ChugSplash, nullptr, 6);
-		WorldInventory->AddItem(Shells, nullptr, 50);
-		WorldInventory->AddItem(Medium, nullptr, 250);
-		WorldInventory->AddItem(Light, nullptr, 250);
-		WorldInventory->AddItem(Heavy, nullptr, 30);
-
-		WorldInventory->Update();
 	}
 
 	static auto SafeZonesStartTimeOffset = GameState->GetOffset("SafeZonesStartTime");
@@ -1395,6 +1151,19 @@ static inline void MainUI()
 					UKismetSystemLibrary::ExecuteConsoleCommand(GetWorld(), cmd, nullptr);
 				}
 
+				if (!bIsInAutoRestart && Engine_Version < 424 && ImGui::Button("Restart"))
+				{
+					if (Engine_Version < 424)
+					{
+						Restart();
+						LOG_INFO(LogGame, "Restarting!");
+					}
+					else
+					{
+						LOG_ERROR(LogGame, "Restarting is not supported on chapter 2 and above!");
+					}
+				}
+
 				if (!bStartedBus) {
 					if (ImGui::Button("Start Bus Countdown")) {
 						Globals::bStarting = true;
@@ -1487,6 +1256,108 @@ static inline void MainUI()
 				}
 			}
 		}
+
+		else if (Tab == EVENT_TAB)
+		{
+			if (ImGui::Button(std::format("Start {}", GetEventName()).c_str()))
+			{
+				StartEvent();
+			}
+
+			if (Fortnite_Version == 18.40)
+			{
+				if (ImGui::Button("Remove Storm Effect"))
+				{
+					auto ClientConnections = GetWorld()->GetNetDriver()->GetClientConnections();
+
+					for (int i = 0; i < ClientConnections.Num(); i++)
+					{
+						auto CurrentController = (AFortPlayerControllerAthena*)ClientConnections.At(i)->GetPlayerController();
+
+						static auto StormEffectClass = FindObject<UClass>(L"/Game/Athena/SafeZone/GE_OutsideSafeZoneDamage.GE_OutsideSafeZoneDamage_C");
+						auto PlayerState = CurrentController->GetPlayerStateAthena();
+						PlayerState->GetAbilitySystemComponent()->RemoveActiveGameplayEffectBySourceEffect(StormEffectClass, 1, PlayerState->GetAbilitySystemComponent());
+					}
+				}
+			}
+
+			if (Fortnite_Version == 8.51)
+			{
+				if (ImGui::Button("Unvault DrumGun"))
+				{
+					static auto SetUnvaultItemNameFn = FindObject<UFunction>(L"/Game/Athena/Prototype/Blueprints/White/BP_SnowScripting.BP_SnowScripting_C.SetUnvaultItemName");
+					auto EventScripting = GetEventScripting();
+
+					if (EventScripting)
+					{
+						FName Name = UKismetStringLibrary::Conv_StringToName(L"DrumGun");
+						EventScripting->ProcessEvent(SetUnvaultItemNameFn, &Name);
+
+						static auto PillarsConcludedFn = FindObject<UFunction>(L"/Game/Athena/Prototype/Blueprints/White/BP_SnowScripting.BP_SnowScripting_C.PillarsConcluded");
+						EventScripting->ProcessEvent(PillarsConcludedFn, &Name);
+					}
+				}
+			}
+		}
+
+		else if (Tab == CALENDAR_TAB)
+		{
+			if (Calendar::HasSnowModification())
+			{
+				static bool bFirst = false;
+
+				static float FullSnowValue = Calendar::GetFullSnowMapValue();
+				static float NoSnowValue = 0.0f;
+				static float SnowValue = 0.0f;
+
+				ImGui::SliderFloat(("Snow Level"), &SnowValue, 0, FullSnowValue);
+
+				if (ImGui::Button("Set Snow Level"))
+				{
+					Calendar::SetSnow(SnowValue);
+				}
+
+				if (ImGui::Button("Toggle Full Snow Map"))
+				{
+					bFirst ? Calendar::SetSnow(NoSnowValue) : Calendar::SetSnow(FullSnowValue);
+
+					bFirst = !bFirst;
+				}
+			}
+
+			if (Calendar::HasNYE())
+			{
+				if (ImGui::Button("Start New Years Eve Event"))
+				{
+					Calendar::StartNYE();
+				}
+			}
+
+			if (std::floor(Fortnite_Version) == 13)
+			{
+				static UObject* WL = FindObject("/Game/Athena/Apollo/Maps/Apollo_POI_Foundations.Apollo_POI_Foundations.PersistentLevel.Apollo_WaterSetup_2");
+
+				if (WL)
+				{
+					static auto MaxWaterLevelOffset = WL->GetOffset("MaxWaterLevel");
+
+					static int MaxWaterLevel = WL->Get<int>(MaxWaterLevelOffset);
+					static int WaterLevel = 0;
+
+					ImGui::SliderInt("WaterLevel", &WaterLevel, 0, MaxWaterLevel);
+
+					if (ImGui::Button("Set Water Level"))
+					{
+						Calendar::SetWaterLevel(WaterLevel);
+					}
+				}
+			}
+		}
+
+		else if (Tab == UNBAN_TAB)
+		{
+
+		}
 		else if (Tab == FUN_TAB)
 		{
 			static std::string ItemToGrantEveryone;
@@ -1575,110 +1446,283 @@ static inline void MainUI()
 				}
 			}
 		}
-		else if (PlayerTab != 2435892 && bLoaded)
+		else if (Tab == LATEGAME_TAB)
 		{
-			auto World = GetWorld();
-			auto NetDriver = World->GetNetDriver();
+			if (bEnableReverseZone)
+				ImGui::Text(std::format("Currently {}eversing zone", bZoneReversing ? "r" : "not r").c_str());
 
-			if (NetDriver)
+			ImGui::Checkbox("Enable Reverse Zone (EXPERIMENTAL)", &bEnableReverseZone);
+
+			if (bEnableReverseZone)
 			{
-				static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
-				auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
-				auto& ClientConnections = WorldNetDriver->GetClientConnections();
-
-				for (int i = 0; i < ClientConnections.Num(); i++) {
-					auto Connection = ClientConnections.At(i);
-
-					if (!Connection)
-						continue;
-
-					auto CurrentController = Cast<AFortPlayerControllerAthena>(ClientConnections.at(i)->GetPlayerController());
-
-					if (CurrentController) {
-						auto it = std::find_if(AllControllers.begin(), AllControllers.end(), [CurrentController, Connection](const auto& pair)
-							{
-								return pair.first == CurrentController && pair.second == Connection;
-							});
-
-						if (it == AllControllers.end()) {
-							AllControllers.push_back({ CurrentController, Connection });
-						}
-					}
-				}
+				ImGui::InputInt("Start Reversing Phase", &StartReverseZonePhase);
+				ImGui::InputInt("End Reversing Phase", &EndReverseZonePhase);
 			}
-			if (PlayerTab < AllControllers.size())
+		}
+		else if (Tab == DEVELOPER_TAB)
+		{
+			static std::string ClassNameToDump;
+			static std::string FunctionNameToDump;
+			static std::string ObjectToDump;
+			static std::string FileNameToSaveTo;
+			static bool bExcludeUnhandled = true;
+
+			ImGui::Checkbox("Handle Death", &bHandleDeath);
+			ImGui::Checkbox("Fill Vending Machines", &Globals::bFillVendingMachines);
+			ImGui::Checkbox("Enable Bot Tick", &bEnableBotTick);
+			ImGui::Checkbox("Enable Rebooting", &bEnableRebooting);
+			ImGui::Checkbox("Enable Combine Pickup", &bEnableCombinePickup);
+			ImGui::Checkbox("Exclude unhandled", &bExcludeUnhandled);
+			ImGui::InputInt("Amount To Subtract Index", &AmountToSubtractIndex);
+			ImGui::InputText("Class Name to mess with", &ClassNameToDump);
+			ImGui::InputText("Object to dump", &ObjectToDump);
+			ImGui::InputText("File to save to", &FileNameToSaveTo);
+
+			ImGui::InputText("Function Name to mess with", &FunctionNameToDump);
+
+			if (ImGui::Button("Print Gamephase Step"))
 			{
-				PlayerTabs();
+				auto GameState = Cast<AFortGameStateAthena>(GetWorld()->GetGameState());
 
-				auto& CurrentPair = AllControllers.at(PlayerTab);
-				auto CurrentController = CurrentPair.first;
-				auto CurrentPawn = CurrentController->GetMyFortPawn();
-				auto CurrentPlayerState = CurrentController->GetPlayerState();
-
-				if (CurrentPlayerState)
+				if (GameState)
 				{
-					FString NameFStr;
+					LOG_INFO(LogDev, "GamePhaseStep: {}", (int)GameState->GetGamePhaseStep());
+				}
+			}
 
-					auto Connection = CurrentPair.second;
-					auto RequestURL = *GetRequestURL(Connection); // If it works don't fix it
+			if (ImGui::Button("Dump Object Info"))
+			{
+				ObjectViewer::DumpContentsToFile(ObjectToDump, FileNameToSaveTo, bExcludeUnhandled);
+			}
 
-					if (RequestURL.Data.Data)
+			if (ImGui::Button("Print all instances of class"))
+			{
+				auto ClassToScuff = FindObject<UClass>(ClassNameToDump);
+
+				if (ClassToScuff)
+				{
+					auto ObjectNum = ChunkedObjects ? ChunkedObjects->Num() : UnchunkedObjects ? UnchunkedObjects->Num() : 0;
+
+					for (int i = 0; i < ObjectNum; i++)
 					{
-						auto RequestURLStr = RequestURL.ToString();
+						auto CurrentObject = GetObjectByIndex(i);
 
-						std::size_t pos = RequestURLStr.find("Name=");
+						if (!CurrentObject)
+							continue;
 
-						if (pos != std::string::npos)
+						if (!CurrentObject->IsA(ClassToScuff))
+							continue;
+
+						LOG_INFO(LogDev, "Object Name: {}", CurrentObject->GetPathName());
+					}
+				}
+			}
+
+			if (ImGui::Button("Load BGA Class"))
+			{
+				static auto BlueprintGeneratedClassClass = FindObject<UClass>(L"/Script/Engine.BlueprintGeneratedClass");
+				auto Class = LoadObject(ClassNameToDump, BlueprintGeneratedClassClass);
+
+				LOG_INFO(LogDev, "New Class: {}", __int64(Class));
+			}
+
+			if (ImGui::Button("Find all classes that inherit"))
+			{
+				auto ClassToScuff = FindObject<UClass>(ClassNameToDump);
+
+				if (ClassToScuff)
+				{
+					auto ObjectNum = ChunkedObjects ? ChunkedObjects->Num() : UnchunkedObjects ? UnchunkedObjects->Num() : 0;
+
+					for (int i = 0; i < ObjectNum; i++)
+					{
+						auto CurrentObject = GetObjectByIndex(i);
+
+						if (!CurrentObject || CurrentObject == ClassToScuff)
+							continue;
+
+						if (!CurrentObject->IsA(ClassToScuff))
+							continue;
+
+						LOG_INFO(LogDev, "Class Name: {}", CurrentObject->GetPathName());
+					}
+				}
+			}
+
+			if (ImGui::Button("Print Class VFT"))
+			{
+				auto Class = FindObject<UClass>(ClassNameToDump);
+
+				if (Class)
+				{
+					auto ClassToDump = Class->CreateDefaultObject();
+
+					if (ClassToDump)
+					{
+						LOG_INFO(LogDev, "{} VFT: 0x{:x}", ClassToDump->GetName(), __int64(ClassToDump->VFTable) - __int64(GetModuleHandleW(0)));
+					}
+				}
+			}
+
+			if (ImGui::Button("Print Function Exec Addr"))
+			{
+				auto Function = FindObject<UFunction>(FunctionNameToDump);
+
+				if (Function)
+				{
+					LOG_INFO(LogDev, "{} Exec: 0x{:x}", Function->GetName(), __int64(Function->GetFunc()) - __int64(GetModuleHandleW(0)));
+				}
+			}
+
+			/* if (ImGui::Button("Load BGA Class (and spawn so no GC)"))
+			{
+				static auto BGAClass = FindObject<UClass>("/Script/Engine.BlueprintGeneratedClass");
+				auto Class = LoadObject<UClass>(ClassNameToDump, BGAClass);
+
+				if (Class)
+				{
+					GetWorld()->SpawnActor<AActor>(Class, FVector());
+				}
+			} */
+
+			/*
+			ImGui::Text(std::format("Amount of hooks {}", AllFunctionHooks.size()).c_str());
+
+			for (auto& FunctionHook : AllFunctionHooks)
+			{
+				if (ImGui::Button(std::format("{} {} (0x{:x})", (FunctionHook.IsHooked ? "Unhook" : "Hook"), FunctionHook.Name, (__int64(FunctionHook.Original) - __int64(GetModuleHandleW(0)))).c_str()))
+				{
+					if (FunctionHook.IsHooked)
+					{
+						if (!FunctionHook.VFT || FunctionHook.Index == -1)
 						{
-							std::size_t end_pos = RequestURLStr.find('?', pos);
+							Hooking::MinHook::Unhook(FunctionHook.Original);
+						}
+						else
+						{
+							VirtualSwap(FunctionHook.VFT, FunctionHook.Index, FunctionHook.Original);
+						}
+					}
+					else
+					{
+						Hooking::MinHook::Hook(FunctionHook.Original, FunctionHook.Detour, nullptr, FunctionHook.Name);
+					}
 
-							if (end_pos != std::string::npos)
-								RequestURLStr = RequestURLStr.substr(pos + 5, end_pos - pos - 5);
+					FunctionHook.IsHooked = !FunctionHook.IsHooked;
+				}
+			}
+			*/
+		}
+		else if (Tab == SETTINGS_TAB)
+		{
+			// ImGui::Checkbox("Use custom lootpool (from Win64/lootpool.txt)", &Defines::bCustomLootpool);
+		}
+	}
+	else if (PlayerTab != 2435892 && bLoaded)
+	{
+		auto World = GetWorld();
+		auto NetDriver = World->GetNetDriver();
+
+		if (NetDriver)
+		{
+			static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
+			auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
+			auto& ClientConnections = WorldNetDriver->GetClientConnections();
+
+			for (int i = 0; i < ClientConnections.Num(); i++) {
+				auto Connection = ClientConnections.At(i);
+
+				if (!Connection)
+					continue;
+
+				auto CurrentController = Cast<AFortPlayerControllerAthena>(ClientConnections.at(i)->GetPlayerController());
+
+				if (CurrentController) {
+					auto it = std::find_if(AllControllers.begin(), AllControllers.end(), [CurrentController, Connection](const auto& pair)
+						{
+							return pair.first == CurrentController && pair.second == Connection;
+						});
+
+					if (it == AllControllers.end()) {
+						AllControllers.push_back({ CurrentController, Connection });
+					}
+				}
+			}
+		}
+
+		if (PlayerTab < AllControllers.size())
+		{
+			PlayerTabs();
+
+			auto& CurrentPair = AllControllers.at(PlayerTab);
+			auto CurrentController = CurrentPair.first;
+			auto CurrentPawn = CurrentController->GetMyFortPawn();
+			auto CurrentPlayerState = CurrentController->GetPlayerState();
+
+			if (CurrentPlayerState)
+			{
+				FString NameFStr;
+
+				auto Connection = CurrentPair.second;
+				auto RequestURL = *GetRequestURL(Connection); // If it works don't fix it
+
+				if (RequestURL.Data.Data)
+				{
+					auto RequestURLStr = RequestURL.ToString();
+
+					std::size_t pos = RequestURLStr.find("Name=");
+
+					if (pos != std::string::npos)
+					{
+						std::size_t end_pos = RequestURLStr.find('?', pos);
+
+						if (end_pos != std::string::npos)
+							RequestURLStr = RequestURLStr.substr(pos + 5, end_pos - pos - 5);
+					}
+
+					auto RequestURLCStr = RequestURLStr.c_str();
+					ImGui::Text(("Viewing " + RequestURLStr).c_str());
+
+					if (playerTabTab == MAIN_PLAYERTAB)
+					{
+						static std::string KickReason = "You have been kicked!";
+
+						ImGui::InputText("Kick Reason", &KickReason);
+
+						if (ImGui::Button("Kick"))
+						{
+							std::wstring wstr = std::wstring(KickReason.begin(), KickReason.end());
+							FString Reason;
+							Reason.Set(wstr.c_str());
+
+							static auto ClientReturnToMainMenu = FindObject<UFunction>("/Script/Engine.PlayerController.ClientReturnToMainMenu");
+							CurrentController->ProcessEvent(ClientReturnToMainMenu, &Reason);
 						}
 
-						auto RequestURLCStr = RequestURLStr.c_str();
-						ImGui::Text(("Viewing " + RequestURLStr).c_str());
-
-						if (playerTabTab == MAIN_PLAYERTAB)
+						if (ImGui::Button("DBNO"))
 						{
-							static std::string KickReason = "You have been kicked!";
+							CurrentPawn->SetDBNO(true);
+						}
 
-							ImGui::InputText("Kick Reason", &KickReason);
+						if (ImGui::Button("Troll"))
+						{
+							CurrentPawn->SetHealth(500);
+							CurrentPawn->SetMaxHealth(500);
+						}
 
-							if (ImGui::Button("Kick"))
-							{
-								std::wstring wstr = std::wstring(KickReason.begin(), KickReason.end());
-								FString Reason;
-								Reason.Set(wstr.c_str());
+						if (ImGui::Button("Rape EXPERIMENTAL"))
+						{
+							auto Cast = (AFortPlayerStateAthena*)CurrentPlayerState;
 
-								static auto ClientReturnToMainMenu = FindObject<UFunction>("/Script/Engine.PlayerController.ClientReturnToMainMenu");
-								CurrentController->ProcessEvent(ClientReturnToMainMenu, &Reason);
-							}
-
-							if (ImGui::Button("DBNO"))
-							{
-								CurrentPawn->SetDBNO(true);
-							}
-
-							if (ImGui::Button("Troll"))
-							{
-								CurrentPawn->SetHealth(500);
-								CurrentPawn->SetMaxHealth(500);
-							}
-
-							if (ImGui::Button("Rape EXPERIMENTAL"))
-							{
-								auto Cast = (AFortPlayerStateAthena*)CurrentPlayerState;
-
-								auto NetWork = CurrentPlayerState->GetSavedNetworkAddress();
-								LOG_INFO(LogDev, "NetWork Ip: {}", NetWork.ToString());
-								auto GameMode = (AFortGameModeAthena*)GetWorld()->GetGameMode();
-								GameMode->ChangeName(CurrentController, NetWork, true);
-							}
+							auto NetWork = CurrentPlayerState->GetSavedNetworkAddress();
+							LOG_INFO(LogDev, "NetWork Ip: {}", NetWork.ToString());
+							auto GameMode = (AFortGameModeAthena*)GetWorld()->GetGameMode();
+							GameMode->ChangeName(CurrentController, NetWork, true);
 						}
 					}
 				}
 			}
+
 		}
 		ImGui::NewLine();
 

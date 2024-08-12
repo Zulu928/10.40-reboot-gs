@@ -128,8 +128,8 @@ UClass* AFortGameModeAthena::GetVehicleClassOverride(UClass* DefaultClass)
 	if (!GetVehicleClassOverrideFn)
 		return DefaultClass;
 
-	struct { UClass* DefaultClass; UClass* ReturnValue; } GetVehicleClassOverride_Params{DefaultClass};
-	
+	struct { UClass* DefaultClass; UClass* ReturnValue; } GetVehicleClassOverride_Params{ DefaultClass };
+
 	this->ProcessEvent(GetVehicleClassOverrideFn, &GetVehicleClassOverride_Params);
 
 	return GetVehicleClassOverride_Params.ReturnValue;
@@ -1011,7 +1011,7 @@ bool AFortGameModeAthena::Athena_ReadyToStartMatchHook(AFortGameModeAthena* Game
 			GameState->Get<float>("DefaultParachuteDeployTraceForGroundDistance") = 10000;
 		}
 
-		UptimeWebHook.send_message(std::format("Server up! {} {}", Fortnite_Version, PlaylistName)); // PlaylistName sometimes isn't always what we use!
+		//UptimeWebHook.send_message(std::format("Server up! {} {}", Fortnite_Version, PlaylistName)); // PlaylistName sometimes isn't always what we use!
 
 		static auto ReplicationDriverOffset = GetWorld()->GetNetDriver()->GetOffset("ReplicationDriver", false); // If netdriver is null the world blows up
 
@@ -1400,10 +1400,7 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 			bool bDestroyFloorLootActor = false;
 			bool bPrintWarmup = bDebugPrintFloorLoot;
 
-<<<<<<< Updated upstream
-=======
-			bool bTest = false;
->>>>>>> Stashed changes
+			/*
 			for (int i = 0; i < SpawnIsland_FloorLoot_Actors.Num(); i++)
 			{
 				ABuildingContainer* CurrentActor = (ABuildingContainer*)SpawnIsland_FloorLoot_Actors.at(i);
@@ -1424,13 +1421,10 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 					auto Pickup = AFortPickup::SpawnPickup(CreateData);
 				}
 
-				if (!bDestroyFloorLootActor)
+				if (!bTest)
 					CurrentActor->K2_DestroyActor();
 			}
-<<<<<<< Updated upstream
-=======
-			
->>>>>>> Stashed changes
+			*/
 
 			bool bPrintIsland = bDebugPrintFloorLoot;
 
@@ -1472,7 +1466,7 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 		}
 	}
 
-	if (Engine_Version >= 423 && Fortnite_Version <= 12.61) // 423+ we need to spawn manually and vehicle sync doesn't work on >S13.
+	if (Engine_Version >= 423 && Fortnite_Version <= 16.40) // 423+ we need to spawn manually and vehicle sync doesn't work on >S13.
 	{
 		static int LastNum420 = 114;
 
@@ -1480,7 +1474,7 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 		{
 			LastNum420 = Globals::AmountOfListens;
 
-			SpawnVehicles2();
+			SpawnVehicles();
 		}
 	}
 
