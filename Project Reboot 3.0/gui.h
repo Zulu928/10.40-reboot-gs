@@ -645,11 +645,11 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 
 		WorldInventory->Update();
 	}
-
+	/*
 	auto GS = EAthenaGamePhase::SafeZones;
 	GameState->GetGamePhase() = GS;
 	GameState->OnRep_GamePhase();
-
+	*/
 	while (GameState->GetGamePhase() != EAthenaGamePhase::Aircraft)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000) / MaxTickRate);

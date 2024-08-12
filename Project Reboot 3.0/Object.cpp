@@ -114,6 +114,52 @@ bool UObject::ReadBitfieldValue(int Offset, uint8_t FieldMask)
 	return ReadBitfield(this->GetPtr<PlaceholderBitfield>(Offset), FieldMask);
 }
 
+void* UObject::GetPropertyFunc(const std::string& ChildName, bool bWarnIfNotFound)
+{
+	auto Func = (UFunction*)this;
+	void* Property = *(void**)(__int64(Func) + Offsets::Children);
+
+	if (Property)
+	{
+		// LOG_INFO(LogDev, "Reading prop name..");
+
+		std::string PropName = GetFNameOfProp(Property)->ToString();
+
+		// LOG_INFO(LogDev, "PropName: {}", PropName);
+
+		if (PropName == ChildName)
+		{
+			return Property;
+		}
+
+		while (Property)
+		{
+			if (PropName == ChildName)
+			{
+				return Property;
+			}
+
+			Property = GetNext(Property);
+			PropName = Property ? GetFNameOfProp(Property)->ToString() : "";
+		}
+	}
+
+	if (bWarnIfNotFound)
+		LOG_WARN(LogFinder, "Unable to find0{}", ChildName);
+
+	return nullptr;
+}
+
+int UObject::GetOffsetFunc(const std::string& ChildName, bool bWarnIfNotFound)
+{
+	auto Property = GetPropertyFunc(ChildName, bWarnIfNotFound);
+
+	if (!Property)
+		return -1;
+
+	return  *(int*)(__int64(Property) + Offsets::Offset_Internal);
+}
+
 void UObject::SetBitfieldValue(int Offset, uint8_t FieldMask, bool NewValue)
 {
 	SetBitfield(this->GetPtr<PlaceholderBitfield>(Offset), FieldMask, NewValue);

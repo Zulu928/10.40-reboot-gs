@@ -3,6 +3,7 @@
 #include "Object.h"
 #include "GameplayAbilitySpec.h"
 #include "AttributeSet.h"
+#include "GameplayTagContainer.h"
 
 // using FPredictionKey = PadHex18;
 // using FGameplayEventData = PadHexA8;
@@ -84,7 +85,7 @@ public:
 	void ClientCancelAbility(FGameplayAbilitySpecHandle AbilityToCancel, FGameplayAbilityActivationInfo* ActivationInfo);
 	bool HasAbility(UObject* DefaultAbility);
 	FActiveGameplayEffectHandle ApplyGameplayEffectToSelf(UClass* GameplayEffectClass, float Level, const FGameplayEffectContextHandle& EffectContext = FGameplayEffectContextHandle());
-	// FGameplayEffectContextHandle MakeEffectContext();
+	FGameplayEffectContextHandle MakeEffectContext();
 	void RemoveActiveGameplayEffectBySourceEffect(UClass* GEClass, int StacksToRemove, UAbilitySystemComponent* Instigator);
 	void ConsumeAllReplicatedData(FGameplayAbilitySpecHandle AbilityHandle, FPredictionKey* AbilityOriginalPredictionKey);
 	FGameplayAbilitySpecHandle GiveAbilityEasy(UClass* AbilityClass, UObject* SourceObject = nullptr, bool bDoNotRegive = true);

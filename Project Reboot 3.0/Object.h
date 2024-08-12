@@ -75,6 +75,9 @@ public:
 	bool ReadBitfieldValue(int Offset, uint8_t FieldMask);
 	bool ReadBitfieldValue(const std::string& ChildName, uint8_t FieldMask) { return ReadBitfieldValue(GetOffset(ChildName), FieldMask); }
 
+	int GetOffsetFunc(const std::string& ChildName, bool bWarnIfNotFound = false);
+	void* GetPropertyFunc(const std::string& ChildName, bool bWarnIfNotFound = false);
+
 	void SetBitfieldValue(int Offset, uint8_t FieldMask, bool NewValue);
 	void SetBitfieldValue(const std::string& ChildName, uint8_t FieldMask, bool NewValue) { return SetBitfieldValue(GetOffset(ChildName), FieldMask, NewValue); }
 
