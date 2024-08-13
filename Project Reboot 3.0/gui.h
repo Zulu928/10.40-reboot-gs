@@ -578,19 +578,16 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 		}
 	}
 
+	const std::chrono::milliseconds check_interval(1000);
+
 	while (GameState->GetGamePhase() != EAthenaGamePhase::Aircraft)
 	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000) / MaxTickRate);
-	}
-
-	while (Globals::bStarted == false)
-	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000) / MaxTickRate);
+		std::this_thread::sleep_for(check_interval);
 	}
 
 	if (Globals::bStarted == true)
 	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(4000));
+		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 		auto GameState = Cast<AFortGameStateAthena>(GetWorld()->GetGameState());
 		GameState->SkipAircraft();
 		GameState->GetGamePhaseStep();

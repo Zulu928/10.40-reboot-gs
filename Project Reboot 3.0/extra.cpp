@@ -39,7 +39,7 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
 				bZoneReversing = false;
 			}
 
-			auto sleepDuration = std::chrono::milliseconds(10000);
+			auto sleepDuration = std::chrono::milliseconds(100);
 
 			while (NewLateGameSafeZonePhase == 1 || NewLateGameSafeZonePhase == 2)
 			{
@@ -153,7 +153,7 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
 			bZoneReversing = false;
 		}
 
-		if (NewLateGameSafeZonePhase >= StartReverseZonePhase) // This means instead of going to the 8th phase its gonna go down.
+		if (NewLateGameSafeZonePhase >= StartReverseZonePhase)
 		{
 			bZoneReversing = true;
 		}
@@ -191,7 +191,7 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
 	{
 		UKismetSystemLibrary::ExecuteConsoleCommand(GetWorld(), L"skipsafezone", nullptr);
 
-		auto sleepDuration = std::chrono::milliseconds(100);
+		auto sleepDuration = std::chrono::milliseconds(1);
 
 		if (SafeZoneIndicator)
 		{
