@@ -546,7 +546,7 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 	{
 		auto CurrentAircraft = Aircrafts.at(i);
 
-		std::this_thread::sleep_for(std::chrono::seconds(100) / MaxTickRate);
+		std::this_thread::sleep_for(std::chrono::seconds(140) / MaxTickRate);
 
 		if (CurrentAircraft)
 		{
@@ -578,15 +578,35 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 		}
 	}
 
+	while (GameState->GetGamePhase() != EAthenaGamePhase::Aircraft)
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000) / MaxTickRate);
+	}
+
+	while (Globals::bStarted == false)
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000) / MaxTickRate);
+	}
+
+	if (Globals::bStarted == true)
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(4000));
+		auto GameState = Cast<AFortGameStateAthena>(GetWorld()->GetGameState());
+		GameState->SkipAircraft();
+		GameState->GetGamePhaseStep();
+	}
+
 	static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
 	auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
 	auto& ClientConnections = WorldNetDriver->GetClientConnections();
 
 	for (int z = 0; z < ClientConnections.Num(); z++)
 	{
+
 		auto ClientConnection = ClientConnections.at(z);
 		auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController());
 		if (!FortPC) continue;
+
 
 		auto WorldInventory = FortPC->GetWorldInventory();
 		if (!WorldInventory) continue;
@@ -644,28 +664,6 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsHeavy.AthenaAmmoDataBulletsHeavy"), nullptr, 30);
 
 		WorldInventory->Update();
-	}
-	/*
-	auto GS = EAthenaGamePhase::SafeZones;
-	GameState->GetGamePhase() = GS;
-	GameState->OnRep_GamePhase();
-	*/
-	while (GameState->GetGamePhase() != EAthenaGamePhase::Aircraft)
-	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000) / MaxTickRate);
-	}
-
-	while (Globals::bStarted == false)
-	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000) / MaxTickRate);
-	}
-
-	if (Globals::bStarted == true)
-	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(6000));
-		auto GameState = Cast<AFortGameStateAthena>(GetWorld()->GetGameState());
-		GameState->SkipAircraft();
-		GameState->GetGamePhaseStep();
 	}
 
 	int NumPlayers = GameState->GetPlayersLeft();
