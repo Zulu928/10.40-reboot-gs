@@ -107,8 +107,6 @@ void AFortPlayerPawn::ServerHandlePickupWithRequestedSwapHook(UObject* Context, 
 	auto Pickup = *(AFortPickup**)(__int64(Params) + PickupOffset);
 	auto& Swap = *(FGuid*)(__int64(Params) + SwapOffset);
 
-	// LOG_INFO(LogDev, "Pickup: {}", Pickup->IsValidLowLevel() ? Pickup->GetFullName() : "BadRead");
-
 	if (!Pickup)
 		return ServerHandlePickupWithRequestedSwapOriginal(Context, Stack, Ret);
 
@@ -121,14 +119,15 @@ void AFortPlayerPawn::ServerHandlePickupWithRequestedSwapHook(UObject* Context, 
 	}
 
 	static auto IncomingPickupsOffset = Pawn->GetOffset("IncomingPickups");
-	Pawn->Get<TArray<AFortPickup*>>(IncomingPickupsOffset).Add(Pickup);
+	TArray<AFortPickup*>& IncomingPickups = Pawn->Get<TArray<AFortPickup*>>(IncomingPickupsOffset);
+
+	IncomingPickups.Add(Pickup);
 
 	auto PickupLocationData = Pickup->GetPickupLocationData();
 
 	PickupLocationData->GetPickupTarget() = Pawn;
 	PickupLocationData->GetFlyTime() = 0.40f;
 	PickupLocationData->GetItemOwner() = Pawn;
-	// PickupLocationData->GetStartDirection() = InStartDirection;
 	PickupLocationData->GetPickupGuid() = Swap;
 
 	Controller->ShouldTryPickupSwap() = true;
@@ -143,6 +142,8 @@ void AFortPlayerPawn::ServerHandlePickupWithRequestedSwapHook(UObject* Context, 
 
 	return ServerHandlePickupWithRequestedSwapOriginal(Context, Stack, Ret);
 }
+
+
 
 void AFortPlayerPawn::ServerChoosePart(EFortCustomPartType Part, UObject* ChosenCharacterPart)
 {

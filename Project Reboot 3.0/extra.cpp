@@ -45,7 +45,6 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
                     LOG_WARN(LogZone, "Invalid SafeZoneIndicator!");
                 }
 
-                // Recheck the phase and update it if needed
                 if (NewLateGameSafeZonePhase != 1 && NewLateGameSafeZonePhase != 2)
                 {
                     return;
@@ -159,7 +158,7 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
 
     LOG_INFO(LogZone, "SafeZonePhase After: {}", GameModeAthena->Get<int>(SafeZonePhaseOffset));
 
-    float ZoneHoldDuration = 30.0f;
+    float ZoneHoldDuration = 0.0f;
     if (GameModeAthena->Get<int>(SafeZonePhaseOffset) >= 0 && GameModeAthena->Get<int>(SafeZonePhaseOffset) < ZoneHoldDurations.Num())
     {
         ZoneHoldDuration = ZoneHoldDurations.at(GameModeAthena->Get<int>(SafeZonePhaseOffset));
@@ -188,7 +187,7 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
         }
         else
         {
-            LOG_WARN(LogZone, "non sigma safezone indication");
+            LOG_WARN(LogZone, "SafeZoneIndicator is null during skip.");
             break;
         }
 
