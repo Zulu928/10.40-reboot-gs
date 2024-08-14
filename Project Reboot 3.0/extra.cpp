@@ -26,10 +26,6 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
 	{
 		if (Globals::bLateGame.load())
 		{
-			int NumPlayers = GameState->GetPlayersLeft();
-
-			if (NumPlayers >= 2)
-
 				GameModeAthena->Get<int>(GameMode_SafeZonePhaseOffset) = NewLateGameSafeZonePhase;
 			GameState->Get<int>(GameState_SafeZonePhaseOffset) = NewLateGameSafeZonePhase;
 			SetZoneToIndexOriginal(GameModeAthena, OverridePhaseMaybeIDFK);
@@ -39,7 +35,7 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
 				bZoneReversing = false;
 			}
 
-			auto sleepDuration = std::chrono::milliseconds(100);
+			auto sleepDuration = std::chrono::milliseconds(0);
 
 			while (NewLateGameSafeZonePhase == 1 || NewLateGameSafeZonePhase == 2)
 			{
@@ -191,7 +187,7 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
 	{
 		UKismetSystemLibrary::ExecuteConsoleCommand(GetWorld(), L"skipsafezone", nullptr);
 
-		auto sleepDuration = std::chrono::milliseconds(1);
+		auto sleepDuration = std::chrono::milliseconds(0);
 
 		if (SafeZoneIndicator)
 		{
@@ -200,11 +196,6 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
 		else
 		{
 			LOG_WARN(LogZone, "non sigma safezone indication");
-			break;
-		}
-
-		std::this_thread::sleep_for(sleepDuration);
-		{
 			break;
 		}
 
