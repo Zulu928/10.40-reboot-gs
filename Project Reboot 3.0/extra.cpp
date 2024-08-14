@@ -11,15 +11,22 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
     auto GameState = Cast<AFortGameStateAthena>(GameModeAthena->GetGameState());
 
     if (!GameState)
+    {
+        LOG_ERROR(LogZone, "Invalid GameState!");
         return SetZoneToIndexOriginal(GameModeAthena, OverridePhaseMaybeIDFK);
+    }
 
     auto SafeZoneIndicator = GameModeAthena->GetSafeZoneIndicator();
+
+    if (!SafeZoneIndicator)
+    {
+        LOG_ERROR(LogZone, "Invalid SafeZoneIndicator!");
+        return SetZoneToIndexOriginal(GameModeAthena, OverridePhaseMaybeIDFK);
+    }
 
     static auto GameState_SafeZonePhaseOffset = GameState->GetOffset("SafeZonePhase");
 
     static int NewLateGameSafeZonePhase = 1;
-
-    LOG_INFO(LogDev, "NewLateGameSafeZonePhase: {}", NewLateGameSafeZonePhase);
 
     if (Fortnite_Version < 8)
     {
@@ -36,19 +43,7 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
 
             if (NewLateGameSafeZonePhase == 1 || NewLateGameSafeZonePhase == 2)
             {
-                if (SafeZoneIndicator)
-                {
-                    SafeZoneIndicator->SkipShrinkSafeZone();
-                }
-                else
-                {
-                    LOG_WARN(LogZone, "Invalid SafeZoneIndicator!");
-                }
-
-                if (NewLateGameSafeZonePhase != 1 && NewLateGameSafeZonePhase != 2)
-                {
-                    return;
-                }
+                SafeZoneIndicator->SkipShrinkSafeZone();
             }
 
             if (NewLateGameSafeZonePhase >= StartReverseZonePhase)
@@ -65,12 +60,6 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
         return SetZoneToIndexOriginal(GameModeAthena, OverridePhaseMaybeIDFK);
     }
 
-    if (!SafeZoneIndicator)
-    {
-        LOG_WARN(LogZone, "Invalid SafeZoneIndicator!");
-        return SetZoneToIndexOriginal(GameModeAthena, OverridePhaseMaybeIDFK);
-    }
-
     static auto SafeZoneFinishShrinkTimeOffset = SafeZoneIndicator->GetOffset("SafeZoneFinishShrinkTime");
     static auto SafeZoneStartShrinkTimeOffset = SafeZoneIndicator->GetOffset("SafeZoneStartShrinkTime");
     static auto RadiusOffset = SafeZoneIndicator->GetOffset("Radius");
@@ -82,16 +71,14 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
 
     if (!MapInfo)
     {
-        LOG_WARN(LogZone, "Invalid MapInfo!");
+        LOG_ERROR(LogZone, "Invalid MapInfo!");
         return SetZoneToIndexOriginal(GameModeAthena, OverridePhaseMaybeIDFK);
     }
 
     static auto SafeZoneDefinitionOffset = MapInfo->GetOffset("SafeZoneDefinition");
     auto SafeZoneDefinition = MapInfo->GetPtr<__int64>(SafeZoneDefinitionOffset);
 
-    LOG_INFO(LogDev, "SafeZoneDefinitionOffset: 0x{:x}", SafeZoneDefinitionOffset);
-
-    static auto ZoneHoldDurationsOffset = ZoneDurationsOffset - 0x10; // fr
+    static auto ZoneHoldDurationsOffset = ZoneDurationsOffset - 0x10;
 
     auto& ZoneDurations = *(TArray<float>*)(__int64(SafeZoneDefinition) + ZoneDurationsOffset);
     auto& ZoneHoldDurations = *(TArray<float>*)(__int64(SafeZoneDefinition) + ZoneHoldDurationsOffset);
@@ -158,7 +145,7 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
 
     LOG_INFO(LogZone, "SafeZonePhase After: {}", GameModeAthena->Get<int>(SafeZonePhaseOffset));
 
-    float ZoneHoldDuration = 0.0f;
+    float ZoneHoldDuration = 30.0f;
     if (GameModeAthena->Get<int>(SafeZonePhaseOffset) >= 0 && GameModeAthena->Get<int>(SafeZonePhaseOffset) < ZoneHoldDurations.Num())
     {
         ZoneHoldDuration = ZoneHoldDurations.at(GameModeAthena->Get<int>(SafeZonePhaseOffset));
@@ -179,8 +166,6 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
 
     while (NewLateGameSafeZonePhase == 2 || NewLateGameSafeZonePhase == 3)
     {
-        UKismetSystemLibrary::ExecuteConsoleCommand(GetWorld(), L"skipsafezone", nullptr);
-
         if (SafeZoneIndicator)
         {
             SafeZoneIndicator->SkipShrinkSafeZone();
@@ -190,6 +175,8 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
             LOG_WARN(LogZone, "SafeZoneIndicator is null during skip.");
             break;
         }
+
+        UKismetSystemLibrary::ExecuteConsoleCommand(GetWorld(), L"skipsafezone", nullptr);
 
         if (NewLateGameSafeZonePhase != 4 && NewLateGameSafeZonePhase != 5)
         {
