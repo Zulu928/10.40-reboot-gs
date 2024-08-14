@@ -494,6 +494,7 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 	const FVector ZoneCenterLocation = SafeZoneLocations.at(3);
 	FVector LocationToStartAircraft = ZoneCenterLocation;
 	LocationToStartAircraft.Z += 10000;
+	LocationToStartAircraft.X += -2000;
 
 	auto GetAircrafts = [&]() -> std::vector<AActor*>
 		{
@@ -546,7 +547,7 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 	{
 		auto CurrentAircraft = Aircrafts.at(i);
 
-		std::this_thread::sleep_for(std::chrono::seconds(140) / MaxTickRate);
+		std::this_thread::sleep_for(std::chrono::seconds(150) / MaxTickRate);
 
 		if (CurrentAircraft)
 		{
@@ -576,21 +577,6 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 				FlightInfo->GetTimeTillDropStart() = DropStartTime;
 			}
 		}
-	}
-	
-	const std::chrono::milliseconds check_interval(1000);
-
-	while (GameState->GetGamePhase() != EAthenaGamePhase::Aircraft)
-	{
-		std::this_thread::sleep_for(check_interval);
-	}
-
-	if (Globals::bStarted == true)
-	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-		auto GameState = Cast<AFortGameStateAthena>(GetWorld()->GetGameState());
-		GameState->SkipAircraft();
-		GameState->GetGamePhaseStep();
 	}
 
 	static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
@@ -666,6 +652,25 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsHeavy.AthenaAmmoDataBulletsHeavy"), nullptr, 30);
 
 		WorldInventory->Update();
+	}
+
+	auto GS = EAthenaGamePhase::SafeZones;
+	GameState->GetGamePhase() = GS;
+	GameState->OnRep_GamePhase();
+	
+	const std::chrono::milliseconds check_interval(1000);
+
+	while (GameState->GetGamePhase() != EAthenaGamePhase::Aircraft)
+	{
+		std::this_thread::sleep_for(check_interval);
+	}
+
+	if (Globals::bStarted == true)
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+		auto GameState = Cast<AFortGameStateAthena>(GetWorld()->GetGameState());
+		GameState->SkipAircraft();
+		GameState->GetGamePhaseStep();
 	}
 
 	int NumPlayers = GameState->GetPlayersLeft();

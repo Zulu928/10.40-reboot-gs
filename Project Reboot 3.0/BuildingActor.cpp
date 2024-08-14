@@ -66,51 +66,54 @@ void ABuildingActor::OnDamageServerHook(ABuildingActor* BuildingActor, float Dam
 	static auto BuildingResourceAmountOverrideOffset = BuildingSMActor->GetOffset("BuildingResourceAmountOverride");
 	auto& BuildingResourceAmountOverride = BuildingSMActor->Get<FCurveTableRowHandle>(BuildingResourceAmountOverrideOffset);
 
-	int ResourceCount = 0;
-
-	if (BuildingResourceAmountOverride.RowName.IsValid())
+	if (Globals::bStartedBus == true)
 	{
-		// auto AssetManager = Cast<UFortAssetManager>(GEngine->AssetManager);
-		// auto GameState = Cast<AFortGameStateAthena>(GetWorld()->GetGameStateAthena);
-		UCurveTable* CurveTable = nullptr; // GameState->CurrentPlaylistInfo.BasePlaylist ? GameState->CurrentPlaylistInfo.BasePlaylist->ResourceRates.Get() : nullptr;
+		int ResourceCount = 0;
 
-		// LOG_INFO(LogDev, "Before1");
-
-		if (!CurveTable)
-			CurveTable = FindObject<UCurveTable>(L"/Game/Athena/Balance/DataTables/AthenaResourceRates.AthenaResourceRates");
-
+		if (BuildingResourceAmountOverride.RowName.IsValid())
 		{
-			// auto curveMap = ((UDataTable*)CurveTable)->GetRowMap();
+			// auto AssetManager = Cast<UFortAssetManager>(GEngine->AssetManager);
+			// auto GameState = Cast<AFortGameStateAthena>(GetWorld()->GetGameStateAthena);
+			UCurveTable* CurveTable = nullptr; // GameState->CurrentPlaylistInfo.BasePlaylist ? GameState->CurrentPlaylistInfo.BasePlaylist->ResourceRates.Get() : nullptr;
 
-			// LOG_INFO(LogDev, "Before {}", __int64(CurveTable));
+			// LOG_INFO(LogDev, "Before1");
 
-			float Out = UDataTableFunctionLibrary::EvaluateCurveTableRow(CurveTable, BuildingResourceAmountOverride.RowName, 0.f);
+			if (!CurveTable)
+				CurveTable = FindObject<UCurveTable>(L"/Game/Athena/Balance/DataTables/AthenaResourceRates.AthenaResourceRates");
 
-			// LOG_INFO(LogDev, "Out: {}", Out);
+			{
+				// auto curveMap = ((UDataTable*)CurveTable)->GetRowMap();
 
-			const float DamageThatWillAffect = /* PreviousLastDamageHit > 0 && Damage > PreviousLastDamageHit ? PreviousLastDamageHit : */ Damage;
+				// LOG_INFO(LogDev, "Before {}", __int64(CurveTable));
 
-			float skid = Out / (BuildingActor->GetMaxHealth() / DamageThatWillAffect);
+				float Out = UDataTableFunctionLibrary::EvaluateCurveTableRow(CurveTable, BuildingResourceAmountOverride.RowName, 0.f);
 
-			ResourceCount = round(skid);
+				// LOG_INFO(LogDev, "Out: {}", Out);
+
+				const float DamageThatWillAffect = /* PreviousLastDamageHit > 0 && Damage > PreviousLastDamageHit ? PreviousLastDamageHit : */ Damage;
+
+				float skid = Out / (BuildingActor->GetMaxHealth() / DamageThatWillAffect);
+
+				ResourceCount = round(skid);
+			}
 		}
-	}
 
-	if (ResourceCount <= 0)
-	{
+		if (ResourceCount <= 0)
+		{
+			return OnDamageServerOriginal(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
+		}
+
+		bool bIsWeakspot = Damage == 100.0f;
+		PlayerController->ClientReportDamagedResourceBuilding(BuildingSMActor, BuildingSMActor->GetResourceType(), ResourceCount, false, bIsWeakspot);
+
+		bool bShouldUpdate = false;
+		WorldInventory->AddItem(ItemDef, &bShouldUpdate, ResourceCount);
+
+		if (bShouldUpdate)
+			WorldInventory->Update();
+
 		return OnDamageServerOriginal(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
 	}
-
-	bool bIsWeakspot = Damage == 100.0f;
-	PlayerController->ClientReportDamagedResourceBuilding(BuildingSMActor, BuildingSMActor->GetResourceType(), ResourceCount, false, bIsWeakspot);
-
-	bool bShouldUpdate = false;
-	WorldInventory->AddItem(ItemDef, &bShouldUpdate, ResourceCount);
-
-	if (bShouldUpdate)
-		WorldInventory->Update();
-
-	return OnDamageServerOriginal(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
 }
 
 UClass* ABuildingActor::StaticClass()

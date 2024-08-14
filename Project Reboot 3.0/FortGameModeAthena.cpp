@@ -1399,8 +1399,9 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 
 			bool bDestroyFloorLootActor = false;
 			bool bPrintWarmup = bDebugPrintFloorLoot;
+			bool bTest = false;
 
-			/*
+			
 			for (int i = 0; i < SpawnIsland_FloorLoot_Actors.Num(); i++)
 			{
 				ABuildingContainer* CurrentActor = (ABuildingContainer*)SpawnIsland_FloorLoot_Actors.at(i);
@@ -1424,7 +1425,7 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 				if (!bTest)
 					CurrentActor->K2_DestroyActor();
 			}
-			*/
+			
 
 			bool bPrintIsland = bDebugPrintFloorLoot;
 
