@@ -579,14 +579,6 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 		}
 	}
 
-	if (Globals::bStarted == true)
-	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-		auto GameState = Cast<AFortGameStateAthena>(GetWorld()->GetGameState());
-		GameState->SkipAircraft();
-		GameState->GetGamePhaseStep();
-	}
-
 	static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
 	auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
 	auto& ClientConnections = WorldNetDriver->GetClientConnections();
@@ -671,6 +663,14 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 	while (GameState->GetGamePhase() != EAthenaGamePhase::Aircraft)
 	{
 		std::this_thread::sleep_for(check_interval);
+	}
+
+	if (Globals::bStarted == true)
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+		auto GameState = Cast<AFortGameStateAthena>(GetWorld()->GetGameState());
+		GameState->SkipAircraft();
+		GameState->GetGamePhaseStep();
 	}
 
 	int NumPlayers = GameState->GetPlayersLeft();
