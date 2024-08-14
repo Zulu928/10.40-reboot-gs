@@ -577,7 +577,7 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 			}
 		}
 	}
-
+	
 	const std::chrono::milliseconds check_interval(1000);
 
 	while (GameState->GetGamePhase() != EAthenaGamePhase::Aircraft)
@@ -644,16 +644,21 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 		};
 
 		int RifleIndex = rand() % RifleOptions.size();
-		int ShieldIndex = rand() % ShotgunOptions.size();
+		int ShotgunIndex = rand() % ShotgunOptions.size();
+		int SMGIndex = rand() % SMGOptions.size();
+		int ShieldIndex = rand() % ShieldOptions.size();
 
 		UFortItemDefinition* Rifle = RifleOptions[RifleIndex];
-		UFortItemDefinition* Shield = ShotgunOptions[ShieldIndex];
+		UFortItemDefinition* Shotgun = ShotgunOptions[ShotgunIndex];
+		UFortItemDefinition* SMG = SMGOptions[SMGIndex];
+		UFortItemDefinition* Shield = ShieldOptions[ShieldIndex];
 
 		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/WoodItemData.WoodItemData"), nullptr, 500);
 		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/StoneItemData.StoneItemData"), nullptr, 500);
 		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/MetalItemData.MetalItemData"), nullptr, 500);
 		WorldInventory->AddItem(Rifle, nullptr, 1);
 		WorldInventory->AddItem(Shield, nullptr, 3);
+		WorldInventory->AddItem(Shotgun, nullptr, 1);
 		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/ShieldSmall/Athena_ShieldSmall.Athena_ShieldSmall"), nullptr, 3);
 		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataShells.AthenaAmmoDataShells"), nullptr, 50);
 		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsMedium.AthenaAmmoDataBulletsMedium"), nullptr, 250);
