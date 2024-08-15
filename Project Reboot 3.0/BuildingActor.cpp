@@ -66,8 +66,6 @@ void ABuildingActor::OnDamageServerHook(ABuildingActor* BuildingActor, float Dam
 	static auto BuildingResourceAmountOverrideOffset = BuildingSMActor->GetOffset("BuildingResourceAmountOverride");
 	auto& BuildingResourceAmountOverride = BuildingSMActor->Get<FCurveTableRowHandle>(BuildingResourceAmountOverrideOffset);
 
-	if (Globals::bStartedBus == true)
-	{
 		int ResourceCount = 0;
 
 		if (BuildingResourceAmountOverride.RowName.IsValid())
@@ -114,7 +112,6 @@ void ABuildingActor::OnDamageServerHook(ABuildingActor* BuildingActor, float Dam
 
 		return OnDamageServerOriginal(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
 	}
-}
 
 UClass* ABuildingActor::StaticClass()
 {

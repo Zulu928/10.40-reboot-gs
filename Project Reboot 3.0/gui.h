@@ -610,47 +610,60 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 			L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_C_Ore_T03.WID_Assault_Heavy_Athena_C_Ore_T03",
 			L"/Game/Athena/Items/Weapons/WID_Assault_Suppressed_Athena_VR_Ore_T03.WID_Assault_Suppressed_Athena_VR_Ore_T03",
 			L"/Game/Athena/Items/Weapons/WID_Assault_Suppressed_Athena_SR_Ore_T03.WID_Assault_Suppressed_Athena_SR_Ore_T03",
-			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_VR_Ore_T05.WID_Assault_NeonGlow_VR_Ore_T05",
-			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_VR_Ore_T04.WID_Assault_NeonGlow_VR_Ore_T04",
-			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_VR_Ore_T03.WID_Assault_NeonGlow_VR_Ore_T03",
-			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_VR_Ore_T02.WID_Assault_NeonGlow_VR_Ore_T02",
-			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_VR_Ore_T01.WID_Assault_NeonGlow_VR_Ore_T01",
-			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_VR_Crystal_T05.WID_Assault_NeonGlow_VR_Crystal_T05",
-			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_VR_Crystal_T04.WID_Assault_NeonGlow_VR_Crystal_T04",
-			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_SR_Ore_T05.WID_Assault_NeonGlow_SR_Ore_T05",
-			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_SR_Ore_T04.WID_Assault_NeonGlow_SR_Ore_T04",
-			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_SR_Ore_T03.WID_Assault_NeonGlow_SR_Ore_T03",
-			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_SR_Ore_T02.WID_Assault_NeonGlow_SR_Ore_T02",
-			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_SR_Ore_T01.WID_Assault_NeonGlow_SR_Ore_T01",
-			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_SR_Crystal_T05.WID_Assault_NeonGlow_SR_Crystal_T05",
-			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_SR_Crystal_T04.WID_Assault_NeonGlow_SR_Crystal_T04"
+			L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_SR_Ore_T03.WID_Assault_AutoHigh_Athena_SR_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_VR_Ore_T03.WID_Assault_AutoHigh_Athena_VR_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_UC_Ore_T03.WID_Assault_Auto_Athena_UC_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_C_Ore_T02.WID_Assault_Auto_Athena_C_Ore_T02",
+			L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_UC_Ore_T03.WID_Assault_Heavy_Athena_UC_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_R_Ore_T03.WID_Assault_Heavy_Athena_R_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_C_Ore_T03.WID_Assault_Heavy_Athena_C_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Assault_Suppressed_Athena_VR_Ore_T03.WID_Assault_Suppressed_Athena_VR_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Assault_Suppressed_Athena_SR_Ore_T03.WID_Assault_Suppressed_Athena_SR_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_R_Ore_T03.WID_Assault_Heavy_Athena_R_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_C_Ore_T03.WID_Assault_Heavy_Athena_C_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_VR_Ore_T03.WID_Assault_AutoHigh_Athena_VR_Ore_T03",
 		};
 
 		std::vector<const wchar_t*> ShotgunOptions = {
 			L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_SR_Ore_T03.WID_Shotgun_Standard_Athena_SR_Ore_T03",
 			L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_VR_Ore_T03.WID_Shotgun_Standard_Athena_VR_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_R_Ore_T03.WID_Shotgun_SemiAuto_Athena_R_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_C_Ore_T03.WID_Shotgun_Standard_Athena_C_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_SR_Ore_T03.WID_Shotgun_Standard_Athena_SR_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_VR_Ore_T03.WID_Shotgun_Standard_Athena_VR_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_VR_Ore_T03.WID_Shotgun_SemiAuto_Athena_VR_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03",
 			L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03",
 			L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_C_Ore_T03.WID_Shotgun_Standard_Athena_C_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Shotgun_SlugFire_Athena_VR.WID_Shotgun_SlugFire_Athena_VR",
-			L"/Game/Athena/Items/Weapons/WID_Shotgun_SlugFire_Athena_SR.WID_Shotgun_SlugFire_Athena_SR",
-			L"/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_VR_Ore_T03.WID_Shotgun_SemiAuto_Athena_VR_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_UC_Ore_T03.WID_Shotgun_SemiAuto_Athena_UC_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_R_Ore_T03.WID_Shotgun_SemiAuto_Athena_R_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Shotgun_BreakBarrel_Athena_VR_Ore_T03.WID_Shotgun_BreakBarrel_Athena_VR_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Shotgun_BreakBarrel_Athena_SR_Ore_T03.WID_Shotgun_BreakBarrel_Athena_SR_Ore_T03"
+			L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03",
 		};
 
 		std::vector<const wchar_t*> SMGOptions = {
 			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_SR_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_SR_Ore_T03",
 			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_VR_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_VR_Ore_T03",
 			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_R_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_R_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavy_Athena_UC_Ore_T03.WID_Pistol_AutoHeavy_Athena_UC_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavy_Athena_C_Ore_T02.WID_Pistol_AutoHeavy_Athena_C_Ore_T02",
+			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavySuppressed_Athena_R_Ore_T03.WID_Pistol_AutoHeavySuppressed_Athena_R_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Sniper_BoltAction_Scope_Athena_R_Ore_T03.WID_Sniper_BoltAction_Scope_Athena_R_Ore_T03",
 			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavySuppressed_Athena_UC_Ore_T03.WID_Pistol_AutoHeavySuppressed_Athena_UC_Ore_T03",
 			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavySuppressed_Athena_R_Ore_T03.WID_Pistol_AutoHeavySuppressed_Athena_R_Ore_T03",
 			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavySuppressed_Athena_C_Ore_T02.WID_Pistol_AutoHeavySuppressed_Athena_C_Ore_T02",
-			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_UC_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_UC_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_C_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_C_Ore_T03"
+			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavySuppressed_Athena_R_Ore_T03.WID_Pistol_AutoHeavySuppressed_Athena_R_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Sniper_BoltAction_Scope_Athena_R_Ore_T03.WID_Sniper_BoltAction_Scope_Athena_R_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Sniper_Heavy_Athena_VR_Ore_T03.WID_Sniper_Heavy_Athena_VR_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Sniper_Heavy_Athena_SR_Ore_T03.WID_Sniper_Heavy_Athena_SR_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Sniper_NoScope_Athena_R_Ore_T03.WID_Sniper_NoScope_Athena_R_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Sniper_NoScope_Athena_UC_Ore_T03.WID_Sniper_NoScope_Athena_UC_Ore_T03",
+			L"/Game/Athena/Items/Consumables/RiftItem/Athena_Rift_Item.Athena_Rift_Item",
+		};
+
+		std::vector<const wchar_t*> OtherOptions = {
+			L"/Game/Athena/Items/Consumables/ShockwaveGrenade/Athena_ShockGrenade.Athena_ShockGrenade",
+			L"/Game/Athena/Items/Consumables/TNT/Athena_TNT.Athena_TNT",
+			L"/Game/Abilities/Player/Generic/UtilityItems/WeaponData_KnockGrenade.WeaponData_KnockGrenade",
+			L"/Game/Athena/Items/Consumables/Grenade/Athena_Grenade.Athena_Grenade",
+			L"/Game/Athena/Items/Weapons/WID_Hook_Gun_VR_Ore_T03.WID_Hook_Gun_VR_Ore_T03",
 		};
 
 		std::vector<const wchar_t*> ShieldOptions = {
@@ -659,17 +672,32 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 			L"/Game/Athena/Items/Consumables/SuperMedkit/Athena_SuperMedkit.Athena_SuperMedkit",
 			L"/Game/Athena/Items/Consumables/Medkit/Athena_Medkit.Athena_Medkit",
 			L"/Game/Athena/Items/Consumables/Bandage/Athena_Bandage.Athena_Bandage"
+			L"/Game/Athena/Items/Consumables/PurpleStuff/Athena_PurpleStuff.Athena_PurpleStuff",
+			L"/Game/Athena/Items/Consumables/Bush/Athena_Bush.Athena_Bush",
+		};
+
+		std::vector<const wchar_t*> TrapOptions = {
+			L"/Game/Athena/Items/Traps/TID_PoisonDartTrap_Context.TID_PoisonDartTrap_Context",
+			L"/Game/Athena/Items/Traps/TID_Floor_Player_Launch_Pad_Athena.TID_Floor_Player_Launch_Pad_Athena",
+			L"/Game/Athena/Items/Traps/TID_Floor_Player_Campfire_Athena.TID_Floor_Player_Campfire_Athena",
+			L"/Game/Athena/Items/Traps/TID_Context_BouncePad_Athena.TID_Context_BouncePad_Athena",
+			L"/Game/Athena/Items/Traps/TID_Floor_Player_Launch_Pad_Athena.TID_Floor_Player_Launch_Pad_Athena",
+			L"/Game/Athena/Items/Traps/TID_Context_BouncePad_Athena.TID_Context_BouncePad_Athena",
 		};
 
 		std::uniform_int_distribution<> RifleDist(0, RifleOptions.size() - 1);
 		std::uniform_int_distribution<> ShotgunDist(0, ShotgunOptions.size() - 1);
 		std::uniform_int_distribution<> SMGDist(0, SMGOptions.size() - 1);
+		std::uniform_int_distribution<> OptionDist(0, OtherOptions.size() - 1);
 		std::uniform_int_distribution<> ShieldDist(0, ShieldOptions.size() - 1);
+		std::uniform_int_distribution<> TrapDist(0, TrapOptions.size() - 1);
 
 		UFortItemDefinition* Rifle = FindObject<UFortItemDefinition>(RifleOptions[RifleDist(gen)]);
 		UFortItemDefinition* Shotgun = FindObject<UFortItemDefinition>(ShotgunOptions[ShotgunDist(gen)]);
 		UFortItemDefinition* SMG = FindObject<UFortItemDefinition>(SMGOptions[SMGDist(gen)]);
+		UFortItemDefinition* Other = FindObject<UFortItemDefinition>(OtherOptions[OptionDist(gen)]);
 		UFortItemDefinition* Shield = FindObject<UFortItemDefinition>(ShieldOptions[ShieldDist(gen)]);
+		UFortItemDefinition* Trap = FindObject<UFortItemDefinition>(TrapOptions[TrapDist(gen)]);
 
 		static auto WoodItemData = FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/WoodItemData.WoodItemData");
 		static auto StoneItemData = FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/StoneItemData.StoneItemData");
@@ -685,11 +713,13 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 		WorldInventory->AddItem(Shotgun, nullptr, 1);
 		WorldInventory->AddItem(SMG, nullptr, 1);
 		WorldInventory->AddItem(Rifle, nullptr, 1);
-		WorldInventory->AddItem(Shield, nullptr, 6);
-		WorldInventory->AddItem(Shells, nullptr, 999);
-		WorldInventory->AddItem(Medium, nullptr, 999);
-		WorldInventory->AddItem(Light, nullptr, 999);
-		WorldInventory->AddItem(Heavy, nullptr, 999);
+		WorldInventory->AddItem(Other, nullptr, 2);
+		WorldInventory->AddItem(Shield, nullptr, 3);
+		WorldInventory->AddItem(Trap, nullptr, 2);
+		WorldInventory->AddItem(Shells, nullptr, 25);
+		WorldInventory->AddItem(Medium, nullptr, 90);
+		WorldInventory->AddItem(Light, nullptr, 120);
+		WorldInventory->AddItem(Heavy, nullptr, 14);
 
 		WorldInventory->Update();
 	}

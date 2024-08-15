@@ -38,7 +38,6 @@ void AFortPlayerState::SiphonEffect()
 	static auto BGAClass = FindObject<UClass>(L"/Script/Engine.BlueprintGeneratedClass");
 	UClass* GE_Class = LoadObject<UClass>(L"/Game/Athena/Items/Consumables/PurpleStuff/GE_Athena_PurpleStuff_Shields.GE_Athena_PurpleStuff_Shields_C", BGAClass);
 	GetAbilitySystemComponent()->ApplyGameplayEffectToSelf(GE_Class, -1.f);
-	// Game / Animation / Game / MainPlayer / Reacts / Healing / MiniShield / MiniShieldPotion_Prop_AnimBP.MiniShieldPotion_Prop_AnimBP_C
 }
 
 bool AFortPlayerState::AreUniqueIDsIdentical(FUniqueNetIdRepl* A, FUniqueNetIdRepl* B)
