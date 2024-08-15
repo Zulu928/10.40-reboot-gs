@@ -68,10 +68,7 @@
 #define LOADOUT_PLAYERTAB 4
 #define FUN_PLAYERTAB 5
 
-extern inline int StartReverseZonePhase = 7;
-extern inline int EndReverseZonePhase = 5;
 extern inline float StartingShield = 100;
-extern inline bool bEnableReverseZone = false;
 extern inline int AmountOfPlayersWhenBusStart = 0;
 extern inline bool bHandleDeath = true;
 extern inline bool bUseCustomMap = false;
@@ -86,7 +83,6 @@ extern inline bool bDebugPrintLooting = false;
 extern inline bool bDebugPrintFloorLoot = false;
 extern inline bool bDebugPrintSwapping = false;
 extern inline bool bEnableBotTick = false;
-extern inline bool bZoneReversing = false;
 extern inline bool bEnableCombinePickup = false;
 extern inline int AmountOfBotsToSpawn = 0;
 extern inline int WarmupRequiredPlayerCount = 1;
@@ -661,9 +657,10 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 		std::vector<const wchar_t*> OtherOptions = {
 			L"/Game/Athena/Items/Consumables/ShockwaveGrenade/Athena_ShockGrenade.Athena_ShockGrenade",
 			L"/Game/Athena/Items/Consumables/TNT/Athena_TNT.Athena_TNT",
-			L"/Game/Abilities/Player/Generic/UtilityItems/WeaponData_KnockGrenade.WeaponData_KnockGrenade",
+			L"/Game/Athena/Items/Consumables/KnockGrenade/Athena_KnockGrenade.Athena_KnockGrenade",
 			L"/Game/Athena/Items/Consumables/Grenade/Athena_Grenade.Athena_Grenade",
 			L"/Game/Athena/Items/Weapons/WID_Hook_Gun_VR_Ore_T03.WID_Hook_Gun_VR_Ore_T03",
+			L"/Game/Athena/Items/Consumables/StickyGrenade/Athena_StickyGrenade.Athena_StickyGrenade",
 		};
 
 		std::vector<const wchar_t*> ShieldOptions = {
@@ -1519,19 +1516,6 @@ static inline void MainUI()
 						CurrentPlaylist->GetRespawnType() = (EAthenaRespawnType)bRespawning;
 					}
 				}
-			}
-		}
-		else if (Tab == LATEGAME_TAB)
-		{
-			if (bEnableReverseZone)
-				ImGui::Text(std::format("Currently {}eversing zone", bZoneReversing ? "r" : "not r").c_str());
-
-			ImGui::Checkbox("Enable Reverse Zone (EXPERIMENTAL)", &bEnableReverseZone);
-
-			if (bEnableReverseZone)
-			{
-				ImGui::InputInt("Start Reversing Phase", &StartReverseZonePhase);
-				ImGui::InputInt("End Reversing Phase", &EndReverseZonePhase);
 			}
 		}
 		else if (Tab == DEVELOPER_TAB)

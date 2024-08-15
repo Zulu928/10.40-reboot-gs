@@ -10,6 +10,10 @@ static int32 GameState_SafeZonePhaseOffset = 0;
 static int32 SafeZonePhaseOffset = 0;
 static int32 NewLateGameSafeZonePhase = 1;
 static bool bFilledDurations = false;
+static bool bZoneReversing = false;
+static bool bEnableReverseZone = false;
+static const int32 EndReverseZonePhase = 5;
+static const int32 StartReverseZonePhase = 7;
 
 void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMaybeIDFK)
 {
