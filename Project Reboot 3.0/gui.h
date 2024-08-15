@@ -585,113 +585,111 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 
 	for (int z = 0; z < ClientConnections.Num(); z++)
 	{
-
 		auto ClientConnection = ClientConnections.at(z);
 		auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController());
-		if (!FortPC) continue;
 
+		if (!FortPC)
+			continue;
 
 		auto WorldInventory = FortPC->GetWorldInventory();
-		if (!WorldInventory) continue;
 
-		std::unordered_map<int, UFortItemDefinition*> RifleOptions{
-			{0, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_SR_Ore_T03.WID_Assault_AutoHigh_Athena_SR_Ore_T03")},
-			{ 1, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_VR_Ore_T03.WID_Assault_AutoHigh_Athena_VR_Ore_T03") },
-			{ 2, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03") },
-			{ 3, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_UC_Ore_T03.WID_Assault_Auto_Athena_UC_Ore_T03") },
-			{ 4, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_SR_Ore_T03.WID_Assault_AutoHigh_Athena_SR_Ore_T03") },
-			{ 5, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03") },
-			{ 6, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_VR_Ore_T03.WID_Assault_AutoHigh_Athena_VR_Ore_T03") },
-			{ 7, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_SemiAuto_Athena_VR_Ore_T03.WID_Assault_SemiAuto_Athena_VR_Ore_T03") },
-			{ 8, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_SemiAuto_Athena_UC_Ore_T03.WID_Assault_SemiAuto_Athena_UC_Ore_T03") },
-			{ 9, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_SemiAuto_Athena_SR_Ore_T03.WID_Assault_SemiAuto_Athena_SR_Ore_T03") },
-			{ 10, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_SemiAuto_Athena_R_Ore_T03.WID_Assault_SemiAuto_Athena_R_Ore_T03") },
-			{ 11, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_SemiAuto_Athena_R_Ore_T03.WID_Assault_SemiAuto_Athena_R_Ore_T03") },
-			{ 12, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_UC_Ore_T03.WID_Assault_Auto_Athena_UC_Ore_T03") },
-			{ 13, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03") },
-			{ 14, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_C_Ore_T02.WID_Assault_Auto_Athena_C_Ore_T02") },
-			{ 15, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_UC_Ore_T03.WID_Assault_Heavy_Athena_UC_Ore_T03") },
-			{ 16, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_R_Ore_T03.WID_Assault_Heavy_Athena_R_Ore_T03") },
-			{ 17, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_C_Ore_T03.WID_Assault_Heavy_Athena_C_Ore_T03") },
-			{ 18, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_Suppressed_Athena_VR_Ore_T03.WID_Assault_Suppressed_Athena_VR_Ore_T03") },
-			{ 19, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Assault_Suppressed_Athena_SR_Ore_T03.WID_Assault_Suppressed_Athena_SR_Ore_T03") },
-			{ 20, FindObject<UFortItemDefinition>(L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_VR_Ore_T05.WID_Assault_NeonGlow_VR_Ore_T05") },
-			{ 21, FindObject<UFortItemDefinition>(L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_VR_Ore_T04.WID_Assault_NeonGlow_VR_Ore_T04") },
-			{ 22, FindObject<UFortItemDefinition>(L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_VR_Ore_T03.WID_Assault_NeonGlow_VR_Ore_T03") },
-			{ 23, FindObject<UFortItemDefinition>(L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_VR_Ore_T02.WID_Assault_NeonGlow_VR_Ore_T02") },
-			{ 24, FindObject<UFortItemDefinition>(L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_VR_Ore_T01.WID_Assault_NeonGlow_VR_Ore_T01") },
-			{ 25, FindObject<UFortItemDefinition>(L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_VR_Crystal_T05.WID_Assault_NeonGlow_VR_Crystal_T05") },
-			{ 26, FindObject<UFortItemDefinition>(L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_VR_Crystal_T04.WID_Assault_NeonGlow_VR_Crystal_T04") },
-			{ 27, FindObject<UFortItemDefinition>(L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_SR_Ore_T05.WID_Assault_NeonGlow_SR_Ore_T05") },
-			{ 28, FindObject<UFortItemDefinition>(L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_SR_Ore_T04.WID_Assault_NeonGlow_SR_Ore_T04") },
-			{ 29, FindObject<UFortItemDefinition>(L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_SR_Ore_T03.WID_Assault_NeonGlow_SR_Ore_T03") },
-			{ 30, FindObject<UFortItemDefinition>(L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_SR_Ore_T02.WID_Assault_NeonGlow_SR_Ore_T02") },
-			{ 31, FindObject<UFortItemDefinition>(L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_SR_Ore_T01.WID_Assault_NeonGlow_SR_Ore_T01") },
-			{ 32, FindObject<UFortItemDefinition>(L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_SR_Crystal_T05.WID_Assault_NeonGlow_SR_Crystal_T05") },
-			{ 33, FindObject<UFortItemDefinition>(L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_SR_Crystal_T04.WID_Assault_NeonGlow_SR_Crystal_T04") }
+		if (!WorldInventory)
+			continue;
+
+		std::random_device rd;
+		std::mt19937 gen(rd());
+
+		std::vector<const wchar_t*> RifleOptions = {
+			L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_SR_Ore_T03.WID_Assault_AutoHigh_Athena_SR_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_VR_Ore_T03.WID_Assault_AutoHigh_Athena_VR_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_UC_Ore_T03.WID_Assault_Auto_Athena_UC_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_C_Ore_T02.WID_Assault_Auto_Athena_C_Ore_T02",
+			L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_UC_Ore_T03.WID_Assault_Heavy_Athena_UC_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_R_Ore_T03.WID_Assault_Heavy_Athena_R_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_C_Ore_T03.WID_Assault_Heavy_Athena_C_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Assault_Suppressed_Athena_VR_Ore_T03.WID_Assault_Suppressed_Athena_VR_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Assault_Suppressed_Athena_SR_Ore_T03.WID_Assault_Suppressed_Athena_SR_Ore_T03",
+			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_VR_Ore_T05.WID_Assault_NeonGlow_VR_Ore_T05",
+			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_VR_Ore_T04.WID_Assault_NeonGlow_VR_Ore_T04",
+			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_VR_Ore_T03.WID_Assault_NeonGlow_VR_Ore_T03",
+			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_VR_Ore_T02.WID_Assault_NeonGlow_VR_Ore_T02",
+			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_VR_Ore_T01.WID_Assault_NeonGlow_VR_Ore_T01",
+			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_VR_Crystal_T05.WID_Assault_NeonGlow_VR_Crystal_T05",
+			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_VR_Crystal_T04.WID_Assault_NeonGlow_VR_Crystal_T04",
+			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_SR_Ore_T05.WID_Assault_NeonGlow_SR_Ore_T05",
+			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_SR_Ore_T04.WID_Assault_NeonGlow_SR_Ore_T04",
+			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_SR_Ore_T03.WID_Assault_NeonGlow_SR_Ore_T03",
+			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_SR_Ore_T02.WID_Assault_NeonGlow_SR_Ore_T02",
+			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_SR_Ore_T01.WID_Assault_NeonGlow_SR_Ore_T01",
+			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_SR_Crystal_T05.WID_Assault_NeonGlow_SR_Crystal_T05",
+			L"/Game/Items/Weapons/Ranged/Assault/NeonGlow_Assault/WID_Assault_NeonGlow_SR_Crystal_T04.WID_Assault_NeonGlow_SR_Crystal_T04"
 		};
 
-		std::unordered_map<int, UFortItemDefinition*> ShotgunOptions{
-			{0, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_SR_Ore_T03.WID_Shotgun_Standard_Athena_SR_Ore_T03")},
-			{ 1, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_VR_Ore_T03.WID_Shotgun_Standard_Athena_VR_Ore_T03") },
-			{ 2, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03") },
-			{ 3, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_C_Ore_T03.WID_Shotgun_Standard_Athena_C_Ore_T03") },
-			{ 4, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Shotgun_SlugFire_Athena_VR.WID_Shotgun_SlugFire_Athena_VR") },
-			{ 5, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Shotgun_SlugFire_Athena_SR.WID_Shotgun_SlugFire_Athena_SR") },
-			{ 6, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_VR_Ore_T03.WID_Shotgun_SemiAuto_Athena_VR_Ore_T03") },
-			{ 7, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_UC_Ore_T03.WID_Shotgun_SemiAuto_Athena_UC_Ore_T03") },
-			{ 8, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_R_Ore_T03.WID_Shotgun_SemiAuto_Athena_R_Ore_T03") },
-			{ 9, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Shotgun_BreakBarrel_Athena_VR_Ore_T03.WID_Shotgun_BreakBarrel_Athena_VR_Ore_T03") },
-			{ 10, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Shotgun_BreakBarrel_Athena_SR_Ore_T03.WID_Shotgun_BreakBarrel_Athena_SR_Ore_T03") }
+		std::vector<const wchar_t*> ShotgunOptions = {
+			L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_SR_Ore_T03.WID_Shotgun_Standard_Athena_SR_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_VR_Ore_T03.WID_Shotgun_Standard_Athena_VR_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_C_Ore_T03.WID_Shotgun_Standard_Athena_C_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Shotgun_SlugFire_Athena_VR.WID_Shotgun_SlugFire_Athena_VR",
+			L"/Game/Athena/Items/Weapons/WID_Shotgun_SlugFire_Athena_SR.WID_Shotgun_SlugFire_Athena_SR",
+			L"/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_VR_Ore_T03.WID_Shotgun_SemiAuto_Athena_VR_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_UC_Ore_T03.WID_Shotgun_SemiAuto_Athena_UC_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_R_Ore_T03.WID_Shotgun_SemiAuto_Athena_R_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Shotgun_BreakBarrel_Athena_VR_Ore_T03.WID_Shotgun_BreakBarrel_Athena_VR_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Shotgun_BreakBarrel_Athena_SR_Ore_T03.WID_Shotgun_BreakBarrel_Athena_SR_Ore_T03"
 		};
 
-		std::unordered_map<int, UFortItemDefinition*> SMGOptions{
-			{0, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_SR_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_SR_Ore_T03")},
-			{ 1, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_VR_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_VR_Ore_T03") },
-			{ 2, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_R_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_R_Ore_T03") },
-			{ 3, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/ChillBronco/Athena_ChillBronco.Athena_ChillBronco") },
-			{ 4, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/PurpleStuff/Athena_PurpleStuff.Athena_PurpleStuff") },
-			{ 5, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/SuperMedkit/Athena_SuperMedkit.Athena_SuperMedkit") },
-			{ 6, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Flopper/WID_Athena_Flopper.WID_Athena_Flopper") },
-			{ 7, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Flopper/Effective/WID_Athena_Flopper_Effective.WID_Athena_Flopper_Effective") },
-			{ 8, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavy_Athena_UC_Ore_T03.WID_Pistol_AutoHeavy_Athena_UC_Ore_T03") },
-			{ 9, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavy_Athena_C_Ore_T02.WID_Pistol_AutoHeavy_Athena_C_Ore_T02") },
-			{ 10, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavySuppressed_Athena_UC_Ore_T03.WID_Pistol_AutoHeavySuppressed_Athena_UC_Ore_T03") },
-			{ 11, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavySuppressed_Athena_R_Ore_T03.WID_Pistol_AutoHeavySuppressed_Athena_R_Ore_T03") },
-			{ 12, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavySuppressed_Athena_C_Ore_T02.WID_Pistol_AutoHeavySuppressed_Athena_C_Ore_T02") },
-			{ 13, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_UC_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_UC_Ore_T03") },
-			{ 14, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_C_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_C_Ore_T03") }
+		std::vector<const wchar_t*> SMGOptions = {
+			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_SR_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_SR_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_VR_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_VR_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_R_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_R_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavy_Athena_UC_Ore_T03.WID_Pistol_AutoHeavy_Athena_UC_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavy_Athena_C_Ore_T02.WID_Pistol_AutoHeavy_Athena_C_Ore_T02",
+			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavySuppressed_Athena_UC_Ore_T03.WID_Pistol_AutoHeavySuppressed_Athena_UC_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavySuppressed_Athena_R_Ore_T03.WID_Pistol_AutoHeavySuppressed_Athena_R_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavySuppressed_Athena_C_Ore_T02.WID_Pistol_AutoHeavySuppressed_Athena_C_Ore_T02",
+			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_UC_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_UC_Ore_T03",
+			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_C_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_C_Ore_T03"
 		};
 
-		std::unordered_map<int, UFortItemDefinition*> ShieldOptions{
-			{0, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Shields/Athena_Shields.Athena_Shields")},
-			{1, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/ShieldSmall/Athena_ShieldSmall.Athena_ShieldSmall")},
-			{2, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/SuperMedkit/Athena_SuperMedkit.Athena_SuperMedkit")},
-			{3, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Medkit/Athena_Medkit.Athena_Medkit")},
-			{4, FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/Bandage/Athena_Bandage.Athena_Bandage")},
+		std::vector<const wchar_t*> ShieldOptions = {
+			L"/Game/Athena/Items/Consumables/Shields/Athena_Shields.Athena_Shields",
+			L"/Game/Athena/Items/Consumables/ShieldSmall/Athena_ShieldSmall.Athena_ShieldSmall",
+			L"/Game/Athena/Items/Consumables/SuperMedkit/Athena_SuperMedkit.Athena_SuperMedkit",
+			L"/Game/Athena/Items/Consumables/Medkit/Athena_Medkit.Athena_Medkit",
+			L"/Game/Athena/Items/Consumables/Bandage/Athena_Bandage.Athena_Bandage"
 		};
 
-		int RifleIndex = rand() % RifleOptions.size();
-		int ShotgunIndex = rand() % ShotgunOptions.size();
-		int SMGIndex = rand() % SMGOptions.size();
-		int ShieldIndex = rand() % ShieldOptions.size();
+		std::uniform_int_distribution<> RifleDist(0, RifleOptions.size() - 1);
+		std::uniform_int_distribution<> ShotgunDist(0, ShotgunOptions.size() - 1);
+		std::uniform_int_distribution<> SMGDist(0, SMGOptions.size() - 1);
+		std::uniform_int_distribution<> ShieldDist(0, ShieldOptions.size() - 1);
 
-		UFortItemDefinition* Rifle = RifleOptions[RifleIndex];
-		UFortItemDefinition* Shotgun = ShotgunOptions[ShotgunIndex];
-		UFortItemDefinition* SMG = SMGOptions[SMGIndex];
-		UFortItemDefinition* Shield = ShieldOptions[ShieldIndex];
+		UFortItemDefinition* Rifle = FindObject<UFortItemDefinition>(RifleOptions[RifleDist(gen)]);
+		UFortItemDefinition* Shotgun = FindObject<UFortItemDefinition>(ShotgunOptions[ShotgunDist(gen)]);
+		UFortItemDefinition* SMG = FindObject<UFortItemDefinition>(SMGOptions[SMGDist(gen)]);
+		UFortItemDefinition* Shield = FindObject<UFortItemDefinition>(ShieldOptions[ShieldDist(gen)]);
 
-		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/WoodItemData.WoodItemData"), nullptr, 500);
-		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/StoneItemData.StoneItemData"), nullptr, 500);
-		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/MetalItemData.MetalItemData"), nullptr, 500);
-		WorldInventory->AddItem(Rifle, nullptr, 1);
-		WorldInventory->AddItem(Shield, nullptr, 3);
+		static auto WoodItemData = FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/WoodItemData.WoodItemData");
+		static auto StoneItemData = FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/StoneItemData.StoneItemData");
+		static auto MetalItemData = FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/MetalItemData.MetalItemData");
+		static auto Shells = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataShells.AthenaAmmoDataShells");
+		static auto Medium = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsMedium.AthenaAmmoDataBulletsMedium");
+		static auto Light = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsLight.AthenaAmmoDataBulletsLight");
+		static auto Heavy = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsHeavy.AthenaAmmoDataBulletsHeavy");
+
+		WorldInventory->AddItem(WoodItemData, nullptr, 500);
+		WorldInventory->AddItem(StoneItemData, nullptr, 500);
+		WorldInventory->AddItem(MetalItemData, nullptr, 500);
 		WorldInventory->AddItem(Shotgun, nullptr, 1);
-		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Consumables/ShieldSmall/Athena_ShieldSmall.Athena_ShieldSmall"), nullptr, 3);
-		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataShells.AthenaAmmoDataShells"), nullptr, 50);
-		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsMedium.AthenaAmmoDataBulletsMedium"), nullptr, 250);
-		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsLight.AthenaAmmoDataBulletsLight"), nullptr, 250);
-		WorldInventory->AddItem(FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsHeavy.AthenaAmmoDataBulletsHeavy"), nullptr, 30);
+		WorldInventory->AddItem(SMG, nullptr, 1);
+		WorldInventory->AddItem(Rifle, nullptr, 1);
+		WorldInventory->AddItem(Shield, nullptr, 6);
+		WorldInventory->AddItem(Shells, nullptr, 999);
+		WorldInventory->AddItem(Medium, nullptr, 999);
+		WorldInventory->AddItem(Light, nullptr, 999);
+		WorldInventory->AddItem(Heavy, nullptr, 999);
 
 		WorldInventory->Update();
 	}
