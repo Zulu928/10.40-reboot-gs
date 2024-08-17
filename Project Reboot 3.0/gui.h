@@ -543,7 +543,7 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 	{
 		auto CurrentAircraft = Aircrafts.at(i);
 
-		std::this_thread::sleep_for(std::chrono::seconds(150) / MaxTickRate);
+		std::this_thread::sleep_for(std::chrono::seconds(180) / MaxTickRate);
 
 		if (CurrentAircraft)
 		{
@@ -720,7 +720,7 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 
 		WorldInventory->Update();
 	}
-
+	
 	auto GS = EAthenaGamePhase::SafeZones;
 	GameState->GetGamePhase() = GS;
 	GameState->OnRep_GamePhase();

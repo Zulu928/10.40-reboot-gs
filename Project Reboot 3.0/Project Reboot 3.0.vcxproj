@@ -270,6 +270,7 @@
     <ClCompile Include="UnrealNames.cpp" />
     <ClCompile Include="UObjectGlobals.cpp" />
     <ClCompile Include="World.cpp" />
+    <ClCompile Include="XP.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AbilitySystemComponent.h" />
@@ -502,6 +503,7 @@
     <ClInclude Include="WeakObjectPtr.h" />
     <ClInclude Include="WeakObjectPtrTemplates.h" />
     <ClInclude Include="World.h" />
+    <ClInclude Include="XP.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DelegateSignatureImpl.inl" />

@@ -305,6 +305,9 @@
     <ClCompile Include="FortServerBotManagerAthena.cpp">
       <Filter>FortniteGame\Source\FortniteGame\Private\AI</Filter>
     </ClCompile>
+    <ClCompile Include="XP.cpp">
+      <Filter>Reboot\Private</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="log.h" />
@@ -991,6 +994,9 @@
       <Filter>FortniteGame\Plugins\GameFeatures\LTM\HighTower_Cobalt\Source\HighTowerCobaltRuntime\Public</Filter>
     </ClInclude>
     <ClInclude Include="api.h">
+      <Filter>Reboot\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="XP.h">
       <Filter>Reboot\Public</Filter>
     </ClInclude>
   </ItemGroup>

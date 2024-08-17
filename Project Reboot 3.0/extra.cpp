@@ -152,6 +152,7 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
 
     if (GameModeAthena->Get<int>(SafeZonePhaseOffset) == 2 || GameModeAthena->Get<int>(SafeZonePhaseOffset) == 3)
     {
+
         if (SafeZoneIndicator)
         {
             SafeZoneIndicator->SkipShrinkSafeZone();

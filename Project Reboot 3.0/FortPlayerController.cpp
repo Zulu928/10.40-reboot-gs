@@ -1493,13 +1493,16 @@ void AFortPlayerController::ClientOnPawnDiedHook(AFortPlayerController* PlayerCo
 	{
 		if (Globals::bSpawnCrownOnKill && Globals::SpawnCrown > 0)
 		{
-			if (Globals::AlivePlayers == 2)
+			if (Globals::AlivePlayers == 1) 
 			{
 				static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
 				auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
 				auto& ClientConnections = WorldNetDriver->GetClientConnections();
 
-				for (int z = 0; z < ClientConnections.Num(); z++)
+				AFortPlayerStateAthena* LastPlayerState = nullptr;
+				AFortPlayerController* LastPlayerController = nullptr;
+
+				for (int z = 0; z < ClientConnections.Num(); ++z)
 				{
 					auto ClientConnection = ClientConnections.at(z);
 					auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController());
@@ -1507,32 +1510,36 @@ void AFortPlayerController::ClientOnPawnDiedHook(AFortPlayerController* PlayerCo
 					if (!FortPC)
 						continue;
 
-					auto AllPlayerStates = UGameplayStatics::GetAllActorsOfClass(GetWorld(), AFortPlayerStateAthena::StaticClass());
+					auto PlayerState = Cast<AFortPlayerStateAthena>(FortPC->GetPlayerState());
 
-					for (int i = 0; i < AllPlayerStates.Num(); ++i)
+					if (PlayerState)
 					{
-						auto CurrentPlayerState = (AFortGameStateAthena*)AllPlayerStates.at(i);
+						LastPlayerState = PlayerState;
+						LastPlayerController = FortPC;
+						break;
+					}
+				}
 
-						auto WorldInventory = FortPC->GetWorldInventory();
+				if (LastPlayerController)
+				{
+					auto WorldInventory = LastPlayerController->GetWorldInventory();
 
-						if (!WorldInventory)
-							continue;
-
+					if (WorldInventory)
+					{
 						static auto CrownSpawn = FindObject<UFortItemDefinition>(L"/VictoryCrownsGameplay/Items/AGID_VictoryCrown.AGID_VictoryCrown");
 
-						GameState->GetActorLocation();
-						KillerPlayerState->GetPlayerName().ToString();
 						WorldInventory->AddItem(CrownSpawn, nullptr, Globals::SpawnCrown);
+						KillerPlayerState->GetPlayerName().ToString();
 						WorldInventory->Update();
 
-						LOG_INFO(LogDev, "Crown Given")
-
-							break;
+						LOG_INFO(LogDev, "Crown Given to last player: %s", *LastPlayerState->GetPlayerName().ToString());
 					}
 				}
 			}
 		}
 	}
+
+
 
 	bool bIsRespawningAllowed = GameState->IsRespawningAllowed(DeadPlayerState);
 
