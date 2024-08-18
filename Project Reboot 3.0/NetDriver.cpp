@@ -78,10 +78,10 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 				// LOG_INFO(LogDev, "ReplicationDriver is nul!!?1//33/221/4/124/123"); // 3.3 MOMENT
 			}
 		}
-		if (Globals::bStartedBus == true)
+		if (Globals::bStartedBus == true && AmountOfPlayersWhenBusStart >= 2)
 		{
 			static bool hasGivenVBucks = false;
-			if (Globals::AlivePlayers == 1 && hasGivenVBucks == false && AmountOfPlayersWhenBusStart != 1)
+			if (Globals::AlivePlayers == 1 && hasGivenVBucks == false)
 			{
 				for (int z = 0; z < ClientConnections.Num(); ++z)
 				{

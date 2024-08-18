@@ -1315,7 +1315,16 @@ void AFortPlayerController::ClientOnPawnDiedHook(AFortPlayerController* PlayerCo
 		if (Globals::EnableRewards == true)
 		{
 			auto killerName = KillerPlayerState->GetPlayerName().ToString();
-			Requests::GiveVBucks(killerName, 50);
+			auto killedName = DeadPlayerState->GetPlayerName().ToString();
+
+			if (killerName != killedName)
+			{
+				if (DeadPlayerState->IsBot() == false)
+				{
+					Requests::GiveVBucks(killerName, 50);
+					Requests::GiveXP(killerName, 20);
+				}
+			}
 		}
 
 		FGameplayTagContainer CopyTags;
