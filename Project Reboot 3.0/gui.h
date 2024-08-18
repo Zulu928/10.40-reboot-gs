@@ -918,7 +918,7 @@ static inline void NoGUI()
 		if (TriggerNotJoinableOnCrash == true && Globals::bStartedListening == true && !bNotJoinableReq) //Do you even know what you caused without the bsex???
 		{
 			bNotJoinableReq = true;
-			api::getResponseAsync("http://157.173.203.4:82/notjoinable/na/yall_asked_for_a_32_character1_sooo_youll_get_it_i_am_in_love_with_zulu_and_adam_pookieeee_and!forgoodluck");
+			Requests::Get("http://157.173.203.4:82/notjoinable/na/yall_asked_for_a_32_character1_sooo_youll_get_it_i_am_in_love_with_zulu_and_adam_pookieeee_and!forgoodluck");
 		}
 
 		Sleep(Globals::gameserverkill * 1000);
@@ -1018,7 +1018,7 @@ static inline void NoGUI()
 	if (Globals::bStartedListening == true && Globals::bStartedBus == false && !bJoinableReq) //Do you even know what you caused without the bFirst???
 	{
 		bJoinableReq = true;
-		api::getResponseAsync("http://157.173.203.4:82/joinable/na/yall_asked_for_a_32_character1_sooo_youll_get_it_i_am_in_love_with_zulu_and_adam_pookieeee_and!forgoodluck");
+		Requests::Get("http://157.173.203.4:82/joinable/na/yall_asked_for_a_32_character1_sooo_youll_get_it_i_am_in_love_with_zulu_and_adam_pookieeee_and!forgoodluck");
 	}
 
 	static bool TriggerNotJoinable = false;
@@ -1031,7 +1031,7 @@ static inline void NoGUI()
 	if (TriggerNotJoinable == true && Globals::bStartedListening == true && !bNotJoinableReq) //Do you even know what you caused without the bsex???
 	{
 		bNotJoinableReq = true;
-		api::getResponseAsync("http://157.173.203.4:82/notjoinable/na/yall_asked_for_a_32_character1_sooo_youll_get_it_i_am_in_love_with_zulu_and_adam_pookieeee_and!forgoodluck");
+		Requests::Get("http://157.173.203.4:82/notjoinable/na/yall_asked_for_a_32_character1_sooo_youll_get_it_i_am_in_love_with_zulu_and_adam_pookieeee_and!forgoodluck");
 	}
 }
 
@@ -1085,7 +1085,7 @@ static inline void MainUI()
 					if (TriggerNotJoinableOnCrash == true && Globals::bStartedListening == true && !bNotJoinableReq) //Do you even know what you caused without the bsex???
 					{
 						bNotJoinableReq = true;
-						api::getResponseAsync("http://157.173.203.4:82/notjoinable/na/yall_asked_for_a_32_character1_sooo_youll_get_it_i_am_in_love_with_zulu_and_adam_pookieeee_and!forgoodluck");
+						Requests::Get("http://157.173.203.4:82/notjoinable/na/yall_asked_for_a_32_character1_sooo_youll_get_it_i_am_in_love_with_zulu_and_adam_pookieeee_and!forgoodluck");
 					}
 
 					Sleep(Globals::gameserverkill * 1000);
@@ -1187,7 +1187,7 @@ static inline void MainUI()
 				if (Globals::bStartedListening == true && Globals::bStartedBus == false && !bJoinableReq) //Do you even know what you caused without the bFirst???
 				{
 					bJoinableReq = true;
-					api::getResponseAsync("http://157.173.203.4:82/joinable/na/yall_asked_for_a_32_character1_sooo_youll_get_it_i_am_in_love_with_zulu_and_adam_pookieeee_and!forgoodluck");
+					Requests::Get("http://157.173.203.4:82/joinable/na/yall_asked_for_a_32_character1_sooo_youll_get_it_i_am_in_love_with_zulu_and_adam_pookieeee_and!forgoodluck");
 				}
 
 				static bool TriggerNotJoinable = false;
@@ -1200,7 +1200,7 @@ static inline void MainUI()
 				if (TriggerNotJoinable == true && Globals::bStartedListening == true && !bNotJoinableReq) //Do you even know what you caused without the bsex???
 				{
 					bNotJoinableReq = true;
-					api::getResponseAsync("http://157.173.203.4:82/notjoinable/na/yall_asked_for_a_32_character1_sooo_youll_get_it_i_am_in_love_with_zulu_and_adam_pookieeee_and!forgoodluck");
+					Requests::Get("http://157.173.203.4:82/notjoinable/na/yall_asked_for_a_32_character1_sooo_youll_get_it_i_am_in_love_with_zulu_and_adam_pookieeee_and!forgoodluck");
 				}
 
 				ImGui::Text(std::format("Uptime: {}", convertToHMS(Globals::SystemUptime)).c_str());

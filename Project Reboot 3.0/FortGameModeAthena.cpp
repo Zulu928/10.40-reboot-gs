@@ -1223,6 +1223,9 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 	if (NewPlayerActor == GetLocalPlayerController()) // we dont really need this but it also functions as a nullptr check usually
 		return;
 
+	int count = 0;
+	count++;
+
 	auto GameState = GameMode->GetGameStateAthena();
 
 	static auto CurrentPlaylistDataOffset = GameState->GetOffset("CurrentPlaylistData", false);
@@ -1230,33 +1233,73 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 
 	LOG_INFO(LogPlayer, "HandleStartingNewPlayer!");
 
-	if (Globals::bAutoRestart)
+	auto NewPlayer = (AFortPlayerControllerAthena*)NewPlayerActor;
+
+	auto PlayerStateAthena = NewPlayer->GetPlayerStateAthena();
+	auto playerName = PlayerStateAthena->GetPlayerName().ToString();
+
+	if (!PlayerStateAthena)
+		return Athena_HandleStartingNewPlayerOriginal(GameMode, NewPlayerActor);
+
+	// Teams :
+
+	std::set<std::tuple<int, std::string, std::string>> teamsSet;
+	static auto SquadIdOffset = PlayerStateAthena->GetOffset("SquadId", false);
+	static bool SquadIdBool = false;
+	static bool IsDuos = false;
+	static std::string foundTeamStuff = ".";
+	static int teamIndex = 0;
+	static std::string search = Requests::GetTeamMember(playerName);
+
+	if (SquadIdOffset != -1) 
+		SquadIdBool = true;
+
+	if (PlaylistName == "/Game/Athena/Playlists/Playlist_DefaultDuo.Playlist_DefaultDuo" || PlaylistName == "/Game/Athena/Playlists/Showdown/Playlist_ShowdownAlt_Duos.Playlist_ShowdownAlt_Duos")
 	{
-		static int LastNum123 = 15;
+		IsDuos = true;
+	}
 
-		if (GetWorld()->GetNetDriver()->GetClientConnections().Num() >= NumRequiredPlayersToStart && LastNum123 != Globals::AmountOfListens)
+	if (IsDuos == true)
+	{
+		for (const auto& entry : teamsSet)
 		{
-			LastNum123 = Globals::AmountOfListens;
-
-			float Duration = AutoBusStartSeconds;
-			float EarlyDuration = Duration;
-
-			float TimeSeconds = UGameplayStatics::GetTimeSeconds(GetWorld());
-
-			static auto WarmupCountdownEndTimeOffset = GameState->GetOffset("WarmupCountdownEndTime");
-			static auto WarmupCountdownStartTimeOffset = GameState->GetOffset("WarmupCountdownStartTime");
-			static auto WarmupCountdownDurationOffset = GameMode->GetOffset("WarmupCountdownDuration");
-			static auto WarmupEarlyCountdownDurationOffset = GameMode->GetOffset("WarmupEarlyCountdownDuration");
-
-			GameState->Get<float>(WarmupCountdownEndTimeOffset) = TimeSeconds + Duration;
-			GameMode->Get<float>(WarmupCountdownDurationOffset) = Duration;
-
-			GameState->Get<float>(WarmupCountdownStartTimeOffset) = TimeSeconds;
-			GameMode->Get<float>(WarmupEarlyCountdownDurationOffset) = EarlyDuration;
-
-			LOG_INFO(LogDev, "Auto starting bus in {}.", AutoBusStartSeconds);
+			if (std::get<1>(entry) == search)
+			{
+				foundTeamStuff = "TeamExists";
+				teamIndex = std::get<0>(entry);
+			}
+			else if (std::get<2>(entry) == search)
+			{
+				foundTeamStuff = "TeamExists";
+				teamIndex = std::get<0>(entry);
+			}
+			else
+			{
+				foundTeamStuff = "TeamDoesntExist";
+			}
 		}
 	}
+	if (foundTeamStuff == ".")
+	{
+		std::cout << "What in the Skibidi Rizz is this!" << std::endl; // wiks : brain rot has consumed me b4 gta 6 :skull:
+	}
+	if (foundTeamStuff == "TeamExists")
+	{
+		PlayerStateAthena->GetTeamIndex() = teamIndex;
+		PlayerStateAthena->GetSquadId() = PlayerStateAthena->GetTeamIndex();
+		std::cout << "Player Team Index Changed to \"" << PlayerStateAthena->GetTeamIndex() << "\"" << std::endl;
+		foundTeamStuff = ".";
+	}
+	else if (foundTeamStuff == "TeamDoesntExist")
+	{
+		static std::string teamMemberName = Requests::GetTeamMember(playerName);
+		PlayerStateAthena->GetTeamIndex() = count;
+		PlayerStateAthena->GetSquadId() = PlayerStateAthena->GetTeamIndex();
+		teamsSet.insert(std::make_tuple(PlayerStateAthena->GetTeamIndex(), playerName, teamMemberName));
+		std::cout << "Team Created!" << std::endl;
+		foundTeamStuff = ".";
+	}
+	
 
 	static auto XPComponentOffset = NewPlayerActor->GetOffset("XPComponent", false);
 
@@ -1360,27 +1403,6 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 				{
 					MapInfo->SpawnLlamas();
 				}
-
-				if (false)
-				{
-					float AmmoBoxMinSpawnPercent = UDataTableFunctionLibrary::EvaluateCurveTableRow(
-						MapInfo->GetAmmoBoxMinSpawnPercent()->GetCurve().CurveTable, MapInfo->GetAmmoBoxMinSpawnPercent()->GetCurve().RowName, 0
-					);
-
-					float AmmoBoxMaxSpawnPercent = UDataTableFunctionLibrary::EvaluateCurveTableRow(
-						MapInfo->GetAmmoBoxMaxSpawnPercent()->GetCurve().CurveTable, MapInfo->GetAmmoBoxMaxSpawnPercent()->GetCurve().RowName, 0
-					);
-
-					LOG_INFO(LogDev, "AmmoBoxMinSpawnPercent: {} AmmoBoxMaxSpawnPercent: {}", AmmoBoxMinSpawnPercent, AmmoBoxMaxSpawnPercent);
-
-					std::random_device AmmoBoxRd;
-					std::mt19937 AmmoBoxGen(AmmoBoxRd());
-					std::uniform_int_distribution<> AmmoBoxDis(AmmoBoxMinSpawnPercent * 100, AmmoBoxMaxSpawnPercent * 100 + 1); // + 1 ?
-
-					float AmmoBoxSpawnPercent = AmmoBoxDis(AmmoBoxGen);
-
-					HandleSpawnRateForActorClass(MapInfo->GetAmmoBoxClass(), AmmoBoxSpawnPercent);
-				}
 			}
 
 #if 1
@@ -1389,7 +1411,7 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 			auto SpawnIsland_FloorLoot = FindObject<UClass>(L"/Game/Athena/Environments/Blueprints/Tiered_Athena_FloorLoot_Warmup.Tiered_Athena_FloorLoot_Warmup_C");
 			auto BRIsland_FloorLoot = FindObject<UClass>(L"/Game/Athena/Environments/Blueprints/Tiered_Athena_FloorLoot_01.Tiered_Athena_FloorLoot_01_C");
 
-			TArray<AActor*> SpawnIsland_FloorLoot_Actors = UGameplayStatics::GetAllActorsOfClass(GetWorld(), SpawnIsland_FloorLoot);
+			// TArray<AActor*> SpawnIsland_FloorLoot_Actors = UGameplayStatics::GetAllActorsOfClass(GetWorld(), SpawnIsland_FloorLoot);
 			TArray<AActor*> BRIsland_FloorLoot_Actors = UGameplayStatics::GetAllActorsOfClass(GetWorld(), BRIsland_FloorLoot);
 
 			auto SpawnIslandTierGroup = UKismetStringLibrary::Conv_StringToName(L"Loot_AthenaFloorLoot_Warmup");
@@ -1402,7 +1424,7 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 			bool bTest = false;
 
 			
-			for (int i = 0; i < SpawnIsland_FloorLoot_Actors.Num(); i++)
+/*			for (int i = 0; i < SpawnIsland_FloorLoot_Actors.Num(); i++)
 			{
 				ABuildingContainer* CurrentActor = (ABuildingContainer*)SpawnIsland_FloorLoot_Actors.at(i);
 				auto Location = CurrentActor->GetActorLocation() + CurrentActor->GetActorForwardVector() * CurrentActor->GetLootSpawnLocation_Athena().X + CurrentActor->GetActorRightVector() * CurrentActor->GetLootSpawnLocation_Athena().Y + CurrentActor->GetActorUpVector() * CurrentActor->GetLootSpawnLocation_Athena().Z;
@@ -1424,7 +1446,7 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 
 				if (!bTest)
 					CurrentActor->K2_DestroyActor();
-			}
+			} */
 			
 
 			bool bPrintIsland = bDebugPrintFloorLoot;
@@ -1459,7 +1481,7 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 					CurrentActor->K2_DestroyActor();
 			}
 
-			SpawnIsland_FloorLoot_Actors.Free();
+			// SpawnIsland_FloorLoot_Actors.Free();
 			BRIsland_FloorLoot_Actors.Free();
 
 			LOG_INFO(LogDev, "Spawned loot!");
@@ -1478,13 +1500,6 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 			SpawnVehicles();
 		}
 	}
-
-	auto NewPlayer = (AFortPlayerControllerAthena*)NewPlayerActor;
-
-	auto PlayerStateAthena = NewPlayer->GetPlayerStateAthena();
-
-	if (!PlayerStateAthena)
-		return Athena_HandleStartingNewPlayerOriginal(GameMode, NewPlayerActor);
 
 	static auto CharacterPartsOffset = PlayerStateAthena->GetOffset("CharacterParts", false);
 	static auto CustomCharacterPartsStruct = FindObject<UStruct>(L"/Script/FortniteGame.CustomCharacterParts");
@@ -1514,11 +1529,6 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 
 	if (auto MatchReportPtr = NewPlayer->GetMatchReport())
 		*MatchReportPtr = (UAthenaPlayerMatchReport*)UGameplayStatics::SpawnObject(UAthenaPlayerMatchReport::StaticClass(), NewPlayer); // idk when to do this
-
-	static auto SquadIdOffset = PlayerStateAthena->GetOffset("SquadId", false);
-
-	if (SquadIdOffset != -1)
-		PlayerStateAthena->GetSquadId() = PlayerStateAthena->GetTeamIndex() - NumToSubtractFromSquadId; // wrong place to do this
 
 	TWeakObjectPtr<AFortPlayerStateAthena> WeakPlayerState{};
 	WeakPlayerState.ObjectIndex = PlayerStateAthena->InternalIndex;

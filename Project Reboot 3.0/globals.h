@@ -64,6 +64,9 @@ namespace Globals
 	extern inline bool bInfiniteAmmo = false;
 	extern inline bool bShouldUseReplicationGraph = false;
 	extern inline std::string Gamemode = "";
+	extern inline std::string BackendIP = "http://127.0.0.1:1738";
+	extern inline std::string BackendAPIKey = "InfernoSex1!aaaaaaa";
+	extern inline bool EnableRewards = true;
 
 	extern inline bool bHitReadyToStartMatch = false;
 	extern inline bool bInitializedPlaylist = false;

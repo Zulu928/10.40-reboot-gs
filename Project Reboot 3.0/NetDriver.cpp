@@ -31,6 +31,11 @@ void UNetDriver::RemoveNetworkActor(AActor* Actor)
 
 void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 {
+	static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
+	auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
+	auto& ClientConnections = WorldNetDriver->GetClientConnections();
+
+
 	if (bShouldDestroyAllPlayerBuilds) // i hate this
 	{
 		auto AllBuildingSMActors = UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABuildingSMActor::StaticClass());
@@ -71,6 +76,27 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 			else
 			{
 				// LOG_INFO(LogDev, "ReplicationDriver is nul!!?1//33/221/4/124/123"); // 3.3 MOMENT
+			}
+		}
+		if (Globals::bStartedBus == true)
+		{
+			static bool hasGivenVBucks = false;
+			if (Globals::AlivePlayers == 1 && hasGivenVBucks == false && AmountOfPlayersWhenBusStart != 1)
+			{
+				for (int z = 0; z < ClientConnections.Num(); ++z)
+				{
+					auto ClientConnection = ClientConnections.at(z);
+					auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController());
+
+					if (!FortPC)
+						continue;
+
+					auto PlayerState = Cast<AFortPlayerStateAthena>(FortPC->GetPlayerState());
+					auto WinnerName = PlayerState->GetPlayerName().ToString();
+					Requests::GiveVBucks(WinnerName, 200);
+
+					hasGivenVBucks = true;
+				}
 			}
 		}
 	}

@@ -429,6 +429,8 @@ void AFortPlayerController::ServerAttemptInteractHook(UObject* Context, FFrame* 
 	AFortPlayerControllerAthena* PlayerController = bIsUsingComponent ? Cast<AFortPlayerControllerAthena>(((UActorComponent*)Context)->GetOwner()) :
 		Cast<AFortPlayerControllerAthena>(Context);
 
+	auto ControllerPlayerName = PlayerController->GetPlayerStateAthena()->GetPlayerName().ToString();
+
 	if (!PlayerController)
 		return;
 
@@ -437,12 +439,8 @@ void AFortPlayerController::ServerAttemptInteractHook(UObject* Context, FFrame* 
 	static auto ReceivingActorOffset = FindOffsetStruct(StructName, "ReceivingActor");
 	auto ReceivingActor = *(AActor**)(__int64(Params) + ReceivingActorOffset);
 
-	// LOG_INFO(LogInteraction, "ReceivingActor: {}", __int64(ReceivingActor));
-
 	if (!ReceivingActor)
 		return;
-
-	// LOG_INFO(LogInteraction, "ReceivingActor Name: {}", ReceivingActor->GetFullName());
 
 	FVector LocationToSpawnLoot = ReceivingActor->GetActorLocation() + ReceivingActor->GetActorRightVector() * 70.f + FVector{ 0, 0, 50 };
 
@@ -462,7 +460,11 @@ void AFortPlayerController::ServerAttemptInteractHook(UObject* Context, FFrame* 
 
 		// LOG_INFO(LogInteraction, "bAlreadySearchedFieldMask: {}", bAlreadySearchedFieldMask);
 
-		BuildingContainer->SpawnLoot(PlayerController->GetMyFortPawn());
+		if (BuildingContainer->IsAlreadySearched() == false && BuildingContainer->IsDestroyed() == false)
+		{
+			BuildingContainer->SpawnLoot(PlayerController->GetMyFortPawn());
+			Requests::GiveXP(ControllerPlayerName, 10);
+		}
 
 		BuildingContainer->SetBitfieldValue(bAlreadySearchedOffset, bAlreadySearchedFieldMask, true);
 		(*(int*)(__int64(SearchBounceData) + SearchAnimationCountOffset))++;
@@ -471,10 +473,6 @@ void AFortPlayerController::ServerAttemptInteractHook(UObject* Context, FFrame* 
 		BuildingContainer->ForceNetUpdate(); // ?
 
 		static auto OnRep_bAlreadySearchedFn = FindObject<UFunction>(L"/Script/FortniteGame.BuildingContainer.OnRep_bAlreadySearched");
-		// BuildingContainer->ProcessEvent(OnRep_bAlreadySearchedFn);
-
-		// if (BuildingContainer->ShouldDestroyOnSearch())
-			// BuildingContainer->K2_DestroyActor();
 	}
 	else if (ReceivingActor->IsA(FortAthenaVehicleClass))
 	{
@@ -1291,6 +1289,9 @@ void AFortPlayerController::ClientOnPawnDiedHook(AFortPlayerController* PlayerCo
 	auto DeadPlayerState = Cast<AFortPlayerStateAthena>(PlayerController->GetPlayerState());
 	auto KillerPawn = Cast<AFortPlayerPawn>(*(AFortPawn**)(__int64(DeathReport) + MemberOffsets::DeathReport::KillerPawn));
 	auto KillerPlayerState = Cast<AFortPlayerStateAthena>(*(AFortPlayerState**)(__int64(DeathReport) + MemberOffsets::DeathReport::KillerPlayerState));
+	static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
+	auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
+	auto& ClientConnections = WorldNetDriver->GetClientConnections();
 
 	if (!DeadPawn || !GameState || !DeadPlayerState)
 		return ClientOnPawnDiedOriginal(PlayerController, DeathReport);
@@ -1306,13 +1307,16 @@ void AFortPlayerController::ClientOnPawnDiedHook(AFortPlayerController* PlayerCo
 		auto DeathInfo = DeadPlayerState->GetDeathInfo(); // Alloc<void>(DeathInfoStructSize);
 		DeadPlayerState->ClearDeathInfo();
 
-		auto/*&*/ Tags = MemberOffsets::FortPlayerPawn::CorrectTags == 0 ? FGameplayTagContainer()
+		auto Tags = MemberOffsets::FortPlayerPawn::CorrectTags == 0 ? FGameplayTagContainer()
 			: DeadPawn->Get<FGameplayTagContainer>(MemberOffsets::FortPlayerPawn::CorrectTags);
-		// *(FGameplayTagContainer*)(__int64(DeathReport) + MemberOffsets::DeathReport::Tags);
 
-		// LOG_INFO(LogDev, "Tags: {}", Tags.ToStringSimple(true));
+		DeathCause = ToDeathCause(Tags, false, DeadPawn);
 
-		DeathCause = ToDeathCause(Tags, false, DeadPawn); // DeadPawn->IsDBNO() ??
+		if (Globals::EnableRewards == true)
+		{
+			auto killerName = KillerPlayerState->GetPlayerName().ToString();
+			Requests::GiveVBucks(killerName, 50);
+		}
 
 		FGameplayTagContainer CopyTags;
 
@@ -1485,9 +1489,6 @@ void AFortPlayerController::ClientOnPawnDiedHook(AFortPlayerController* PlayerCo
 		}
 	}
 	*/
-	static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
-	auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
-	auto& ClientConnections = WorldNetDriver->GetClientConnections();
 
 	if (Fortnite_Version == 19.10)
 	{
@@ -1495,10 +1496,6 @@ void AFortPlayerController::ClientOnPawnDiedHook(AFortPlayerController* PlayerCo
 		{
 			if (Globals::AlivePlayers == 1) 
 			{
-				static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
-				auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
-				auto& ClientConnections = WorldNetDriver->GetClientConnections();
-
 				AFortPlayerStateAthena* LastPlayerState = nullptr;
 				AFortPlayerController* LastPlayerController = nullptr;
 
@@ -1731,7 +1728,7 @@ void AFortPlayerController::ClientOnPawnDiedHook(AFortPlayerController* PlayerCo
 				for (int i = 0; i < AllPlayerStates.Num(); ++i)
 				{
 					auto CurrentPlayerState = (AFortPlayerStateAthena*)AllPlayerStates.at(i);
-
+					
 					if (CurrentPlayerState->GetPlace() <= 1)
 					{
 						bDidSomeoneWin = true;
@@ -1739,9 +1736,6 @@ void AFortPlayerController::ClientOnPawnDiedHook(AFortPlayerController* PlayerCo
 					}
 				}
 
-				// LOG_INFO(LogDev, "bDidSomeoneWin: {}", bDidSomeoneWin);
-
-				// if (GameState->GetGamePhase() == EAthenaGamePhase::EndGame)
 				if (bDidSomeoneWin)
 				{
 					CreateThread(0, 0, RestartThread, 0, 0, 0);
