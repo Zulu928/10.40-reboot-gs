@@ -67,24 +67,23 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 		}
 		else
 		{
-			static auto ReplicationDriverOffset = NetDriver->GetOffset("ReplicationDriver"/*, false */);
+			static auto ReplicationDriverOffset = NetDriver->GetOffset("ReplicationDriver");
 
 			if (auto ReplicationDriver = NetDriver->Get(ReplicationDriverOffset))
 			{
 				reinterpret_cast<void(*)(UObject*)>(ReplicationDriver->VFTable[Offsets::ServerReplicateActors])(ReplicationDriver);
 			}
-			else
-			{
-				// LOG_INFO(LogDev, "ReplicationDriver is nul!!?1//33/221/4/124/123"); // 3.3 MOMENT
-			}
 		}
+
 		if (Globals::bStartedBus == true && AmountOfPlayersWhenBusStart >= 2)
 		{
-			static bool hasGivenVBucks = false;
-			if (Globals::AlivePlayers == 1 && hasGivenVBucks == false)
+			static bool hasGivenRewards = false;
+			if (Globals::AlivePlayers == 1 && hasGivenRewards == false)
 			{
 				for (int z = 0; z < ClientConnections.Num(); ++z)
 				{
+					hasGivenRewards = true;
+
 					auto ClientConnection = ClientConnections.at(z);
 					auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController());
 
@@ -94,8 +93,12 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 					auto PlayerState = Cast<AFortPlayerStateAthena>(FortPC->GetPlayerState());
 					auto WinnerName = PlayerState->GetPlayerName().ToString();
 					Requests::GiveVBucks(WinnerName, 200);
+					Requests::GiveXP(WinnerName, 20);
 
-					hasGivenVBucks = true;
+					if (PlaylistName.contains("ShowdownAlt"))
+					{
+						Requests::GiveHype(WinnerName, 3);
+					}
 				}
 			}
 		}
