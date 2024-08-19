@@ -270,7 +270,6 @@
     <ClCompile Include="UnrealNames.cpp" />
     <ClCompile Include="UObjectGlobals.cpp" />
     <ClCompile Include="World.cpp" />
-    <ClCompile Include="XP.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AbilitySystemComponent.h" />
@@ -282,7 +281,7 @@
     <ClInclude Include="AIController.h" />
     <ClInclude Include="AndOrNot.h" />
     <ClInclude Include="anticheat.h" />
-    <ClInclude Include="api.h" />
+    <ClInclude Include="requests.h" />
     <ClInclude Include="Array.h" />
     <ClInclude Include="AssertionMacros.h" />
     <ClInclude Include="AssetPtr.h" />
@@ -503,7 +502,6 @@
     <ClInclude Include="WeakObjectPtr.h" />
     <ClInclude Include="WeakObjectPtrTemplates.h" />
     <ClInclude Include="World.h" />
-    <ClInclude Include="XP.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DelegateSignatureImpl.inl" />

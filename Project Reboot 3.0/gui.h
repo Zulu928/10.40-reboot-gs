@@ -45,7 +45,7 @@
 #include "vendingmachine.h"
 #include "die.h"
 #include "calendar.h"
-#include "api.h"
+#include "requests.h"
 
 #define GAME_TAB 1
 #define PLAYERS_TAB 2

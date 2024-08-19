@@ -1637,7 +1637,7 @@ void AFortPlayerController::ClientOnPawnDiedHook(AFortPlayerController* PlayerCo
 					static void (*RemoveFromAlivePlayers)(AFortGameModeAthena * GameMode, AFortPlayerController * PlayerController, APlayerState * PlayerState, APawn * FinisherPawn,
 						UFortWeaponItemDefinition * FinishingWeapon, uint8_t DeathCause, char a7)
 						= decltype(RemoveFromAlivePlayers)(Addresses::RemoveFromAlivePlayers);
-
+					
 					AActor* DamageCauser = *(AActor**)(__int64(DeathReport) + MemberOffsets::DeathReport::DamageCauser);
 					UFortWeaponItemDefinition* KillerWeaponDef = nullptr;
 
@@ -1658,52 +1658,12 @@ void AFortPlayerController::ClientOnPawnDiedHook(AFortPlayerController* PlayerCo
 
 					RemoveFromAlivePlayers(GameMode, PlayerController, KillerPlayerState == DeadPlayerState ? nullptr : KillerPlayerState, KillerPawn, KillerWeaponDef, DeathCause, 0);
 
-					/*
-
-					STATS:
-
-					Note: This isn't the exact order relative to other functions.
-
-					ClientSendMatchStatsForPlayer
-					ClientSendTeamStatsForPlayer
-					ClientSendEndBattleRoyaleMatchForPlayer
-
-					*/
-
-					// FAthenaMatchStats.Stats[ERewardSource] // hmm
-
-					/*
-
-					// We need to check if their entire team is dead then I think we send it????
-
-					auto DeadControllerAthena = Cast<AFortPlayerControllerAthena>(PlayerController);
-
-					if (DeadControllerAthena && FAthenaMatchTeamStats::GetStruct())
-					{
-						auto MatchReport = DeadControllerAthena->GetMatchReport();
-
-						LOG_INFO(LogDev, "MatchReport: {}", __int64(MatchReport));
-
-						if (MatchReport)
-						{
-							MatchReport->GetTeamStats()->GetPlace() = DeadPlayerState->GetPlace();
-							MatchReport->GetTeamStats()->GetTotalPlayers() = AmountOfPlayersWhenBusStart; // hmm
-							MatchReport->HasTeamStats() = true;
-
-							DeadControllerAthena->ClientSendTeamStatsForPlayer(MatchReport->GetTeamStats());
-						}
-					}
-
-					*/
-
 					LOG_INFO(LogDev, "Removed!");
 				}
-
-				// LOG_INFO(LogDev, "KillerPlayerState->Place: {}", KillerPlayerState ? KillerPlayerState->GetPlace() : -1);
 			}
 		}
 
-		if (Fortnite_Version < 6) // Spectating (is this the actual build or is it like 6.10 when they added it auto).
+		if (Fortnite_Version < 6)
 		{
 			if (GameState->GetGamePhase() > EAthenaGamePhase::Warmup)
 			{
