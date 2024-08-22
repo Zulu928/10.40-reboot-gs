@@ -899,13 +899,13 @@ static inline void NoGUI()
 	auto GameState = Cast<AFortGameStateAthena>(((AFortGameMode*)GetWorld()->GetGameMode())->GetGameState());
 
 	Globals::AlivePlayers = GameState->GetPlayersLeft();
-	/*
+	
 	if (Globals::AlivePlayers == 0 && Globals::bStarted)
 	{
 		Globals::bEnded0;
 		KillGameserver();
 	}
-	*/
+	
 	static bool TriggerNotJoinableOnCrash = false;
 	if (Globals::SystemUptime > 120)
 	{
@@ -936,7 +936,7 @@ static inline void NoGUI()
 			if (!FortPC)
 				continue;
 
-			//FortPC->ClientReturnToMainMenu(L"");
+			FortPC->ClientReturnToMainMenu(L"");
 		}
 
 		Sleep(1000);
