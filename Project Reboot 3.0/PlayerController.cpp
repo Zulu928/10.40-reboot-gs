@@ -43,6 +43,12 @@ void APlayerController::ServerRestartPlayer()
 	this->ProcessEvent(fn);
 }
 
+void APlayerController::ClientReturnToMainMenu(struct FString KickReason)
+{
+	static auto ClientReturnToMainMenu = FindObject<UFunction>("/Script/Engine.PlayerController.ClientReturnToMainMenu");
+	this->ProcessEvent(ClientReturnToMainMenu, &KickReason);
+}
+
 UClass* APlayerController::StaticClass()
 {
 	static auto Class = FindObject<UClass>(L"/Script/Engine.PlayerController");

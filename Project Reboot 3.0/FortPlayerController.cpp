@@ -1314,15 +1314,16 @@ void AFortPlayerController::ClientOnPawnDiedHook(AFortPlayerController* PlayerCo
 
 		if (Globals::EnableRewards == true)
 		{
-			auto killerName = KillerPlayerState->GetPlayerName().ToString();
-			auto killedName = DeadPlayerState->GetPlayerName().ToString();
+			auto KillerPlayerName = KillerPlayerState->GetPlayerName().ToString();
 
-			if (killerName != killedName)
+			if (KillerPlayerState != DeadPlayerState && KillerPawn != DeadPawn)
 			{
-				if (DeadPlayerState->IsBot() == false)
+				Requests::GiveVBucks(KillerPlayerName, 50);
+				Requests::GiveXP(KillerPlayerName, 20);
+
+				if (PlaylistName.contains("ShowdownAlt"))
 				{
-					Requests::GiveVBucks(killerName, 50);
-					Requests::GiveXP(killerName, 20);
+					Requests::ManageHype(KillerPlayerName, "Elimination");
 				}
 			}
 		}

@@ -793,9 +793,14 @@ static inline DWORD WINAPI StartGameWithBusThread(LPVOID)
 	LOG_INFO(LogDev, "Auto starting bus in {}.", Globals::LaunchTimeForBus);
 
 	Sleep(1000 * Globals::LaunchTimeForBus + 200);
+
 	if (bStartedBus)
 		return 0;
+	if (Globals::bStartedBus)
+		return 0;
+
 	bStartedBus = true;
+	Globals::bStartedBus = true;
 
 	AmountOfPlayersWhenBusStart = GameState->GetPlayersLeft();
 
@@ -885,6 +890,22 @@ static inline std::string convertToHMS(int totalSeconds) {
 	}
 
 	return result;
+}
+
+static std::string UUIDv4() {
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<uint32_t> dis(0, 0xFFFFFFFF);
+
+	std::stringstream ss;
+	ss << std::hex << std::setfill('0');
+	ss << std::setw(8) << dis(gen) << "-";
+	ss << std::setw(4) << (dis(gen) & 0xFFFF) << "-";
+	ss << std::setw(4) << ((dis(gen) & 0x0FFF) | 0x4000) << "-";
+	ss << std::setw(4) << ((dis(gen) & 0x3FFF) | 0x8000) << "-";
+	ss << std::setw(12) << dis(gen) << dis(gen);
+
+	return ss.str();
 }
 
 static inline void NoGUI()
@@ -1058,7 +1079,6 @@ static inline void MainUI()
 			if (bLoaded)
 			{
 				StaticUI();
-
 
 				Globals::bStarted = bStartedBus;
 				Globals::IsGuiAlive = true;

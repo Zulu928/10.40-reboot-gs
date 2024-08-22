@@ -1241,6 +1241,8 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 	if (!PlayerStateAthena)
 		return Athena_HandleStartingNewPlayerOriginal(GameMode, NewPlayerActor);
 
+	Requests::PlayerJoined(playerName);
+
 	// Teams :
 
 	std::set<std::tuple<int, std::string, std::string>> teamsSet;
@@ -1254,7 +1256,7 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 	if (SquadIdOffset != -1) 
 		SquadIdBool = true;
 
-	if (PlaylistName == "/Game/Athena/Playlists/Playlist_DefaultDuo.Playlist_DefaultDuo" || PlaylistName == "/Game/Athena/Playlists/Showdown/Playlist_ShowdownAlt_Duos.Playlist_ShowdownAlt_Duos")
+	if (PlaylistName.contains("Duo"))
 	{
 		IsDuos = true;
 	}
@@ -1278,26 +1280,29 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 				foundTeamStuff = "TeamDoesntExist";
 			}
 		}
-	}
-	if (foundTeamStuff == ".")
-	{
-		std::cout << "What in the Skibidi Rizz is this!" << std::endl; // wiks : brain rot has consumed me b4 gta 6 :skull:
-	}
-	if (foundTeamStuff == "TeamExists")
-	{
-		PlayerStateAthena->GetTeamIndex() = teamIndex;
-		PlayerStateAthena->GetSquadId() = PlayerStateAthena->GetTeamIndex();
-		std::cout << "Player Team Index Changed to \"" << PlayerStateAthena->GetTeamIndex() << "\"" << std::endl;
-		foundTeamStuff = ".";
-	}
-	else if (foundTeamStuff == "TeamDoesntExist")
-	{
-		static std::string teamMemberName = Requests::GetTeamMember(playerName);
-		PlayerStateAthena->GetTeamIndex() = count;
-		PlayerStateAthena->GetSquadId() = PlayerStateAthena->GetTeamIndex();
-		teamsSet.insert(std::make_tuple(PlayerStateAthena->GetTeamIndex(), playerName, teamMemberName));
-		std::cout << "Team Created!" << std::endl;
-		foundTeamStuff = ".";
+
+		if (foundTeamStuff == ".")
+		{
+			std::cout << "What in the Sussy Amogus Character is this????" << std::endl; // wiks : brain rot has consumed me b4 gta 6 :skull:
+		}
+
+		if (foundTeamStuff == "TeamExists")
+		{
+			PlayerStateAthena->GetTeamIndex() = teamIndex;
+			PlayerStateAthena->GetSquadId() = PlayerStateAthena->GetTeamIndex();
+			std::cout << "Player Team Index Changed to \"" << PlayerStateAthena->GetTeamIndex() << "\"" << std::endl;
+			foundTeamStuff = ".";
+			std::cout << playerName << " has joined team " << std::to_string(PlayerStateAthena->GetTeamIndex()) << " with team member " << search << std::endl;
+		}
+		else if (foundTeamStuff == "TeamDoesntExist")
+		{
+			static std::string teamMemberName = Requests::GetTeamMember(playerName);
+			PlayerStateAthena->GetTeamIndex() = count;
+			PlayerStateAthena->GetSquadId() = PlayerStateAthena->GetTeamIndex();
+			teamsSet.insert(std::make_tuple(PlayerStateAthena->GetTeamIndex(), playerName, teamMemberName));
+			std::cout << "Team Created!" << std::endl;
+			foundTeamStuff = ".";
+		}
 	}
 	
 
@@ -1408,13 +1413,13 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 #if 1
 			LOG_INFO(LogDev, "Spawning loot!");
 
-			auto SpawnIsland_FloorLoot = FindObject<UClass>(L"/Game/Athena/Environments/Blueprints/Tiered_Athena_FloorLoot_Warmup.Tiered_Athena_FloorLoot_Warmup_C");
+			// auto SpawnIsland_FloorLoot = FindObject<UClass>(L"/Game/Athena/Environments/Blueprints/Tiered_Athena_FloorLoot_Warmup.Tiered_Athena_FloorLoot_Warmup_C");
 			auto BRIsland_FloorLoot = FindObject<UClass>(L"/Game/Athena/Environments/Blueprints/Tiered_Athena_FloorLoot_01.Tiered_Athena_FloorLoot_01_C");
 
 			// TArray<AActor*> SpawnIsland_FloorLoot_Actors = UGameplayStatics::GetAllActorsOfClass(GetWorld(), SpawnIsland_FloorLoot);
 			TArray<AActor*> BRIsland_FloorLoot_Actors = UGameplayStatics::GetAllActorsOfClass(GetWorld(), BRIsland_FloorLoot);
 
-			auto SpawnIslandTierGroup = UKismetStringLibrary::Conv_StringToName(L"Loot_AthenaFloorLoot_Warmup");
+			// auto SpawnIslandTierGroup = UKismetStringLibrary::Conv_StringToName(L"Loot_AthenaFloorLoot_Warmup");
 			auto BRIslandTierGroup = UKismetStringLibrary::Conv_StringToName(L"Loot_AthenaFloorLoot");
 
 			uint8 SpawnFlag = EFortPickupSourceTypeFlag::GetContainerValue();
@@ -1527,7 +1532,9 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 		}
 	}
 
-	if (auto MatchReportPtr = NewPlayer->GetMatchReport())
+	auto MatchReportPtr = NewPlayer->GetMatchReport();
+
+	if (MatchReportPtr)
 		*MatchReportPtr = (UAthenaPlayerMatchReport*)UGameplayStatics::SpawnObject(UAthenaPlayerMatchReport::StaticClass(), NewPlayer); // idk when to do this
 
 	TWeakObjectPtr<AFortPlayerStateAthena> WeakPlayerState{};

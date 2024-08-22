@@ -34,7 +34,8 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 	static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
 	auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
 	auto& ClientConnections = WorldNetDriver->GetClientConnections();
-
+	auto GameState = Cast<AFortGameStateAthena>(((AFortGameMode*)GetWorld()->GetGameMode())->GetGameState());
+	auto GamePhase = GameState->GetGamePhase();
 
 	if (bShouldDestroyAllPlayerBuilds) // i hate this
 	{
@@ -75,31 +76,28 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 			}
 		}
 
-		if (Globals::bStartedBus == true && AmountOfPlayersWhenBusStart >= 2)
+		static bool hasGivenWinRewards = false;
+		if (Globals::EnableRewards == true && Globals::bStartedBus == true && Globals::AlivePlayers == 1 && hasGivenWinRewards == false && AmountOfPlayersWhenBusStart >= 2)
 		{
-			static bool hasGivenRewards = false;
-			if (Globals::AlivePlayers == 1 && hasGivenRewards == false)
+			for (int z = 0; z < ClientConnections.Num(); ++z)
 			{
-				for (int z = 0; z < ClientConnections.Num(); ++z)
+				auto ClientConnection = ClientConnections.at(z);
+				auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController());
+
+				if (!FortPC)
+					continue;
+
+				auto PlayerState = Cast<AFortPlayerStateAthena>(FortPC->GetPlayerState());
+				auto WinnerName = PlayerState->GetPlayerName().ToString();
+				Requests::GiveVBucks(WinnerName, 200);
+				Requests::GiveXP(WinnerName, 20);
+
+				if (PlaylistName.contains("ShowdownAlt"))
 				{
-					hasGivenRewards = true;
-
-					auto ClientConnection = ClientConnections.at(z);
-					auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController());
-
-					if (!FortPC)
-						continue;
-
-					auto PlayerState = Cast<AFortPlayerStateAthena>(FortPC->GetPlayerState());
-					auto WinnerName = PlayerState->GetPlayerName().ToString();
-					Requests::GiveVBucks(WinnerName, 200);
-					Requests::GiveXP(WinnerName, 20);
-
-					if (PlaylistName.contains("ShowdownAlt"))
-					{
-						Requests::GiveHype(WinnerName, 3);
-					}
+					Requests::GiveHype(WinnerName, 3);
 				}
+
+				hasGivenWinRewards = true;
 			}
 		}
 	}

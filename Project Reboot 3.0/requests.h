@@ -14,35 +14,9 @@ namespace Requests
         return size * nmemb;
     }
 
-    inline void RemoveHype(const std::string& username, const int& hypeAmount)
+    inline void ManageHype(const std::string& Username, const std::string& Reason)
     {
-        std::string url = Globals::BackendIP + "/removeHype/" + username + "/" + std::to_string(hypeAmount) + "/" + Globals::BackendAPIKey;
-        std::thread([url = url]()
-            {
-                curl_global_init(CURL_GLOBAL_ALL);
-                CURL* curl = curl_easy_init();
-                if (!curl) {
-                    curl_global_cleanup();
-                    return;
-                }
-
-                curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-                curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallbackRequests);
-
-                std::string response_body;
-                curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_body);
-
-                curl_easy_perform(curl);
-                curl_easy_cleanup(curl);
-
-                curl_global_cleanup();
-            }
-        ).detach();
-    }
-
-    inline void GiveHype(const std::string& username, const int& hypeAmount)
-    {
-        std::string url = Globals::BackendIP + "/giveHype/" + username + "/" + std::to_string(hypeAmount) + "/" + Globals::BackendAPIKey;
+        std::string url = Globals::BackendIP + "/manageHype/" + Username + "/" + Reason + "/" + Globals::BackendAPIKey;
         std::thread([url = url]()
             {
                 curl_global_init(CURL_GLOBAL_ALL);
