@@ -9,10 +9,10 @@ void APlayerController::ServerChangeName(const FString& S)
 	this->ProcessEvent(ServerChangeNameFn, (FString*)&S);
 }
 
-void APlayerController::ClientReturnToMainMenu(struct FString ReturnReason)
+void APlayerController::ClientReturnToMainMenu(struct FString KickReason)
 {
 	static auto ClientReturnToMainMenu = FindObject<UFunction>("/Script/Engine.PlayerController.ClientReturnToMainMenu");
-	this->ProcessEvent(ClientReturnToMainMenu, &ReturnReason);
+	this->ProcessEvent(ClientReturnToMainMenu, &KickReason);
 }
 
 void APlayerController::SetPlayerIsWaiting(bool NewValue)
@@ -47,12 +47,6 @@ void APlayerController::ServerRestartPlayer()
 {
 	static auto fn = FindObject<UFunction>(L"/Script/Engine.PlayerController.ServerRestartPlayer");
 	this->ProcessEvent(fn);
-}
-
-void APlayerController::ClientReturnToMainMenu(struct FString KickReason)
-{
-	static auto ClientReturnToMainMenu = FindObject<UFunction>("/Script/Engine.PlayerController.ClientReturnToMainMenu");
-	this->ProcessEvent(ClientReturnToMainMenu, &KickReason);
 }
 
 UClass* APlayerController::StaticClass()

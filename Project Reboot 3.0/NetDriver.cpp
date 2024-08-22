@@ -94,11 +94,83 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 
 				if (PlaylistName.contains("ShowdownAlt"))
 				{
-					Requests::GiveHype(WinnerName, 3);
+					Requests::ManageHype(WinnerName, "Win");
 				}
 
 				hasGivenWinRewards = true;
 			}
+		}
+
+		static bool check25 = false;
+		static bool Placement25 = false;
+		if (Globals::EnableRewards == true && Globals::AlivePlayers == 25 && PlaylistName.contains("ShowdownAlt") && Placement25 == false && check25 == false)
+		{
+			check25 = true;
+			for (int z = 0; z < ClientConnections.Num(); ++z)
+			{
+				auto ClientConnection = ClientConnections.at(z);
+				auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController());
+
+				if (!FortPC)
+					continue;
+
+				auto PlayerState = Cast<AFortPlayerStateAthena>(FortPC->GetPlayerState());
+				auto WinnerName = PlayerState->GetPlayerName().ToString();
+
+				if (PlaylistName.contains("ShowdownAlt"))
+				{
+					Requests::ManageHype(WinnerName, "Top 25");
+				}
+			}
+			Placement25 = true;
+		}
+
+		static bool check15 = false;
+		static bool Placement15 = false;
+		if (Globals::EnableRewards == true && Globals::AlivePlayers == 15 && PlaylistName.contains("ShowdownAlt") && Placement15 == false && check15 == false)
+		{
+			check15 = true;
+			for (int z = 0; z < ClientConnections.Num(); ++z)
+			{
+				auto ClientConnection = ClientConnections.at(z);
+				auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController());
+
+				if (!FortPC)
+					continue;
+
+				auto PlayerState = Cast<AFortPlayerStateAthena>(FortPC->GetPlayerState());
+				auto WinnerName = PlayerState->GetPlayerName().ToString();
+
+				if (PlaylistName.contains("ShowdownAlt"))
+				{
+					Requests::ManageHype(WinnerName, "Top 15");
+				}
+			}
+			Placement15 = true;
+		}
+
+		static bool check5 = false;
+		static bool Placement5 = false;
+		if (Globals::EnableRewards == true && Globals::AlivePlayers == 15 && PlaylistName.contains("ShowdownAlt") && Placement5 == false && check5 == false)
+		{
+			check5 = true;
+			for (int z = 0; z < ClientConnections.Num(); ++z)
+			{
+				auto ClientConnection = ClientConnections.at(z);
+				auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController());
+
+				if (!FortPC)
+					continue;
+
+				auto PlayerState = Cast<AFortPlayerStateAthena>(FortPC->GetPlayerState());
+				auto WinnerName = PlayerState->GetPlayerName().ToString();
+
+				if (PlaylistName.contains("ShowdownAlt"))
+				{
+					Requests::ManageHype(WinnerName, "Top 5");
+				}
+			}
+			Placement5 = true;
 		}
 	}
 

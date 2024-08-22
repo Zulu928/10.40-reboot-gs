@@ -29,7 +29,6 @@ public:
 	UCheatManager*& SpawnCheatManager(UClass* CheatManagerClass);
 	FRotator GetControlRotation();
 	void ServerRestartPlayer();
-	void ClientReturnToMainMenu(struct FString KickReason);
 
 	static UClass* StaticClass();
 };

@@ -1241,8 +1241,6 @@ void AFortGameModeAthena::Athena_HandleStartingNewPlayerHook(AFortGameModeAthena
 	if (!PlayerStateAthena)
 		return Athena_HandleStartingNewPlayerOriginal(GameMode, NewPlayerActor);
 
-	Requests::PlayerJoined(playerName);
-
 	// Teams :
 
 	std::set<std::tuple<int, std::string, std::string>> teamsSet;
