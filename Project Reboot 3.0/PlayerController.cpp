@@ -9,6 +9,12 @@ void APlayerController::ServerChangeName(const FString& S)
 	this->ProcessEvent(ServerChangeNameFn, (FString*)&S);
 }
 
+void APlayerController::ClientReturnToMainMenu(struct FString ReturnReason)
+{
+	static auto ClientReturnToMainMenu = FindObject<UFunction>("/Script/Engine.PlayerController.ClientReturnToMainMenu");
+	this->ProcessEvent(ClientReturnToMainMenu, &ReturnReason);
+}
+
 void APlayerController::SetPlayerIsWaiting(bool NewValue)
 {
 	static auto bPlayerIsWaitingOffset = GetOffset("bPlayerIsWaiting");

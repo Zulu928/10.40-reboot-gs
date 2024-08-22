@@ -207,7 +207,7 @@ static inline void InitFont()
 	FontConfig.FontDataOwnedByAtlas = false;
 	ImGui::GetIO().Fonts->AddFontFromMemoryTTF((void*)ruda_bold_data, sizeof(ruda_bold_data), 17.f, &FontConfig);
 }
-/*
+
 static inline void KillGameserver()
 {
 	Sleep(Globals::gameserverkill * 1000);
@@ -226,14 +226,14 @@ static inline void KillGameserver()
 		if (!FortPC)
 			continue;
 
-		//FortPC->ClientReturnToMainMenu(L"");
+		FortPC->ClientReturnToMainMenu(L"");
 
 	}
 
 	Sleep(1000);
 	std::system("taskkill /f /im FortniteClient-Win64-Shipping.exe");
 }
-*/
+
 static inline void InitStyle()
 {
 	ImGuiStyle& style = ImGui::GetStyle();
@@ -920,13 +920,13 @@ static inline void NoGUI()
 	auto GameState = Cast<AFortGameStateAthena>(((AFortGameMode*)GetWorld()->GetGameMode())->GetGameState());
 
 	Globals::AlivePlayers = GameState->GetPlayersLeft();
-	/*
+	
 	if (Globals::AlivePlayers == 0 && Globals::bStarted)
 	{
 		Globals::bEnded0;
 		KillGameserver();
 	}
-	*/
+	
 	static bool TriggerNotJoinableOnCrash = false;
 	if (Globals::SystemUptime > 120)
 	{
@@ -957,7 +957,7 @@ static inline void NoGUI()
 			if (!FortPC)
 				continue;
 
-			//FortPC->ClientReturnToMainMenu(L"");
+			FortPC->ClientReturnToMainMenu(L"");
 		}
 
 		Sleep(1000);
@@ -1086,13 +1086,13 @@ static inline void MainUI()
 				auto GameState = Cast<AFortGameStateAthena>(((AFortGameMode*)GetWorld()->GetGameMode())->GetGameState());
 
 				Globals::AlivePlayers = GameState->GetPlayersLeft();
-				/*
+				
 				if (Globals::AlivePlayers == 0 && Globals::bStarted)
 				{
 					Globals::bEnded0;
 					KillGameserver();
 				}
-				*/
+			
 				static bool TriggerNotJoinableOnCrash = false;
 				if (Globals::bStartedListening == true)
 				{
@@ -1123,7 +1123,7 @@ static inline void MainUI()
 						if (!FortPC)
 							continue;
 
-						//FortPC->ClientReturnToMainMenu(L"");
+						FortPC->ClientReturnToMainMenu(L"");
 					}
 
 					Sleep(1000);
