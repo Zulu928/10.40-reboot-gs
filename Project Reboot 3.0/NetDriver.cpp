@@ -77,7 +77,7 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 		}
 
 		static bool hasGivenWinRewards = false;
-		if (Globals::EnableRewards == true && Globals::bStartedBus == true && Globals::AlivePlayers == 1 && hasGivenWinRewards == false && AmountOfPlayersWhenBusStart >= 2)
+		if (Globals::EnableRewards == true && bStartedBus == true && Globals::AlivePlayers == 1 && hasGivenWinRewards == false && AmountOfPlayersWhenBusStart >= 2)
 		{
 			for (int z = 0; z < ClientConnections.Num(); ++z)
 			{
@@ -103,7 +103,7 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 
 		static bool check25 = false;
 		static bool Placement25 = false;
-		if (Globals::EnableRewards == true && Globals::AlivePlayers == 25 && PlaylistName.contains("ShowdownAlt") && Placement25 == false && check25 == false)
+		if (Globals::EnableRewards == true && Globals::AlivePlayers == 25 && PlaylistName.contains("ShowdownAlt") && Placement25 == false && check25 == false && bStartedBus == true && AmountOfPlayersWhenBusStart != 25)
 		{
 			check25 = true;
 			for (int z = 0; z < ClientConnections.Num(); ++z)
@@ -127,7 +127,7 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 
 		static bool check15 = false;
 		static bool Placement15 = false;
-		if (Globals::EnableRewards == true && Globals::AlivePlayers == 15 && PlaylistName.contains("ShowdownAlt") && Placement15 == false && check15 == false)
+		if (Globals::EnableRewards == true && Globals::AlivePlayers == 15 && PlaylistName.contains("ShowdownAlt") && Placement15 == false && check15 == false && bStartedBus == true && AmountOfPlayersWhenBusStart != 15)
 		{
 			check15 = true;
 			for (int z = 0; z < ClientConnections.Num(); ++z)
@@ -151,7 +151,7 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 
 		static bool check5 = false;
 		static bool Placement5 = false;
-		if (Globals::EnableRewards == true && Globals::AlivePlayers == 15 && PlaylistName.contains("ShowdownAlt") && Placement5 == false && check5 == false)
+		if (Globals::EnableRewards == true && Globals::AlivePlayers == 15 && PlaylistName.contains("ShowdownAlt") && Placement5 == false && check5 == false && bStartedBus == true && AmountOfPlayersWhenBusStart != 5)
 		{
 			check5 = true;
 			for (int z = 0; z < ClientConnections.Num(); ++z)
