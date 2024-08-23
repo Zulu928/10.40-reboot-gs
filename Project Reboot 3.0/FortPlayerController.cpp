@@ -1304,6 +1304,27 @@ void AFortPlayerController::ClientOnPawnDiedHook(AFortPlayerController* PlayerCo
 
 	if (Fortnite_Version > 1.8 || Fortnite_Version == 1.11)
 	{
+		AFortPlayerStateAthena* LastPlayerState = nullptr;
+		AFortPlayerController* LastPlayerController = nullptr;
+
+		for (int z = 0; z < ClientConnections.Num(); ++z)
+		{
+			auto ClientConnection = ClientConnections.at(z);
+			auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController());
+
+			if (!FortPC)
+				continue;
+
+			auto PlayerState = Cast<AFortPlayerStateAthena>(FortPC->GetPlayerState());
+
+			if (PlayerState)
+			{
+				LastPlayerState = PlayerState;
+				LastPlayerController = FortPC;
+				break;
+			}
+		}
+
 		auto DeathInfo = DeadPlayerState->GetDeathInfo(); // Alloc<void>(DeathInfoStructSize);
 		DeadPlayerState->ClearDeathInfo();
 
@@ -1314,7 +1335,7 @@ void AFortPlayerController::ClientOnPawnDiedHook(AFortPlayerController* PlayerCo
 
 		if (Globals::EnableRewards == true)
 		{
-			auto KillerPlayerName = KillerPlayerState->GetPlayerName().ToString();
+			auto KillerPlayerName = LastPlayerState->GetPlayerName().ToString();
 
 			if (KillerPlayerState != DeadPlayerState && KillerPawn != DeadPawn)
 			{

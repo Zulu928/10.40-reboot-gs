@@ -12,7 +12,7 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
 		return SetZoneToIndexOriginal(GameModeAthena, OverridePhaseMaybeIDFK);
 	}
 
-	int32 ZoneDurationsOffset = (Fortnite_Version >= 13.40 && Fortnite_Version < 18) ? 0x258
+	int32 ZoneDurationsOffset = (Fortnite_Version >= 15 && Fortnite_Version < 18) ? 0x258
 		: (std::floor(Fortnite_Version) >= 18) ? 0x248
 		: 0x1F8;
 	int32 GameMode_SafeZonePhaseOffset = GameModeAthena->GetOffset("SafeZonePhase");
@@ -114,7 +114,7 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
 		LOG_INFO(LogZone, "SafeZonePhase After: {}", GameModeAthena->Get<int>(SafeZonePhaseOffset));
 
 		float ZoneHoldDuration = (GameModeAthena->Get<int>(SafeZonePhaseOffset) >= 0 && GameModeAthena->Get<int>(SafeZonePhaseOffset) < ZoneHoldDurations.Num())
-			? ZoneHoldDurations.at(GameModeAthena->Get<int>(SafeZonePhaseOffset)) : 30.0f;
+			? ZoneHoldDurations.at(GameModeAthena->Get<int>(SafeZonePhaseOffset)) : 0.0f;
 
 		SafeZoneIndicator->Get<float>(SafeZoneStartShrinkTimeOffset) = GameState->GetServerWorldTimeSeconds() + ZoneHoldDuration;
 
