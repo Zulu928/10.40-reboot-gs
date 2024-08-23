@@ -1335,7 +1335,7 @@ void AFortPlayerController::ClientOnPawnDiedHook(AFortPlayerController* PlayerCo
 
 		if (Globals::EnableRewards == true)
 		{
-			auto KillerPlayerName = LastPlayerState->GetPlayerName().ToString();
+			auto KillerPlayerName = LastPlayerState->GetPlayerName().ToString(); // bro thinks making KillerPlayerState auto fixes the crashing
 
 			if (KillerPlayerState != DeadPlayerState && KillerPawn != DeadPawn)
 			{
