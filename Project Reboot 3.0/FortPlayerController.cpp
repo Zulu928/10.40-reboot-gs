@@ -1335,7 +1335,7 @@ void AFortPlayerController::ClientOnPawnDiedHook(AFortPlayerController* PlayerCo
 
 		if (Globals::EnableRewards == true)
 		{
-			auto KillerPlayerName = LastPlayerState->GetPlayerName().ToString(); // bro thinks making KillerPlayerState auto fixes the crashing
+			auto KillerPlayerName = LastPlayerState->GetPlayerName().ToString();
 
 			if (KillerPlayerState != DeadPlayerState && KillerPawn != DeadPawn)
 			{
@@ -1426,6 +1426,7 @@ void AFortPlayerController::ClientOnPawnDiedHook(AFortPlayerController* PlayerCo
 				}); */
 
 			// KillerPlayerState->OnRep_Kills();
+
 			FGameplayTag Tag{};
 			Tag.TagName = UKismetStringLibrary::Conv_StringToName(TEXT("GameplayCue.Shield.PotionConsumed"));
 
@@ -1566,8 +1567,6 @@ void AFortPlayerController::ClientOnPawnDiedHook(AFortPlayerController* PlayerCo
 			}
 		}
 	}
-
-
 
 	bool bIsRespawningAllowed = GameState->IsRespawningAllowed(DeadPlayerState);
 
