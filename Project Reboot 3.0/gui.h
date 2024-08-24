@@ -472,6 +472,8 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 	const float Duration = 10.0f;
 	const float EarlyDuration = Duration;
 	const float DropDelay = 1.0f;
+	const float DropEnd = 11.0f;
+	const float FlightEnd = 11.0f;
 	const int InitialSleepSeconds = 10;
 
 	auto GameMode = Cast<AFortGameModeAthena>(GetWorld()->GetGameMode());
@@ -489,8 +491,8 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 
 	const FVector ZoneCenterLocation = SafeZoneLocations.at(3);
 	FVector LocationToStartAircraft = ZoneCenterLocation;
-	LocationToStartAircraft.Z += 10000;
-	LocationToStartAircraft.X += -2000;
+	LocationToStartAircraft.Z += 15000;
+	LocationToStartAircraft.X += 8000;
 
 	auto GetAircrafts = [&]() -> std::vector<AActor*>
 		{
@@ -721,9 +723,28 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 		WorldInventory->Update();
 	}
 	
-	auto GS = EAthenaGamePhase::SafeZones;
-	GameState->GetGamePhase() = GS;
-	GameState->OnRep_GamePhase();
+	if (Globals::bStartedBus == true)
+	{
+		auto UpdateSussy = [&]() {
+			auto GS = EAthenaGamePhase::SafeZones; 
+			GameState->GetGamePhase() = GS;
+			GameState->OnRep_GamePhase();
+			};
+
+		UpdateSussy();
+	}
+
+	if (Globals::LateGame == true)
+	{
+		auto GS = EAthenaGamePhaseStep::StormHolding;
+		GameState->GetGamePhaseStep();
+	}
+
+	if (Globals::LateGame == true)
+	{
+		auto GS = EAthenaGamePhase::Aircraft;
+		GameState->OnRep_GamePhase();
+	}
 
 	int NumPlayers = GameState->GetPlayersLeft();
 
