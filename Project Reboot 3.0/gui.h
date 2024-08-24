@@ -737,7 +737,7 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 	if (Globals::LateGame == true)
 	{
 		auto GS = EAthenaGamePhaseStep::StormHolding;
-		GameState->GetGamePhaseStep();
+		GameState->GetGamePhaseStep() = GS;
 	}
 
 	if (Globals::LateGame == true)
