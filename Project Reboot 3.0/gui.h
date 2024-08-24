@@ -724,21 +724,6 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 	auto GS = EAthenaGamePhase::SafeZones;
 	GameState->GetGamePhase() = GS;
 	GameState->OnRep_GamePhase();
-	
-	const std::chrono::milliseconds check_interval(1000);
-
-	while (GameState->GetGamePhase() != EAthenaGamePhase::Aircraft)
-	{
-		std::this_thread::sleep_for(check_interval);
-	}
-
-	if (Globals::bStarted == true)
-	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-		auto GameState = Cast<AFortGameStateAthena>(GetWorld()->GetGameState());
-		GameState->SkipAircraft();
-		GameState->GetGamePhaseStep();
-	}
 
 	int NumPlayers = GameState->GetPlayersLeft();
 
@@ -910,7 +895,6 @@ static std::string UUIDv4() {
 
 static inline void NoGUI()
 {
-
 	Globals::bStarted = bStartedBus;
 	bool bLoaded = true;
 	bool uc = false;
