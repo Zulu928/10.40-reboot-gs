@@ -273,6 +273,12 @@ void AFortPlayerControllerAthena::EnterAircraftHook(UObject* PC, AActor* Aircraf
 	LoopMutators(AddInventoryOverrideTeamLoadouts);
 
 	WorldInventory->Update();
+
+	std::string PlayerName = PlayerStateAthena->GetPlayerName().ToString();
+	if (PlaylistName.contains("ShowdownAlt"))
+	{
+		Requests::ManageHype(PlayerName, "Bus Fare");
+	}
 	
 	// Should we equip the pickaxe for older builds here?
 
