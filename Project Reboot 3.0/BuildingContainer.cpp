@@ -6,8 +6,8 @@
 
 bool ABuildingContainer::SpawnLoot(AFortPawn* Pawn)
 {
-	if (!Pawn)
-		return false;
+	//if (!Pawn)
+		//return false;
 
 	this->ForceNetUpdate();
 

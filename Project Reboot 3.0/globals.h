@@ -48,8 +48,8 @@ namespace Globals
 	extern inline int AmountOfPlayersWhenBusStart = 0;
 
 	extern inline int bMaxPlayersForLategame = 30; // doesnt work i think
-	extern inline int RequiredPlayers = 2;
-	extern inline int LaunchTimeForBus = 75;
+	extern inline int RequiredPlayers = 1;
+	extern inline int LaunchTimeForBus = 65;
 	extern inline bool bPlayersForRestart = false; // bus stuff
 	extern inline bool bStarting = false; // bus stuff
 	extern inline bool bStarted = false; // bus stuff

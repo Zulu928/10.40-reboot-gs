@@ -107,6 +107,12 @@ public:
 		static auto ClientReportKillFn = FindObject<UFunction>(L"/Script/FortniteGame.FortPlayerStateAthena.ClientReportKill");
 		this->ProcessEvent(ClientReportKillFn, &Player);
 	}
+
+	void ClientReportTeamKill(int32 TeamKills)
+	{
+		static auto ClientReportTeamKillFn = FindObject<UFunction>(L"/Script/FortniteGame.FortPlayerStateAthena.ClientReportTeamKill");
+		this->ProcessEvent(ClientReportTeamKillFn, &TeamKills);
+	}
 	
 	void OnRep_DeathInfo()
 	{

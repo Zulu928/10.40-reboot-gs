@@ -12,9 +12,7 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
 		return SetZoneToIndexOriginal(GameModeAthena, OverridePhaseMaybeIDFK);
 	}
 
-	int32 ZoneDurationsOffset = (Fortnite_Version >= 15 && Fortnite_Version < 18) ? 0x258
-		: (std::floor(Fortnite_Version) >= 18) ? 0x248
-		: 0x1F8;
+	int32 ZoneDurationsOffset = (Fortnite_Version >= 13.40 ? 0x258 : 0x1F8);
 	int32 GameMode_SafeZonePhaseOffset = GameModeAthena->GetOffset("SafeZonePhase");
 	int32 GameState_SafeZonePhaseOffset = GameState->GetOffset("SafeZonePhase");
 	int32 SafeZonePhaseOffset = GameModeAthena->GetOffset("SafeZonePhase");
@@ -30,7 +28,7 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
 
 	if (NumPlayers >= 5)
 	{
-		if (Fortnite_Version < 8)
+		if (Fortnite_Version < 8.51)
 		{
 			if (Globals::bLateGame.load())
 			{
@@ -126,7 +124,7 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
 
 		SafeZoneIndicator->Get<float>(SafeZoneFinishShrinkTimeOffset) = SafeZoneIndicator->Get<float>(SafeZoneStartShrinkTimeOffset) + ZoneDuration;
 
-		if (GameModeAthena->Get<int>(SafeZonePhaseOffset) == 0)
+		if (GameModeAthena->Get<int>(SafeZonePhaseOffset) == 3)
 		{
 			const float FixedInitialZoneSize = 5000.0f;
 			SafeZoneIndicator->Get<float>(RadiusOffset) = FixedInitialZoneSize;
@@ -154,7 +152,7 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
 
 		LOG_INFO(LogDev, "NewLateGameSafeZonePhase: {}", NewLateGameSafeZonePhase);
 
-		if (Fortnite_Version < 8)
+		if (Fortnite_Version < 8.51)
 		{
 			if (Globals::bLateGame.load())
 			{
@@ -250,7 +248,7 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
 
 		SafeZoneIndicator->Get<float>(SafeZoneFinishShrinkTimeOffset) = SafeZoneIndicator->Get<float>(SafeZoneStartShrinkTimeOffset) + ZoneDuration;
 
-		if (GameModeAthena->Get<int>(SafeZonePhaseOffset) == 0)
+		if (GameModeAthena->Get<int>(SafeZonePhaseOffset) == 3)
 		{
 			const float FixedInitialZoneSize = 5000.0f;
 			SafeZoneIndicator->Get<float>(RadiusOffset) = FixedInitialZoneSize;

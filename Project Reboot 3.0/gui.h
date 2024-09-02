@@ -69,7 +69,7 @@
 #define FUN_PLAYERTAB 5
 
 extern inline float StartingShield = 100;
-extern inline int AmountOfPlayersWhenBusStart = 0;
+extern inline int AmountOfPlayersWhenBusStart = 1;
 extern inline bool bHandleDeath = true;
 extern inline bool bUseCustomMap = false;
 extern inline std::string CustomMapName = "";
@@ -77,8 +77,8 @@ extern inline int AmountToSubtractIndex = 1;
 extern inline int SecondsUntilTravel = 0;
 extern inline bool bSwitchedInitialLevel = false;
 extern inline bool bIsInAutoRestart = false;
-extern inline float AutoBusStartSeconds = 75;
-extern inline int NumRequiredPlayersToStart = 2;
+extern inline float AutoBusStartSeconds = 65;
+extern inline int NumRequiredPlayersToStart = 1;
 extern inline bool bDebugPrintLooting = false;
 extern inline bool bDebugPrintFloorLoot = false;
 extern inline bool bDebugPrintSwapping = false;
@@ -269,59 +269,60 @@ static inline void InitStyle()
 	style.ButtonTextAlign = ImVec2(0.5f, 0.5f);
 	style.SelectableTextAlign = ImVec2(0.0f, 0.0f);
 
-	style.Colors[ImGuiCol_Text] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-	style.Colors[ImGuiCol_TextDisabled] = ImVec4(1.0f, 1.0f, 1.0f, 0.3605149984359741f);
-	style.Colors[ImGuiCol_WindowBg] = ImVec4(0.09803921729326248f, 0.09803921729326248f, 0.09803921729326248f, 1.0f);
-	style.Colors[ImGuiCol_ChildBg] = ImVec4(1.0f, 0.0f, 0.0f, 0.0f);
-	style.Colors[ImGuiCol_PopupBg] = ImVec4(0.09803921729326248f, 0.09803921729326248f, 0.09803921729326248f, 1.0f);
-	style.Colors[ImGuiCol_Border] = ImVec4(0.4235294163227081f, 0.3803921639919281f, 0.572549045085907f, 0.54935622215271f);
+	// Darkish blue and darkish orange colors
+	style.Colors[ImGuiCol_Text] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); // White for text
+	style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.7f, 0.7f, 0.7f, 1.0f); // Light gray for disabled text
+	style.Colors[ImGuiCol_WindowBg] = ImVec4(0.1f, 0.1f, 0.2f, 1.0f); // Darkish blue for window background
+	style.Colors[ImGuiCol_ChildBg] = ImVec4(0.1f, 0.1f, 0.2f, 1.0f); // Same darkish blue for child background
+	style.Colors[ImGuiCol_PopupBg] = ImVec4(0.1f, 0.1f, 0.2f, 1.0f); // Darkish blue for popup background
+	style.Colors[ImGuiCol_Border] = ImVec4(0.2f, 0.2f, 0.4f, 1.0f); // Slightly lighter blue for borders
 	style.Colors[ImGuiCol_BorderShadow] = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
-	style.Colors[ImGuiCol_FrameBg] = ImVec4(0.1568627506494522f, 0.1568627506494522f, 0.1568627506494522f, 1.0f);
-	style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.3803921639919281f, 0.4235294163227081f, 0.572549045085907f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_FrameBgActive] = ImVec4(0.6196078658103943f, 0.5764706134796143f, 0.7686274647712708f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_TitleBg] = ImVec4(0.09803921729326248f, 0.09803921729326248f, 0.09803921729326248f, 1.0f);
-	style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.09803921729326248f, 0.09803921729326248f, 0.09803921729326248f, 1.0f);
-	style.Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.2588235437870026f, 0.2588235437870026f, 0.2588235437870026f, 0.0f);
-	style.Colors[ImGuiCol_MenuBarBg] = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
-	style.Colors[ImGuiCol_ScrollbarBg] = ImVec4(0.1568627506494522f, 0.1568627506494522f, 0.1568627506494522f, 0.0f);
-	style.Colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.1568627506494522f, 0.1568627506494522f, 0.1568627506494522f, 1.0f);
-	style.Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.2352941185235977f, 0.2352941185235977f, 0.2352941185235977f, 1.0f);
-	style.Colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.294117659330368f, 0.294117659330368f, 0.294117659330368f, 1.0f);
-	style.Colors[ImGuiCol_CheckMark] = ImVec4(0.294117659330368f, 0.294117659330368f, 0.294117659330368f, 1.0f);
-	style.Colors[ImGuiCol_SliderGrab] = ImVec4(0.6196078658103943f, 0.5764706134796143f, 0.7686274647712708f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(0.8156862854957581f, 0.772549033164978f, 0.9647058844566345f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_Button] = ImVec4(0.6196078658103943f, 0.5764706134796143f, 0.7686274647712708f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.7372549176216125f, 0.6941176652908325f, 0.886274516582489f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_ButtonActive] = ImVec4(0.8156862854957581f, 0.772549033164978f, 0.9647058844566345f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_Header] = ImVec4(0.6196078658103943f, 0.5764706134796143f, 0.7686274647712708f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0.7372549176216125f, 0.6941176652908325f, 0.886274516582489f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_HeaderActive] = ImVec4(0.8156862854957581f, 0.772549033164978f, 0.9647058844566345f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_Separator] = ImVec4(0.6196078658103943f, 0.5764706134796143f, 0.7686274647712708f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_SeparatorHovered] = ImVec4(0.7372549176216125f, 0.6941176652908325f, 0.886274516582489f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_SeparatorActive] = ImVec4(0.8156862854957581f, 0.772549033164978f, 0.9647058844566345f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_ResizeGrip] = ImVec4(0.6196078658103943f, 0.5764706134796143f, 0.7686274647712708f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.7372549176216125f, 0.6941176652908325f, 0.886274516582489f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_ResizeGripActive] = ImVec4(0.8156862854957581f, 0.772549033164978f, 0.9647058844566345f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_Tab] = ImVec4(0.6196078658103943f, 0.5764706134796143f, 0.7686274647712708f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_TabHovered] = ImVec4(0.7372549176216125f, 0.6941176652908325f, 0.886274516582489f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_TabActive] = ImVec4(0.8156862854957581f, 0.772549033164978f, 0.9647058844566345f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_TabUnfocused] = ImVec4(0.0f, 0.4509803950786591f, 1.0f, 0.0f);
-	style.Colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.1333333402872086f, 0.2588235437870026f, 0.4235294163227081f, 0.0f);
-	style.Colors[ImGuiCol_PlotLines] = ImVec4(0.294117659330368f, 0.294117659330368f, 0.294117659330368f, 1.0f);
-	style.Colors[ImGuiCol_PlotLinesHovered] = ImVec4(0.7372549176216125f, 0.6941176652908325f, 0.886274516582489f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_PlotHistogram] = ImVec4(0.6196078658103943f, 0.5764706134796143f, 0.7686274647712708f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_PlotHistogramHovered] = ImVec4(0.7372549176216125f, 0.6941176652908325f, 0.886274516582489f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_TableHeaderBg] = ImVec4(0.1882352977991104f, 0.1882352977991104f, 0.2000000029802322f, 1.0f);
-	style.Colors[ImGuiCol_TableBorderStrong] = ImVec4(0.4235294163227081f, 0.3803921639919281f, 0.572549045085907f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_TableBorderLight] = ImVec4(0.4235294163227081f, 0.3803921639919281f, 0.572549045085907f, 0.2918455004692078f);
-	style.Colors[ImGuiCol_TableRowBg] = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
-	style.Colors[ImGuiCol_TableRowBgAlt] = ImVec4(1.0f, 1.0f, 1.0f, 0.03433477878570557f);
-	style.Colors[ImGuiCol_TextSelectedBg] = ImVec4(0.7372549176216125f, 0.6941176652908325f, 0.886274516582489f, 0.5490196347236633f);
-	style.Colors[ImGuiCol_DragDropTarget] = ImVec4(1.0f, 1.0f, 0.0f, 0.8999999761581421f);
-	style.Colors[ImGuiCol_NavHighlight] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);
-	style.Colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.0f, 1.0f, 1.0f, 0.699999988079071f);
-	style.Colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.800000011920929f, 0.800000011920929f, 0.800000011920929f, 0.2000000029802322f);
-	style.Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.800000011920929f, 0.800000011920929f, 0.800000011920929f, 0.3499999940395355f);
+	style.Colors[ImGuiCol_FrameBg] = ImVec4(0.2f, 0.2f, 0.3f, 1.0f); // Darker blue for frame background
+	style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.3f, 0.3f, 0.4f, 1.0f); // Slightly lighter blue for hovered frame background
+	style.Colors[ImGuiCol_FrameBgActive] = ImVec4(0.4f, 0.4f, 0.5f, 1.0f); // Lighter blue for active frame background
+	style.Colors[ImGuiCol_TitleBg] = ImVec4(0.1f, 0.1f, 0.2f, 1.0f); // Darkish blue for title bar background
+	style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.1f, 0.1f, 0.2f, 1.0f); // Darkish blue for active title bar
+	style.Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.2f, 0.2f, 0.2f, 1.0f); // Slightly lighter gray for collapsed title bar
+	style.Colors[ImGuiCol_MenuBarBg] = ImVec4(0.1f, 0.1f, 0.2f, 1.0f); // Darkish blue for menu bar
+	style.Colors[ImGuiCol_ScrollbarBg] = ImVec4(0.2f, 0.2f, 0.3f, 1.0f); // Darker blue for scrollbar background
+	style.Colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.3f, 0.3f, 0.4f, 1.0f); // Lighter blue for scrollbar grab
+	style.Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.4f, 0.4f, 0.5f, 1.0f); // Even lighter blue for hovered scrollbar grab
+	style.Colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.5f, 0.5f, 0.6f, 1.0f); // Lightest blue for active scrollbar grab
+	style.Colors[ImGuiCol_CheckMark] = ImVec4(1.0f, 0.6f, 0.2f, 1.0f); // Darkish orange for check marks
+	style.Colors[ImGuiCol_SliderGrab] = ImVec4(0.5f, 0.5f, 0.6f, 1.0f); // Lighter blue for slider grabs
+	style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(0.6f, 0.6f, 0.7f, 1.0f); // Even lighter blue for active slider grabs
+	style.Colors[ImGuiCol_Button] = ImVec4(0.5f, 0.5f, 0.6f, 1.0f); // Lighter blue for buttons
+	style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.6f, 0.6f, 0.7f, 1.0f); // Hovered button color
+	style.Colors[ImGuiCol_ButtonActive] = ImVec4(0.7f, 0.7f, 0.8f, 1.0f); // Active button color
+	style.Colors[ImGuiCol_Header] = ImVec4(0.5f, 0.5f, 0.6f, 1.0f); // Lighter blue for headers
+	style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0.6f, 0.6f, 0.7f, 1.0f); // Hovered header color
+	style.Colors[ImGuiCol_HeaderActive] = ImVec4(0.7f, 0.7f, 0.8f, 1.0f); // Active header color
+	style.Colors[ImGuiCol_Separator] = ImVec4(0.5f, 0.5f, 0.6f, 1.0f); // Separator color
+	style.Colors[ImGuiCol_SeparatorHovered] = ImVec4(0.6f, 0.6f, 0.7f, 1.0f); // Hovered separator color
+	style.Colors[ImGuiCol_SeparatorActive] = ImVec4(0.7f, 0.7f, 0.8f, 1.0f); // Active separator color
+	style.Colors[ImGuiCol_ResizeGrip] = ImVec4(0.5f, 0.5f, 0.6f, 1.0f); // Lighter blue for resize grips
+	style.Colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.6f, 0.6f, 0.7f, 1.0f); // Hovered resize grip color
+	style.Colors[ImGuiCol_ResizeGripActive] = ImVec4(0.7f, 0.7f, 0.8f, 1.0f); // Active resize grip color
+	style.Colors[ImGuiCol_Tab] = ImVec4(0.5f, 0.5f, 0.6f, 1.0f); // Lighter blue for tabs
+	style.Colors[ImGuiCol_TabHovered] = ImVec4(0.6f, 0.6f, 0.7f, 1.0f); // Hovered tab color
+	style.Colors[ImGuiCol_TabActive] = ImVec4(0.7f, 0.7f, 0.8f, 1.0f); // Active tab color
+	style.Colors[ImGuiCol_TabUnfocused] = ImVec4(0.2f, 0.2f, 0.2f, 1.0f); // Darker gray for unfocused tabs
+	style.Colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.3f, 0.3f, 0.3f, 1.0f); // Darker gray for unfocused active tabs
+	style.Colors[ImGuiCol_PlotLines] = ImVec4(0.5f, 0.5f, 0.6f, 1.0f); // Lighter blue for plot lines
+	style.Colors[ImGuiCol_PlotLinesHovered] = ImVec4(0.6f, 0.6f, 0.7f, 1.0f); // Hovered plot lines color
+	style.Colors[ImGuiCol_PlotHistogram] = ImVec4(0.5f, 0.5f, 0.6f, 1.0f); // Lighter blue for histograms
+	style.Colors[ImGuiCol_PlotHistogramHovered] = ImVec4(0.6f, 0.6f, 0.7f, 1.0f); // Hovered histogram color
+	style.Colors[ImGuiCol_TableHeaderBg] = ImVec4(0.2f, 0.2f, 0.2f, 1.0f); // Dark gray for table header background
+	style.Colors[ImGuiCol_TableBorderStrong] = ImVec4(0.2f, 0.2f, 0.3f, 1.0f); // Darker blue for strong table borders
+	style.Colors[ImGuiCol_TableBorderLight] = ImVec4(0.3f, 0.3f, 0.4f, 1.0f); // Lighter blue for light table borders
+	style.Colors[ImGuiCol_TableRowBg] = ImVec4(0.1f, 0.1f, 0.1f, 1.0f); // Dark gray for table rows
+	style.Colors[ImGuiCol_TableRowBgAlt] = ImVec4(0.15f, 0.15f, 0.15f, 1.0f); // Slightly lighter gray for alternate table rows
+	style.Colors[ImGuiCol_TextSelectedBg] = ImVec4(0.5f, 0.5f, 0.6f, 1.0f); // Lighter blue for selected text background
+	style.Colors[ImGuiCol_DragDropTarget] = ImVec4(1.0f, 0.6f, 0.2f, 0.9f); // Darkish orange for drag and drop target
+	style.Colors[ImGuiCol_NavHighlight] = ImVec4(1.0f, 0.6f, 0.2f, 1.0f); // Darkish orange for navigation highlight
+	style.Colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.0f, 0.6f, 0.2f, 0.7f); // Darkish orange for windowing highlight
+	style.Colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.5f, 0.5f, 0.6f, 0.2f); // Lighter blue for windowing dim background
+	style.Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.5f, 0.5f, 0.6f, 0.35f); // Lighter blue for modal window dim background
 }
 
 static inline void TextCentered(const std::string& text, bool bNewLine = true) {
@@ -545,7 +546,7 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 	{
 		auto CurrentAircraft = Aircrafts.at(i);
 
-		std::this_thread::sleep_for(std::chrono::seconds(180) / MaxTickRate);
+		std::this_thread::sleep_for(std::chrono::seconds(160) / MaxTickRate);
 
 		if (CurrentAircraft)
 		{
@@ -723,27 +724,18 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 		WorldInventory->Update();
 	}
 	
-	if (Globals::bStartedBus == true)
+	if (Globals::LateGame)
 	{
 		auto UpdateSussy = [&]() {
 			auto GS = EAthenaGamePhase::SafeZones; 
 			GameState->GetGamePhase() = GS;
 			GameState->OnRep_GamePhase();
+			GameState->GetGamePhaseStep() = EAthenaGamePhaseStep::StormHolding;
+			EAthenaGamePhase::Aircraft;
+			GameState->OnRep_GamePhase();
 			};
 
 		UpdateSussy();
-	}
-
-	if (Globals::LateGame == true)
-	{
-		auto GS = EAthenaGamePhaseStep::StormHolding;
-		GameState->GetGamePhaseStep() = GS;
-	}
-
-	if (Globals::LateGame == true)
-	{
-		auto GS = EAthenaGamePhase::Aircraft;
-		GameState->OnRep_GamePhase();
 	}
 
 	int NumPlayers = GameState->GetPlayersLeft();
@@ -798,15 +790,12 @@ static inline DWORD WINAPI StartGameWithBusThread(LPVOID)
 
 	LOG_INFO(LogDev, "Auto starting bus in {}.", Globals::LaunchTimeForBus);
 
-	Sleep(1000 * Globals::LaunchTimeForBus + 200);
+	Sleep(1000 * Duration + 200);
 
 	if (bStartedBus)
 		return 0;
-	if (Globals::bStartedBus)
-		return 0;
 
 	bStartedBus = true;
-	Globals::bStartedBus = true;
 
 	AmountOfPlayersWhenBusStart = GameState->GetPlayersLeft();
 
@@ -980,7 +969,7 @@ static inline void NoGUI()
 		CreateThread(0, 0, UpdateSystemUptime, 0, 0, 0);
 	}
 
-	if (Globals::AlivePlayers >= 2 && Globals::bStarting == false && Globals::bStarted == false)
+	if (Globals::AlivePlayers >= 1 && Globals::bStarting == false && Globals::bStarted == false)
 	{
 		Globals::bStarting = true;
 		CreateThread(0, 0, StartGameWithBusThread, 0, 0, 0);
@@ -1146,7 +1135,7 @@ static inline void MainUI()
 					CreateThread(0, 0, UpdateSystemUptime, 0, 0, 0);
 				}
 
-				if (Globals::AlivePlayers >= 2 && Globals::bStarting == false && Globals::bStarted == false)
+				if (Globals::AlivePlayers >= 1 && Globals::bStarting == false && Globals::bStarted == false)
 				{
 					Globals::bStarting = true;
 					CreateThread(0, 0, StartGameWithBusThread, 0, 0, 0);

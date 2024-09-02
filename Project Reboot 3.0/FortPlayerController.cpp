@@ -1407,7 +1407,9 @@ void AFortPlayerController::ClientOnPawnDiedHook(AFortPlayerController* PlayerCo
 			if (MemberOffsets::FortPlayerStateAthena::TeamKillScore != -1)
 				KillerPlayerState->Get<int>(MemberOffsets::FortPlayerStateAthena::TeamKillScore)++;
 
+			auto amountOfKills = KillerPlayerState->Get<int>(MemberOffsets::FortPlayerStateAthena::TeamKillScore);
 			KillerPlayerState->ClientReportKill(DeadPlayerState);
+			KillerPlayerState->ClientReportTeamKill(amountOfKills);
 
 			/* LoopMutators([&](AFortAthenaMutator* Mutator) {
 				if (auto TDM_Mutator = Cast<AFortAthenaMutator_TDM>(Mutator))
