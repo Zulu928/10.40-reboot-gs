@@ -1344,7 +1344,7 @@ void AFortPlayerController::ClientOnPawnDiedHook(AFortPlayerController* PlayerCo
 
 				if (PlaylistName.contains("ShowdownAlt"))
 				{
-					Requests::ManageHype(KillerPlayerName, "Elimination");
+					Requests::AddHype(KillerPlayerName, 1);
 				}
 			}
 		}
