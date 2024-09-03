@@ -469,303 +469,298 @@ static inline void PlayerTabs()
 
 static inline DWORD WINAPI LateGameThread(LPVOID)
 {
-	const float MaxTickRate = 30.0f;
-	const float Duration = 10.0f;
-	const float EarlyDuration = Duration;
-	const float DropDelay = 1.0f;
-	const float DropEnd = 11.0f;
-	const float FlightEnd = 11.0f;
-	const int InitialSleepSeconds = 10;
-
-	auto GameMode = Cast<AFortGameModeAthena>(GetWorld()->GetGameMode());
-	auto GameState = Cast<AFortGameStateAthena>(GameMode->GetGameState());
-
-	static auto SafeZoneLocationsOffset = GameMode->GetOffset("SafeZoneLocations");
-	const TArray<FVector>& SafeZoneLocations = GameMode->Get<TArray<FVector>>(SafeZoneLocationsOffset);
-
-	if (SafeZoneLocations.Num() < 4)
+	if (bStartedBus == true)
 	{
-		LOG_WARN(LogLateGame, "Unable to find SafeZoneLocation! Disabling lategame..");
-		SetIsLategame(false);
-		return 0;
-	}
+		const float MaxTickRate = 30.0f;
+		const float Duration = 10.0f;
+		const float EarlyDuration = Duration;
+		const float DropDelay = 1.0f;
+		const float DropEnd = 11.0f;
+		const float FlightEnd = 11.0f;
+		const int InitialSleepSeconds = 10;
 
-	const FVector ZoneCenterLocation = SafeZoneLocations.at(3);
-	FVector LocationToStartAircraft = ZoneCenterLocation;
-	LocationToStartAircraft.Z += 15000;
-	LocationToStartAircraft.X += 8000;
+		auto GameMode = Cast<AFortGameModeAthena>(GetWorld()->GetGameMode());
+		auto GameState = Cast<AFortGameStateAthena>(GameMode->GetGameState());
 
-	auto GetAircrafts = [&]() -> std::vector<AActor*>
+		static auto SafeZoneLocationsOffset = GameMode->GetOffset("SafeZoneLocations");
+		const TArray<FVector>& SafeZoneLocations = GameMode->Get<TArray<FVector>>(SafeZoneLocationsOffset);
+
+		if (SafeZoneLocations.Num() < 4)
 		{
-			static auto AircraftsOffset = GameState->GetOffset("Aircrafts", false);
-			std::vector<AActor*> Aircrafts;
-
-			if (AircraftsOffset == -1)
-			{
-				static auto FortAthenaAircraftClass = FindObject<UClass>(L"/Script/FortniteGame.FortAthenaAircraft");
-				auto AllAircrafts = UGameplayStatics::GetAllActorsOfClass(GetWorld(), FortAthenaAircraftClass);
-
-				for (int i = 0; i < AllAircrafts.Num(); i++)
-				{
-					Aircrafts.push_back(AllAircrafts.at(i));
-				}
-
-				AllAircrafts.Free();
-			}
-			else
-			{
-				const auto& GameStateAircrafts = GameState->Get<TArray<AActor*>>(AircraftsOffset);
-				for (int i = 0; i < GameStateAircrafts.Num(); i++)
-				{
-					Aircrafts.push_back(GameStateAircrafts.at(i));
-				}
-			}
-
-			return Aircrafts;
-		};
-
-	static auto WarmupCountdownEndTimeOffset = GameState->GetOffset("WarmupCountdownEndTime");
-	static auto WarmupCountdownDurationOffset = GameMode->GetOffset("WarmupCountdownDuration");
-	static auto WarmupEarlyCountdownDurationOffset = GameMode->GetOffset("WarmupEarlyCountdownDuration");
-
-	float TimeSeconds = GameState->GetServerWorldTimeSeconds();
-	GameState->Get<float>(WarmupCountdownEndTimeOffset) = TimeSeconds + Duration;
-	GameMode->Get<float>(WarmupCountdownDurationOffset) = Duration;
-	GameMode->Get<float>(WarmupEarlyCountdownDurationOffset) = EarlyDuration;
-
-	while (GetAircrafts().empty())
-	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000) / MaxTickRate);
-	}
-
-	auto Aircrafts = GetAircrafts();
-	float FlightSpeed = 0.0f;
-	float DropStartTime = GameState->GetServerWorldTimeSeconds() + DropDelay;
-
-	for (int i = 0; i < Aircrafts.size(); ++i)
-	{
-		auto CurrentAircraft = Aircrafts.at(i);
-
-		std::this_thread::sleep_for(std::chrono::seconds(160) / MaxTickRate);
-
-		if (CurrentAircraft)
-		{
-			LOG_INFO(LogLateGame, "Attempting to teleport aircraft %d to location: %s", i, *LocationToStartAircraft.ToString());
-
-			CurrentAircraft->TeleportTo(LocationToStartAircraft, FRotator());
-
-			FVector NewLocation = CurrentAircraft->GetActorLocation();
-			LOG_INFO(LogLateGame, "New Location of Aircraft %d: %s", i, *NewLocation.ToString());
-
-			static auto FlightInfoOffset = CurrentAircraft->GetOffset("FlightInfo", false);
-			if (FlightInfoOffset == -1)
-			{
-				static auto FlightStartLocationOffset = CurrentAircraft->GetOffset("FlightStartLocation");
-				static auto FlightSpeedOffset = CurrentAircraft->GetOffset("FlightSpeed");
-				static auto DropStartTimeOffset = CurrentAircraft->GetOffset("DropStartTime");
-
-				CurrentAircraft->Get<FVector>(FlightStartLocationOffset) = LocationToStartAircraft;
-				CurrentAircraft->Get<float>(FlightSpeedOffset) = FlightSpeed;
-				CurrentAircraft->Get<float>(DropStartTimeOffset) = DropStartTime;
-			}
-			else
-			{
-				auto FlightInfo = CurrentAircraft->GetPtr<FAircraftFlightInfo>(FlightInfoOffset);
-				FlightInfo->GetFlightSpeed() = FlightSpeed;
-				FlightInfo->GetFlightStartLocation() = LocationToStartAircraft;
-				FlightInfo->GetTimeTillDropStart() = DropStartTime;
-			}
+			LOG_WARN(LogLateGame, "Unable to find SafeZoneLocation! Disabling lategame..");
+			SetIsLategame(false);
+			return 0;
 		}
-	}
 
-	static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
-	auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
-	auto& ClientConnections = WorldNetDriver->GetClientConnections();
+		const FVector ZoneCenterLocation = SafeZoneLocations.at(3);
+		FVector LocationToStartAircraft = ZoneCenterLocation;
+		LocationToStartAircraft.Z += 15000;
+		LocationToStartAircraft.X += 8000;
 
-	for (int z = 0; z < ClientConnections.Num(); z++)
-	{
-		auto ClientConnection = ClientConnections.at(z);
-		auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController());
+		auto GetAircrafts = [&]() -> std::vector<AActor*>
+			{
+				static auto AircraftsOffset = GameState->GetOffset("Aircrafts", false);
+				std::vector<AActor*> Aircrafts;
 
-		if (!FortPC)
-			continue;
+				if (AircraftsOffset == -1)
+				{
+					static auto FortAthenaAircraftClass = FindObject<UClass>(L"/Script/FortniteGame.FortAthenaAircraft");
+					auto AllAircrafts = UGameplayStatics::GetAllActorsOfClass(GetWorld(), FortAthenaAircraftClass);
 
-		auto WorldInventory = FortPC->GetWorldInventory();
+					for (int i = 0; i < AllAircrafts.Num(); i++)
+					{
+						Aircrafts.push_back(AllAircrafts.at(i));
+					}
 
-		if (!WorldInventory)
-			continue;
+					AllAircrafts.Free();
+				}
+				else
+				{
+					const auto& GameStateAircrafts = GameState->Get<TArray<AActor*>>(AircraftsOffset);
+					for (int i = 0; i < GameStateAircrafts.Num(); i++)
+					{
+						Aircrafts.push_back(GameStateAircrafts.at(i));
+					}
+				}
 
-		std::random_device rd;
-		std::mt19937 gen(rd());
-
-		std::vector<const wchar_t*> RifleOptions = {
-			L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_SR_Ore_T03.WID_Assault_AutoHigh_Athena_SR_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_VR_Ore_T03.WID_Assault_AutoHigh_Athena_VR_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_UC_Ore_T03.WID_Assault_Auto_Athena_UC_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_C_Ore_T02.WID_Assault_Auto_Athena_C_Ore_T02",
-			L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_UC_Ore_T03.WID_Assault_Heavy_Athena_UC_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_R_Ore_T03.WID_Assault_Heavy_Athena_R_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_C_Ore_T03.WID_Assault_Heavy_Athena_C_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Assault_Suppressed_Athena_VR_Ore_T03.WID_Assault_Suppressed_Athena_VR_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Assault_Suppressed_Athena_SR_Ore_T03.WID_Assault_Suppressed_Athena_SR_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_SR_Ore_T03.WID_Assault_AutoHigh_Athena_SR_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_VR_Ore_T03.WID_Assault_AutoHigh_Athena_VR_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_UC_Ore_T03.WID_Assault_Auto_Athena_UC_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_C_Ore_T02.WID_Assault_Auto_Athena_C_Ore_T02",
-			L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_UC_Ore_T03.WID_Assault_Heavy_Athena_UC_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_R_Ore_T03.WID_Assault_Heavy_Athena_R_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_C_Ore_T03.WID_Assault_Heavy_Athena_C_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Assault_Suppressed_Athena_VR_Ore_T03.WID_Assault_Suppressed_Athena_VR_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Assault_Suppressed_Athena_SR_Ore_T03.WID_Assault_Suppressed_Athena_SR_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_R_Ore_T03.WID_Assault_Heavy_Athena_R_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_C_Ore_T03.WID_Assault_Heavy_Athena_C_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_VR_Ore_T03.WID_Assault_AutoHigh_Athena_VR_Ore_T03",
-		};
-
-		std::vector<const wchar_t*> ShotgunOptions = {
-			L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_SR_Ore_T03.WID_Shotgun_Standard_Athena_SR_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_VR_Ore_T03.WID_Shotgun_Standard_Athena_VR_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_R_Ore_T03.WID_Shotgun_SemiAuto_Athena_R_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_C_Ore_T03.WID_Shotgun_Standard_Athena_C_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_SR_Ore_T03.WID_Shotgun_Standard_Athena_SR_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_VR_Ore_T03.WID_Shotgun_Standard_Athena_VR_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_VR_Ore_T03.WID_Shotgun_SemiAuto_Athena_VR_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_C_Ore_T03.WID_Shotgun_Standard_Athena_C_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03",
-		};
-
-		std::vector<const wchar_t*> SMGOptions = {
-			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_SR_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_SR_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_VR_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_VR_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_R_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_R_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavySuppressed_Athena_R_Ore_T03.WID_Pistol_AutoHeavySuppressed_Athena_R_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Sniper_BoltAction_Scope_Athena_R_Ore_T03.WID_Sniper_BoltAction_Scope_Athena_R_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavySuppressed_Athena_UC_Ore_T03.WID_Pistol_AutoHeavySuppressed_Athena_UC_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavySuppressed_Athena_R_Ore_T03.WID_Pistol_AutoHeavySuppressed_Athena_R_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavySuppressed_Athena_C_Ore_T02.WID_Pistol_AutoHeavySuppressed_Athena_C_Ore_T02",
-			L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavySuppressed_Athena_R_Ore_T03.WID_Pistol_AutoHeavySuppressed_Athena_R_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Sniper_BoltAction_Scope_Athena_R_Ore_T03.WID_Sniper_BoltAction_Scope_Athena_R_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Sniper_Heavy_Athena_VR_Ore_T03.WID_Sniper_Heavy_Athena_VR_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Sniper_Heavy_Athena_SR_Ore_T03.WID_Sniper_Heavy_Athena_SR_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Sniper_NoScope_Athena_R_Ore_T03.WID_Sniper_NoScope_Athena_R_Ore_T03",
-			L"/Game/Athena/Items/Weapons/WID_Sniper_NoScope_Athena_UC_Ore_T03.WID_Sniper_NoScope_Athena_UC_Ore_T03",
-			L"/Game/Athena/Items/Consumables/RiftItem/Athena_Rift_Item.Athena_Rift_Item",
-		};
-
-		std::vector<const wchar_t*> OtherOptions = {
-			L"/Game/Athena/Items/Consumables/ShockwaveGrenade/Athena_ShockGrenade.Athena_ShockGrenade",
-			L"/Game/Athena/Items/Consumables/TNT/Athena_TNT.Athena_TNT",
-			L"/Game/Athena/Items/Consumables/KnockGrenade/Athena_KnockGrenade.Athena_KnockGrenade",
-			L"/Game/Athena/Items/Consumables/Grenade/Athena_Grenade.Athena_Grenade",
-			L"/Game/Athena/Items/Weapons/WID_Hook_Gun_VR_Ore_T03.WID_Hook_Gun_VR_Ore_T03",
-			L"/Game/Athena/Items/Consumables/StickyGrenade/Athena_StickyGrenade.Athena_StickyGrenade",
-		};
-
-		std::vector<const wchar_t*> ShieldOptions = {
-			L"/Game/Athena/Items/Consumables/Shields/Athena_Shields.Athena_Shields",
-			L"/Game/Athena/Items/Consumables/ShieldSmall/Athena_ShieldSmall.Athena_ShieldSmall",
-			L"/Game/Athena/Items/Consumables/SuperMedkit/Athena_SuperMedkit.Athena_SuperMedkit",
-			L"/Game/Athena/Items/Consumables/Medkit/Athena_Medkit.Athena_Medkit",
-			L"/Game/Athena/Items/Consumables/Bandage/Athena_Bandage.Athena_Bandage"
-			L"/Game/Athena/Items/Consumables/PurpleStuff/Athena_PurpleStuff.Athena_PurpleStuff",
-			L"/Game/Athena/Items/Consumables/Bush/Athena_Bush.Athena_Bush",
-		};
-
-		std::vector<const wchar_t*> TrapOptions = {
-			L"/Game/Athena/Items/Traps/TID_PoisonDartTrap_Context.TID_PoisonDartTrap_Context",
-			L"/Game/Athena/Items/Traps/TID_Floor_Player_Launch_Pad_Athena.TID_Floor_Player_Launch_Pad_Athena",
-			L"/Game/Athena/Items/Traps/TID_Floor_Player_Campfire_Athena.TID_Floor_Player_Campfire_Athena",
-			L"/Game/Athena/Items/Traps/TID_Context_BouncePad_Athena.TID_Context_BouncePad_Athena",
-			L"/Game/Athena/Items/Traps/TID_Floor_Player_Launch_Pad_Athena.TID_Floor_Player_Launch_Pad_Athena",
-			L"/Game/Athena/Items/Traps/TID_Context_BouncePad_Athena.TID_Context_BouncePad_Athena",
-		};
-
-		std::uniform_int_distribution<> RifleDist(0, RifleOptions.size() - 1);
-		std::uniform_int_distribution<> ShotgunDist(0, ShotgunOptions.size() - 1);
-		std::uniform_int_distribution<> SMGDist(0, SMGOptions.size() - 1);
-		std::uniform_int_distribution<> OptionDist(0, OtherOptions.size() - 1);
-		std::uniform_int_distribution<> ShieldDist(0, ShieldOptions.size() - 1);
-		std::uniform_int_distribution<> TrapDist(0, TrapOptions.size() - 1);
-
-		UFortItemDefinition* Rifle = FindObject<UFortItemDefinition>(RifleOptions[RifleDist(gen)]);
-		UFortItemDefinition* Shotgun = FindObject<UFortItemDefinition>(ShotgunOptions[ShotgunDist(gen)]);
-		UFortItemDefinition* SMG = FindObject<UFortItemDefinition>(SMGOptions[SMGDist(gen)]);
-		UFortItemDefinition* Other = FindObject<UFortItemDefinition>(OtherOptions[OptionDist(gen)]);
-		UFortItemDefinition* Shield = FindObject<UFortItemDefinition>(ShieldOptions[ShieldDist(gen)]);
-		UFortItemDefinition* Trap = FindObject<UFortItemDefinition>(TrapOptions[TrapDist(gen)]);
-
-		static auto WoodItemData = FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/WoodItemData.WoodItemData");
-		static auto StoneItemData = FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/StoneItemData.StoneItemData");
-		static auto MetalItemData = FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/MetalItemData.MetalItemData");
-		static auto Shells = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataShells.AthenaAmmoDataShells");
-		static auto Medium = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsMedium.AthenaAmmoDataBulletsMedium");
-		static auto Light = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsLight.AthenaAmmoDataBulletsLight");
-		static auto Heavy = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsHeavy.AthenaAmmoDataBulletsHeavy");
-
-		WorldInventory->AddItem(WoodItemData, nullptr, 500);
-		WorldInventory->AddItem(StoneItemData, nullptr, 500);
-		WorldInventory->AddItem(MetalItemData, nullptr, 500);
-		WorldInventory->AddItem(Shotgun, nullptr, 1);
-		WorldInventory->AddItem(SMG, nullptr, 1);
-		WorldInventory->AddItem(Rifle, nullptr, 1);
-		WorldInventory->AddItem(Other, nullptr, 2);
-		WorldInventory->AddItem(Shield, nullptr, 3);
-		WorldInventory->AddItem(Trap, nullptr, 2);
-		WorldInventory->AddItem(Shells, nullptr, 25);
-		WorldInventory->AddItem(Medium, nullptr, 90);
-		WorldInventory->AddItem(Light, nullptr, 120);
-		WorldInventory->AddItem(Heavy, nullptr, 14);
-
-		WorldInventory->Update();
-	}
-	
-	if (Globals::LateGame)
-	{
-		auto UpdateSussy = [&]() {
-			auto GS = EAthenaGamePhase::SafeZones; 
-			GameState->GetGamePhase() = GS;
-			GameState->OnRep_GamePhase();
-			GameState->GetGamePhaseStep() = EAthenaGamePhaseStep::StormHolding;
-			EAthenaGamePhase::Aircraft;
-			GameState->OnRep_GamePhase();
+				return Aircrafts;
 			};
 
-		UpdateSussy();
-	}
+		static auto WarmupCountdownEndTimeOffset = GameState->GetOffset("WarmupCountdownEndTime");
+		static auto WarmupCountdownDurationOffset = GameMode->GetOffset("WarmupCountdownDuration");
+		static auto WarmupEarlyCountdownDurationOffset = GameMode->GetOffset("WarmupEarlyCountdownDuration");
 
-	int NumPlayers = GameState->GetPlayersLeft();
+		float TimeSeconds = GameState->GetServerWorldTimeSeconds();
+		GameState->Get<float>(WarmupCountdownEndTimeOffset) = TimeSeconds + Duration;
+		GameMode->Get<float>(WarmupCountdownDurationOffset) = Duration;
+		GameMode->Get<float>(WarmupEarlyCountdownDurationOffset) = EarlyDuration;
 
-	if (NumPlayers == 1 && Globals::bStartedBus == false)
-	{
-		Globals::LateGame = true;
-	}
+		while (GetAircrafts().empty())
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(1000) / MaxTickRate);
+		}
 
-	if (NumPlayers == 30 && Globals::bStartedBus == false)
-	{
-		const int MaxPlayers = 30;
-		auto GameSession = GameMode->GetOffset("GameSession");
-		auto GameSession2 = GameMode->Get<UClass*>("GameSession");
-		auto maxplayersOffset = GameSession2->GetOffset("MaxPlayers");
-		auto MaxPlayersValue = GameSession2->Get<int32>(MaxPlayers);
+		auto Aircrafts = GetAircrafts();
+		float FlightSpeed = 0.0f;
+		float DropStartTime = GameState->GetServerWorldTimeSeconds() + DropDelay;
+
+		for (int i = 0; i < Aircrafts.size(); ++i)
+		{
+			auto CurrentAircraft = Aircrafts.at(i);
+
+			std::this_thread::sleep_for(std::chrono::seconds(160) / MaxTickRate);
+
+			if (CurrentAircraft)
+			{
+				LOG_INFO(LogLateGame, "Attempting to teleport aircraft %d to location: %s", i, *LocationToStartAircraft.ToString());
+
+				CurrentAircraft->TeleportTo(LocationToStartAircraft, FRotator());
+
+				FVector NewLocation = CurrentAircraft->GetActorLocation();
+				LOG_INFO(LogLateGame, "New Location of Aircraft %d: %s", i, *NewLocation.ToString());
+
+				static auto FlightInfoOffset = CurrentAircraft->GetOffset("FlightInfo", false);
+				if (FlightInfoOffset == -1)
+				{
+					static auto FlightStartLocationOffset = CurrentAircraft->GetOffset("FlightStartLocation");
+					static auto FlightSpeedOffset = CurrentAircraft->GetOffset("FlightSpeed");
+					static auto DropStartTimeOffset = CurrentAircraft->GetOffset("DropStartTime");
+
+					CurrentAircraft->Get<FVector>(FlightStartLocationOffset) = LocationToStartAircraft;
+					CurrentAircraft->Get<float>(FlightSpeedOffset) = FlightSpeed;
+					CurrentAircraft->Get<float>(DropStartTimeOffset) = DropStartTime;
+				}
+				else
+				{
+					auto FlightInfo = CurrentAircraft->GetPtr<FAircraftFlightInfo>(FlightInfoOffset);
+					FlightInfo->GetFlightSpeed() = FlightSpeed;
+					FlightInfo->GetFlightStartLocation() = LocationToStartAircraft;
+					FlightInfo->GetTimeTillDropStart() = DropStartTime;
+				}
+			}
+		}
+
+		static auto World_NetDriverOffset = GetWorld()->GetOffset("NetDriver");
+		auto WorldNetDriver = GetWorld()->Get<UNetDriver*>(World_NetDriverOffset);
+		auto& ClientConnections = WorldNetDriver->GetClientConnections();
+
+		for (int z = 0; z < ClientConnections.Num(); z++)
+		{
+			auto ClientConnection = ClientConnections.at(z);
+			auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController());
+
+			if (!FortPC)
+				continue;
+
+			auto WorldInventory = FortPC->GetWorldInventory();
+
+			if (!WorldInventory)
+				continue;
+
+			std::random_device rd;
+			std::mt19937 gen(rd());
+
+			std::vector<const wchar_t*> RifleOptions = {
+				L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_SR_Ore_T03.WID_Assault_AutoHigh_Athena_SR_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_VR_Ore_T03.WID_Assault_AutoHigh_Athena_VR_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_UC_Ore_T03.WID_Assault_Auto_Athena_UC_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_UC_Ore_T03.WID_Assault_Heavy_Athena_UC_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_R_Ore_T03.WID_Assault_Heavy_Athena_R_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Assault_Suppressed_Athena_VR_Ore_T03.WID_Assault_Suppressed_Athena_VR_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Assault_Suppressed_Athena_SR_Ore_T03.WID_Assault_Suppressed_Athena_SR_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_SR_Ore_T03.WID_Assault_AutoHigh_Athena_SR_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_VR_Ore_T03.WID_Assault_AutoHigh_Athena_VR_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_UC_Ore_T03.WID_Assault_Auto_Athena_UC_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_UC_Ore_T03.WID_Assault_Heavy_Athena_UC_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_R_Ore_T03.WID_Assault_Heavy_Athena_R_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Assault_Suppressed_Athena_VR_Ore_T03.WID_Assault_Suppressed_Athena_VR_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Assault_Suppressed_Athena_SR_Ore_T03.WID_Assault_Suppressed_Athena_SR_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Assault_Heavy_Athena_R_Ore_T03.WID_Assault_Heavy_Athena_R_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Assault_AutoHigh_Athena_VR_Ore_T03.WID_Assault_AutoHigh_Athena_VR_Ore_T03",
+			};
+
+			std::vector<const wchar_t*> ShotgunOptions = {
+				L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_SR_Ore_T03.WID_Shotgun_Standard_Athena_SR_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_VR_Ore_T03.WID_Shotgun_Standard_Athena_VR_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_R_Ore_T03.WID_Shotgun_SemiAuto_Athena_R_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_SR_Ore_T03.WID_Shotgun_Standard_Athena_SR_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_VR_Ore_T03.WID_Shotgun_Standard_Athena_VR_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Shotgun_SemiAuto_Athena_VR_Ore_T03.WID_Shotgun_SemiAuto_Athena_VR_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03",
+			};
+
+			std::vector<const wchar_t*> SMGOptions = {
+				L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_SR_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_SR_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_VR_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_VR_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavyPDW_Athena_R_Ore_T03.WID_Pistol_AutoHeavyPDW_Athena_R_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavySuppressed_Athena_R_Ore_T03.WID_Pistol_AutoHeavySuppressed_Athena_R_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Sniper_BoltAction_Scope_Athena_R_Ore_T03.WID_Sniper_BoltAction_Scope_Athena_R_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavySuppressed_Athena_UC_Ore_T03.WID_Pistol_AutoHeavySuppressed_Athena_UC_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavySuppressed_Athena_R_Ore_T03.WID_Pistol_AutoHeavySuppressed_Athena_R_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavySuppressed_Athena_C_Ore_T02.WID_Pistol_AutoHeavySuppressed_Athena_C_Ore_T02",
+				L"/Game/Athena/Items/Weapons/WID_Pistol_AutoHeavySuppressed_Athena_R_Ore_T03.WID_Pistol_AutoHeavySuppressed_Athena_R_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Sniper_BoltAction_Scope_Athena_R_Ore_T03.WID_Sniper_BoltAction_Scope_Athena_R_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Sniper_Heavy_Athena_VR_Ore_T03.WID_Sniper_Heavy_Athena_VR_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Sniper_Heavy_Athena_SR_Ore_T03.WID_Sniper_Heavy_Athena_SR_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Sniper_NoScope_Athena_R_Ore_T03.WID_Sniper_NoScope_Athena_R_Ore_T03",
+				L"/Game/Athena/Items/Weapons/WID_Sniper_NoScope_Athena_UC_Ore_T03.WID_Sniper_NoScope_Athena_UC_Ore_T03",
+				L"/Game/Athena/Items/Consumables/RiftItem/Athena_Rift_Item.Athena_Rift_Item",
+			};
+
+			std::vector<const wchar_t*> OtherOptions = {
+				L"/Game/Athena/Items/Consumables/ShockwaveGrenade/Athena_ShockGrenade.Athena_ShockGrenade",
+				L"/Game/Athena/Items/Consumables/TNT/Athena_TNT.Athena_TNT",
+				L"/Game/Athena/Items/Consumables/KnockGrenade/Athena_KnockGrenade.Athena_KnockGrenade",
+				L"/Game/Athena/Items/Consumables/Grenade/Athena_Grenade.Athena_Grenade",
+				L"/Game/Athena/Items/Weapons/WID_Hook_Gun_VR_Ore_T03.WID_Hook_Gun_VR_Ore_T03",
+				L"/Game/Athena/Items/Consumables/StickyGrenade/Athena_StickyGrenade.Athena_StickyGrenade",
+			};
+
+			std::vector<const wchar_t*> ShieldOptions = {
+				L"/Game/Athena/Items/Consumables/Shields/Athena_Shields.Athena_Shields",
+				L"/Game/Athena/Items/Consumables/ShieldSmall/Athena_ShieldSmall.Athena_ShieldSmall",
+				L"/Game/Athena/Items/Consumables/Medkit/Athena_Medkit.Athena_Medkit",
+				L"/Game/Athena/Items/Consumables/Bandage/Athena_Bandage.Athena_Bandage"
+				L"/Game/Athena/Items/Consumables/PurpleStuff/Athena_PurpleStuff.Athena_PurpleStuff",
+			};
+
+			std::vector<const wchar_t*> TrapOptions = {
+				L"/Game/Athena/Items/Traps/TID_PoisonDartTrap_Context.TID_PoisonDartTrap_Context",
+				L"/Game/Athena/Items/Traps/TID_Floor_Player_Launch_Pad_Athena.TID_Floor_Player_Launch_Pad_Athena",
+				L"/Game/Athena/Items/Traps/TID_Floor_Player_Campfire_Athena.TID_Floor_Player_Campfire_Athena",
+				L"/Game/Athena/Items/Traps/TID_Context_BouncePad_Athena.TID_Context_BouncePad_Athena",
+				L"/Game/Athena/Items/Traps/TID_Floor_Player_Launch_Pad_Athena.TID_Floor_Player_Launch_Pad_Athena",
+				L"/Game/Athena/Items/Traps/TID_Context_BouncePad_Athena.TID_Context_BouncePad_Athena",
+			};
+
+			std::uniform_int_distribution<> RifleDist(0, RifleOptions.size() - 1);
+			std::uniform_int_distribution<> ShotgunDist(0, ShotgunOptions.size() - 1);
+			std::uniform_int_distribution<> SMGDist(0, SMGOptions.size() - 1);
+			std::uniform_int_distribution<> OptionDist(0, OtherOptions.size() - 1);
+			std::uniform_int_distribution<> ShieldDist(0, ShieldOptions.size() - 1);
+			std::uniform_int_distribution<> TrapDist(0, TrapOptions.size() - 1);
+
+			UFortItemDefinition* Rifle = FindObject<UFortItemDefinition>(RifleOptions[RifleDist(gen)]);
+			UFortItemDefinition* Shotgun = FindObject<UFortItemDefinition>(ShotgunOptions[ShotgunDist(gen)]);
+			UFortItemDefinition* SMG = FindObject<UFortItemDefinition>(SMGOptions[SMGDist(gen)]);
+			UFortItemDefinition* Other = FindObject<UFortItemDefinition>(OtherOptions[OptionDist(gen)]);
+			UFortItemDefinition* Shield = FindObject<UFortItemDefinition>(ShieldOptions[ShieldDist(gen)]);
+			UFortItemDefinition* Trap = FindObject<UFortItemDefinition>(TrapOptions[TrapDist(gen)]);
+
+			static auto WoodItemData = FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/WoodItemData.WoodItemData");
+			static auto StoneItemData = FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/StoneItemData.StoneItemData");
+			static auto MetalItemData = FindObject<UFortItemDefinition>(L"/Game/Items/ResourcePickups/MetalItemData.MetalItemData");
+			static auto Shells = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataShells.AthenaAmmoDataShells");
+			static auto Medium = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsMedium.AthenaAmmoDataBulletsMedium");
+			static auto Light = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsLight.AthenaAmmoDataBulletsLight");
+			static auto Heavy = FindObject<UFortItemDefinition>(L"/Game/Athena/Items/Ammo/AthenaAmmoDataBulletsHeavy.AthenaAmmoDataBulletsHeavy");
+
+			WorldInventory->AddItem(WoodItemData, nullptr, 500);
+			WorldInventory->AddItem(StoneItemData, nullptr, 500);
+			WorldInventory->AddItem(MetalItemData, nullptr, 500);
+			WorldInventory->AddItem(Shotgun, nullptr, 1);
+			WorldInventory->AddItem(SMG, nullptr, 1);
+			WorldInventory->AddItem(Rifle, nullptr, 1);
+			WorldInventory->AddItem(Other, nullptr, 2);
+			WorldInventory->AddItem(Shield, nullptr, 3);
+			WorldInventory->AddItem(Trap, nullptr, 2);
+			WorldInventory->AddItem(Shells, nullptr, 25);
+			WorldInventory->AddItem(Medium, nullptr, 90);
+			WorldInventory->AddItem(Light, nullptr, 120);
+			WorldInventory->AddItem(Heavy, nullptr, 14);
+
+			WorldInventory->Update();
+		}
+
+		if (Globals::LateGame)
+		{
+			auto UpdateSussy = [&]() {
+				auto GS = EAthenaGamePhase::SafeZones;
+				GameState->GetGamePhase() = GS;
+				GameState->OnRep_GamePhase();
+				GameState->GetGamePhaseStep() = EAthenaGamePhaseStep::StormHolding;
+				EAthenaGamePhase::Aircraft;
+				GameState->OnRep_GamePhase();
+				};
+
+			UpdateSussy();
+		}
+
 		int NumPlayers = GameState->GetPlayersLeft();
 
-		if (MaxPlayersValue > Globals::bMaxPlayersForLategame)
+		if (NumPlayers == 1 && Globals::bStartedBus == false)
 		{
-			Globals::LateGame = false;
-			LOG_WARN(LogLateGame, "full map switched.");
+			Globals::LateGame = true;
 		}
+
+		if (NumPlayers == 30 && Globals::bStartedBus == false)
+		{
+			const int MaxPlayers = 30;
+			auto GameSession = GameMode->GetOffset("GameSession");
+			auto GameSession2 = GameMode->Get<UClass*>("GameSession");
+			auto maxplayersOffset = GameSession2->GetOffset("MaxPlayers");
+			auto MaxPlayersValue = GameSession2->Get<int32>(MaxPlayers);
+			int NumPlayers = GameState->GetPlayersLeft();
+
+			if (MaxPlayersValue > Globals::bMaxPlayersForLategame)
+			{
+				Globals::LateGame = false;
+				LOG_WARN(LogLateGame, "full map switched.");
+			}
+		}
+
+		static auto SafeZonesStartTimeOffset = GameState->GetOffset("SafeZonesStartTime");
+		GameState->Get<float>(SafeZonesStartTimeOffset) = 0.001f;
+
+		return 0;
 	}
-
-	static auto SafeZonesStartTimeOffset = GameState->GetOffset("SafeZonesStartTime");
-	GameState->Get<float>(SafeZonesStartTimeOffset) = 0.001f;
-
-	return 0;
 }
+
 
 static inline DWORD WINAPI StartGameWithBusThread(LPVOID)
 {
@@ -1135,7 +1130,7 @@ static inline void MainUI()
 					CreateThread(0, 0, UpdateSystemUptime, 0, 0, 0);
 				}
 
-				if (Globals::AlivePlayers >= 1 && Globals::bStarting == false && Globals::bStarted == false)
+				if (Globals::AlivePlayers >= 2 && Globals::bStarting == false && Globals::bStarted == false)
 				{
 					Globals::bStarting = true;
 					CreateThread(0, 0, StartGameWithBusThread, 0, 0, 0);
