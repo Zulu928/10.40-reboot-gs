@@ -94,7 +94,7 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 
 				if (PlaylistName.contains("ShowdownAlt"))
 				{
-					Requests::ManageHype(WinnerName, "Win");
+					Requests::AddHype(WinnerName, 3);
 				}
 
 				hasGivenWinRewards = true;
@@ -103,7 +103,7 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 
 		static bool check25 = false;
 		static bool Placement25 = false;
-		if (Globals::EnableRewards == true && Globals::AlivePlayers == 25 && PlaylistName.contains("ShowdownAlt") && Placement25 == false && check25 == false && bStartedBus == true && AmountOfPlayersWhenBusStart != 25)
+		if (Globals::EnableRewards == true && Globals::AlivePlayers == 25 && PlaylistName.contains("ShowdownAlt") && Placement25 == false && check25 == false && bStartedBus == true && AmountOfPlayersWhenBusStart > 25)
 		{
 			check25 = true;
 			for (int z = 0; z < ClientConnections.Num(); ++z)
@@ -119,7 +119,7 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 
 				if (PlaylistName.contains("ShowdownAlt"))
 				{
-					Requests::ManageHype(WinnerName, "Top 25");
+					Requests::AddHype(WinnerName, 3);
 				}
 			}
 			Placement25 = true;
@@ -127,7 +127,7 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 
 		static bool check15 = false;
 		static bool Placement15 = false;
-		if (Globals::EnableRewards == true && Globals::AlivePlayers == 15 && PlaylistName.contains("ShowdownAlt") && Placement15 == false && check15 == false && bStartedBus == true && AmountOfPlayersWhenBusStart != 15)
+		if (Globals::EnableRewards == true && Globals::AlivePlayers == 15 && PlaylistName.contains("ShowdownAlt") && Placement15 == false && check15 == false && bStartedBus == true && AmountOfPlayersWhenBusStart > 15)
 		{
 			check15 = true;
 			for (int z = 0; z < ClientConnections.Num(); ++z)
@@ -143,7 +143,7 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 
 				if (PlaylistName.contains("ShowdownAlt"))
 				{
-					Requests::ManageHype(WinnerName, "Top 15");
+					Requests::AddHype(WinnerName, 2);
 				}
 			}
 			Placement15 = true;
@@ -151,7 +151,7 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 
 		static bool check5 = false;
 		static bool Placement5 = false;
-		if (Globals::EnableRewards == true && Globals::AlivePlayers == 15 && PlaylistName.contains("ShowdownAlt") && Placement5 == false && check5 == false && bStartedBus == true && AmountOfPlayersWhenBusStart != 5)
+		if (Globals::EnableRewards == true && Globals::AlivePlayers == 5 && PlaylistName.contains("ShowdownAlt") && Placement5 == false && check5 == false && bStartedBus == true && AmountOfPlayersWhenBusStart > 5)
 		{
 			check5 = true;
 			for (int z = 0; z < ClientConnections.Num(); ++z)
@@ -167,7 +167,7 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 
 				if (PlaylistName.contains("ShowdownAlt"))
 				{
-					Requests::ManageHype(WinnerName, "Top 5");
+					Requests::AddHype(WinnerName, 2);
 				}
 			}
 			Placement5 = true;

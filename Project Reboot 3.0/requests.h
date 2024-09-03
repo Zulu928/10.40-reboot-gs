@@ -14,9 +14,35 @@ namespace Requests
         return size * nmemb;
     }
 
-    inline void ManageHype(const std::string& Username, const std::string& Reason)
+    inline void BusFare(const std::string& Username)
     {
-        std::string url = Globals::BackendIP + "/manageHype/" + Username + "/" + Reason + "/" + Globals::BackendAPIKey;
+        std::string url = Globals::BackendIP + "/busFare/" + Username + "/" + Globals::BackendAPIKey;
+        std::thread([url = url]()
+            {
+                curl_global_init(CURL_GLOBAL_ALL);
+                CURL* curl = curl_easy_init();
+                if (!curl) {
+                    curl_global_cleanup();
+                    return;
+                }
+
+                curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+                curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallbackRequests);
+
+                std::string response_body;
+                curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_body);
+
+                curl_easy_perform(curl);
+                curl_easy_cleanup(curl);
+
+                curl_global_cleanup();
+            }
+        ).detach();
+    }
+
+    inline void AddHype(const std::string& Username, const int& Amount)
+    {
+        std::string url = Globals::BackendIP + "/addHype/" + Username + "/" + std::to_string(Amount) + "/" + Globals::BackendAPIKey;
         std::thread([url = url]()
             {
                 curl_global_init(CURL_GLOBAL_ALL);
