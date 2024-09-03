@@ -281,6 +281,7 @@
     <ClInclude Include="AIController.h" />
     <ClInclude Include="AndOrNot.h" />
     <ClInclude Include="anticheat.h" />
+    <ClInclude Include="privatediscord.h" />
     <ClInclude Include="requests.h" />
     <ClInclude Include="Array.h" />
     <ClInclude Include="AssertionMacros.h" />

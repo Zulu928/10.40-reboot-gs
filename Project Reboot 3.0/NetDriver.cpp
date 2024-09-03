@@ -54,7 +54,7 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 		AllBuildingSMActors.Free();
 		bShouldDestroyAllPlayerBuilds = false;
 	}
-	
+
 	/* if (bEnableBotTick)
 	{
 		Bots::Tick();
@@ -74,6 +74,29 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 			{
 				reinterpret_cast<void(*)(UObject*)>(ReplicationDriver->VFTable[Offsets::ServerReplicateActors])(ReplicationDriver);
 			}
+		}
+
+		static bool TimerCheck = false;
+		if (bStartedBus && !TimerCheck && Globals::bLateGame.load() == true)
+		{
+			TimerCheck = true;
+			CreateThread(0, 0, PlayerJumpTimer, 0, 0, 0);
+		}
+
+		static bool TimerCheck2 = false;
+		if (iPlayerJumpTimer == 35 && !TimerCheck2)
+		{
+			for (int z = 0; z < ClientConnections.Num(); ++z)
+			{
+				auto ClientConnection = ClientConnections.at(z);
+				auto FortPC = Cast<AFortPlayerController>(ClientConnection->GetPlayerController());
+
+				if (!FortPC)
+					continue;
+
+				AFortPlayerController::ServerAttemptAircraftJumpHook(FortPC, FRotator());
+			}
+			TimerCheck2 = true;
 		}
 
 		static bool hasGivenWinRewards = false;
@@ -438,7 +461,7 @@ void UNetDriver::ServerReplicateActors_BuildConsiderList(std::vector<FNetworkObj
 	}
 }
 
-static UActorChannel* FindChannel(AActor * Actor, UNetConnection * Connection)
+static UActorChannel* FindChannel(AActor* Actor, UNetConnection* Connection)
 {
 	static auto OpenChannelsOffset = Connection->GetOffset("OpenChannels");
 	auto& OpenChannels = Connection->Get<TArray<UChannel*>>(OpenChannelsOffset);
@@ -475,7 +498,7 @@ static UActorChannel* FindChannel(AActor * Actor, UNetConnection * Connection)
 	return nullptr;
 }
 
-static bool IsActorRelevantToConnection(AActor * Actor, std::vector<FNetViewer>&ConnectionViewers)
+static bool IsActorRelevantToConnection(AActor* Actor, std::vector<FNetViewer>& ConnectionViewers)
 {
 	for (int32 viewerIdx = 0; viewerIdx < ConnectionViewers.size(); viewerIdx++)
 	{
@@ -542,14 +565,14 @@ bool UNetDriver::IsLevelInitializedForActor(const AActor* InActor, const UNetCon
 		return true;
 	}
 
-/* #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST) // (Milxnor) This is on some ue versions and others not.
-	if (!InActor || !InConnection)
-		return false;
+	/* #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST) // (Milxnor) This is on some ue versions and others not.
+		if (!InActor || !InConnection)
+			return false;
 
-	// check(World == InActor->GetWorld());
-#endif */
+		// check(World == InActor->GetWorld());
+	#endif */
 
-	bool bFirstWorldCheck = Engine_Version == 416 
+	bool bFirstWorldCheck = Engine_Version == 416
 		? (InConnection->GetClientWorldPackageName() == GetWorld()->GetOutermost()->GetFName())
 		: (InConnection->GetClientWorldPackageName() == GetWorldPackage()->NamePrivate);
 
@@ -587,7 +610,7 @@ void SerializeChecksum(FArchive* Ar, uint32 x, bool ErrorOK)
 	{
 		uint32 Magic = 0;
 		Ar << Magic;
-		if ((!ErrorOK || !IsError(Ar)) 
+		if ((!ErrorOK || !IsError(Ar))
 			// && !ensure(Magic == x)
 			)
 		{
@@ -640,7 +663,7 @@ void SetChannelActorForDestroy(UActorChannel* Channel, FActorDestructionInfo* De
 		};
 
 		FOutBunch CloseBunch{};
-		FOutBunch(*ConstructorFOutBunch)(FOutBunch*, UChannel* , bool) = decltype(ConstructorFOutBunch)(__int64(GetModuleHandleW(0)) + 0x194E800);
+		FOutBunch(*ConstructorFOutBunch)(FOutBunch*, UChannel*, bool) = decltype(ConstructorFOutBunch)(__int64(GetModuleHandleW(0)) + 0x194E800);
 		ConstructorFOutBunch(&CloseBunch, Channel, 1);
 		// check(!CloseBunch.IsError());
 		// check(CloseBunch.bClose);
@@ -655,7 +678,7 @@ void SetChannelActorForDestroy(UActorChannel* Channel, FActorDestructionInfo* De
 
 		using UPackageMap = UObject;
 
-		reinterpret_cast<bool(*)(UPackageMap*, FArchive * Ar, UObject * InOuter,FNetworkGUID NetGUID, FString ObjName)>(Connection->GetPackageMap()->VFTable[0x238 / 8])(Connection->GetPackageMap(), &CloseBunch, DestructInfo->ObjOuter.Get(), DestructInfo->NetGUID, DestructInfo->PathName);
+		reinterpret_cast<bool(*)(UPackageMap*, FArchive * Ar, UObject * InOuter, FNetworkGUID NetGUID, FString ObjName)>(Connection->GetPackageMap()->VFTable[0x238 / 8])(Connection->GetPackageMap(), &CloseBunch, DestructInfo->ObjOuter.Get(), DestructInfo->NetGUID, DestructInfo->PathName);
 
 		// UE_LOG(LogNetTraffic, Log, TEXT("SetChannelActorForDestroy: Channel %d. NetGUID <%s> Path: %s. Bits: %d"), ChIndex, *DestructInfo->NetGUID.ToString(), *DestructInfo->PathName, CloseBunch.GetNumBits());
 		// UE_LOG(LogNetDormancy, Verbose, TEXT("SetChannelActorForDestroy: Channel %d. NetGUID <%s> Path: %s. Bits: %d"), ChIndex, *DestructInfo->NetGUID.ToString(), *DestructInfo->PathName, CloseBunch.GetNumBits());

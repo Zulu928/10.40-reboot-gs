@@ -467,6 +467,24 @@ static inline void PlayerTabs()
 	}
 }
 
+static int iPlayerJumpTimer = 0;
+static bool PlayersHaveJumped = false;
+static inline DWORD WINAPI PlayerJumpTimer(LPVOID)
+{
+	while (!PlayersHaveJumped)
+	{
+		Sleep(1000);
+		iPlayerJumpTimer += 1;
+
+		if (iPlayerJumpTimer == 35)
+		{
+			PlayersHaveJumped = true;
+		}
+	}
+
+	return true;
+}
+
 static inline DWORD WINAPI LateGameThread(LPVOID)
 {
 	if (bStartedBus == true)

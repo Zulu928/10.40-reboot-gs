@@ -993,6 +993,9 @@
     <ClInclude Include="requests.h">
       <Filter>Reboot\Public</Filter>
     </ClInclude>
+    <ClInclude Include="privatediscord.h">
+      <Filter>Reboot\Public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
