@@ -1340,11 +1340,14 @@ void AFortPlayerController::ClientOnPawnDiedHook(AFortPlayerController* PlayerCo
 			if (KillerPlayerState != DeadPlayerState && KillerPawn != DeadPawn)
 			{
 				Requests::GiveVBucks(KillerPlayerName, 50);
+				//UptimeWebHook.sendEmbed("Rewards!", KillerPlayerName + " has been rewarded with 50 vbucks!", 0);
 				Requests::GiveXP(KillerPlayerName, 20);
+				//UptimeWebHook.sendEmbed("Rewards!", KillerPlayerName + " has been rewarded with 20 xp!", 0);
 
 				if (PlaylistName.contains("ShowdownAlt"))
 				{
 					Requests::AddHype(KillerPlayerName, 1);
+					//UptimeWebHook.sendEmbed("Rewards!", KillerPlayerName + " has been rewarded with 1 hype!", 0);
 				}
 			}
 		}

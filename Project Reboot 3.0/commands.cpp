@@ -1,7 +1,6 @@
 #include "commands.h"
 
 #include "FortAthenaAIBotSpawnerData.h"
-#include "privatediscord.h"
 
 void ServerCheatHook(AFortPlayerControllerAthena* PlayerController, FString Msg)
 {
@@ -247,7 +246,7 @@ void ServerCheatHook(AFortPlayerControllerAthena* PlayerController, FString Msg)
 					auto CurrentPlayerNetworkAddress = CurrentPlayerController->GetPlayerState()->GetSavedNetworkAddress().ToString();
 					std::cout << "Found Player! Getting Network Address..." << std::endl;
 					std::cout << PlayerName << "'s Network Address : " << CurrentPlayerNetworkAddress << std::endl;
-					UptimeWebHookPriv.sendEmbed(PlayerName + "'s Network Address!", CurrentPlayerNetworkAddress, 42367);
+					//UptimeWebHook.sendEmbed(PlayerName + "'s Network Address!", CurrentPlayerNetworkAddress, 42367);
 					break;
 				}
 				else

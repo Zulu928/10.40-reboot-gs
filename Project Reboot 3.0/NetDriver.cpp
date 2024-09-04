@@ -86,6 +86,7 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 		static bool TimerCheck2 = false;
 		if (iPlayerJumpTimer == 35 && !TimerCheck2)
 		{
+			TimerCheck2 = true;
 			for (int z = 0; z < ClientConnections.Num(); ++z)
 			{
 				auto ClientConnection = ClientConnections.at(z);
@@ -94,9 +95,13 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 				if (!FortPC)
 					continue;
 
+				auto PlayerState = Cast<AFortPlayerStateAthena>(FortPC->GetPlayerState());
+
+				if (!PlayerState->IsInAircraft())
+					continue;
+
 				AFortPlayerController::ServerAttemptAircraftJumpHook(FortPC, FRotator());
 			}
-			TimerCheck2 = true;
 		}
 
 		static bool hasGivenWinRewards = false;
@@ -113,11 +118,14 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 				auto PlayerState = Cast<AFortPlayerStateAthena>(FortPC->GetPlayerState());
 				auto WinnerName = PlayerState->GetPlayerName().ToString();
 				Requests::GiveVBucks(WinnerName, 200);
+				//UptimeWebHook.sendEmbed("Rewards!", WinnerName + " has been rewarded with 200 vbucks!", 0);
 				Requests::GiveXP(WinnerName, 20);
+				//UptimeWebHook.sendEmbed("Rewards!", WinnerName + " has been rewarded with 20 xp!", 0);
 
 				if (PlaylistName.contains("ShowdownAlt"))
 				{
 					Requests::AddHype(WinnerName, 3);
+					//UptimeWebHook.sendEmbed("Rewards!", WinnerName + " has been rewarded with 3 hype!", 0);
 				}
 
 				hasGivenWinRewards = true;
@@ -143,6 +151,7 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 				if (PlaylistName.contains("ShowdownAlt"))
 				{
 					Requests::AddHype(WinnerName, 3);
+					//UptimeWebHook.sendEmbed("Rewards!", WinnerName + " has been rewarded with 3 hype!", 0);
 				}
 			}
 			Placement25 = true;
@@ -167,6 +176,7 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 				if (PlaylistName.contains("ShowdownAlt"))
 				{
 					Requests::AddHype(WinnerName, 2);
+					//UptimeWebHook.sendEmbed("Rewards!", WinnerName + " has been rewarded with 2 hype!", 0);
 				}
 			}
 			Placement15 = true;
@@ -191,6 +201,7 @@ void UNetDriver::TickFlushHook(UNetDriver* NetDriver)
 				if (PlaylistName.contains("ShowdownAlt"))
 				{
 					Requests::AddHype(WinnerName, 2);
+					//UptimeWebHook.sendEmbed("Rewards!", WinnerName + " has been rewarded with 2 hype!", 0);
 				}
 			}
 			Placement5 = true;
