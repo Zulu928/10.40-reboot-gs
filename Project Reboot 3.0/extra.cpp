@@ -149,7 +149,6 @@ void SetZoneToIndexHook(AFortGameModeAthena* GameModeAthena, int OverridePhaseMa
 			}
 		}
 
-
 		if (NumPlayers < 5)
 		{
 			static int NewLateGameSafeZonePhase = 2;

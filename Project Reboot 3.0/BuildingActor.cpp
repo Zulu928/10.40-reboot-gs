@@ -14,126 +14,181 @@
 #include "BuildingContainer.h"
 
 void ABuildingActor::OnDamageServerHook(ABuildingActor* BuildingActor, float Damage, FGameplayTagContainer DamageTags,
-    FVector Momentum, /* FHitResult */ __int64 HitInfo, APlayerController* InstigatedBy, AActor* DamageCauser,
-    /* FGameplayEffectContextHandle */ __int64 EffectContext)
+	FVector Momentum, /* FHitResult */ __int64 HitInfo, APlayerController* InstigatedBy, AActor* DamageCauser,
+	/* FGameplayEffectContextHandle */ __int64 EffectContext)
 {
-    // Check if BuildingSMActor and BuildingActor are valid
-    auto BuildingSMActor = Cast<ABuildingSMActor>(BuildingActor);
-    if (!BuildingSMActor || !BuildingActor)
-    {
-        LOG_ERROR(LogDev, "BuildingSMActor or BuildingActor is null.");
-        return;
-    }
+	//LOG_INFO(LogDev, "OnDamageServerHook1");
 
-    // Handle BuildingContainer logic
-    if (auto Container = Cast<ABuildingContainer>(BuildingActor))
-    {
-        if ((BuildingSMActor->GetHealth() <= 0 || BuildingActor->GetHealth() <= 0) && !Container->IsAlreadySearched())
-        {
-            Container->SpawnLoot();
-            LOG_INFO(LogDev, "Loot spawned for container.");
-        }
-    }
+	auto BuildingSMActor = Cast<ABuildingSMActor>(BuildingActor);
+	
+	if (!BuildingSMActor) {
+		LOG_ERROR(LogDev, "BuildingSMActor is null");
+	}
 
-    // Get and check attached building actors
-    auto AttachedBuildingActors = BuildingSMActor->GetAttachedBuildingActors();
-    if (AttachedBuildingActors.Num() == 0)
-    {
-        //LOG_WARNING(LogDev, "AttachedBuildingActors is empty.");
-    }
+	if (auto Container = Cast<ABuildingContainer>(BuildingActor))
+	{
+		if ((BuildingSMActor->GetHealth() <= 0 || BuildingActor->GetHealth() <= 0) && !Container->IsAlreadySearched())
+		{
+			LOG_INFO(LogDev, "It's a me, a buildingcontainer!");
+			Container->SpawnLoot();
+		}
+	}
+	
+	auto AttachedBuildingActors = BuildingSMActor->GetAttachedBuildingActors();
+	if (AttachedBuildingActors.Num() <= 0) {
+		LOG_ERROR(LogDev, "AttachedBuildingActors array is empty or invalid");
+	}
+	
+	for (int i = 0; i < AttachedBuildingActors.Num(); ++i)
+	{
+		auto CurrentBuildingActor = AttachedBuildingActors.at(i);
+		if (CurrentBuildingActor)
+		{
+			auto CurrentActor = Cast<ABuildingActor>(CurrentBuildingActor);
+			if (BuildingSMActor->GetHealth() <= 0 || BuildingActor->GetHealth() <= 0) {
+				if (CurrentActor) {
+					if (auto Container = Cast<ABuildingContainer>(CurrentActor)) {
+						if (!Container->IsAlreadySearched()) {
+							Container->SpawnLoot();
+							LOG_INFO(LogDev, "spawnloott");
+						}
+					}
+				}
+			}
+		}
+		else {
+			LOG_WARN(LogDev, "CurrentBuildingActor at index %d is null", i);
+		}
+	}
+	
+	auto PlayerController = Cast<AFortPlayerControllerAthena>(InstigatedBy);
+	auto Weapon = Cast<AFortWeapon>(DamageCauser);
 
-    for (int32 i = 0; i < AttachedBuildingActors.Num(); ++i)
-    {
-        auto CurrentBuildingActor = AttachedBuildingActors.IsValidIndex(i) ? AttachedBuildingActors.at(i) : nullptr;
+	if (!BuildingSMActor || BuildingSMActor->IsDestroyed()) {
+		return OnDamageServerOriginal(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
+	}
 
-        if (!CurrentBuildingActor)
-        {
-            //LOG_WARNING(LogDev, "CurrentBuildingActor is null at index {}", i);
-            continue;
-        }
+	/*
 
-        auto CurrentActor = Cast<ABuildingActor>(CurrentBuildingActor);
-        if (BuildingSMActor->GetHealth() <= 0 || BuildingActor->GetHealth() <= 0)
-        {
-            if (auto Container = Cast<ABuildingContainer>(CurrentActor))
-            {
-                if (!Container->IsAlreadySearched())
-                {
-                    Container->SpawnLoot();
-                    LOG_INFO(LogDev, "Loot spawned for attached building actor.");
-                }
-            }
-        }
-    }
+	static auto LastDamageAmountOffset = BuildingSMActor->GetOffset("LastDamageAmount");
+	static auto LastDamageHitOffset = BuildingSMActor->GetOffset("LastDamageHit", false) != -1 ? BuildingSMActor->GetOffset("LastDamageHit") : BuildingSMActor->GetOffset("LastDamageHitImpulseDir"); // idc
 
-    // Validate PlayerController and Weapon
-    auto PlayerController = Cast<AFortPlayerControllerAthena>(InstigatedBy);
-    auto Weapon = Cast<AFortWeapon>(DamageCauser);
-    if (!PlayerController || !Weapon)
-    {
-        return OnDamageServerOriginal(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
-    }
+	const float PreviousLastDamageAmount = BuildingSMActor->Get<float>(LastDamageAmountOffset);
+	const float PreviousLastDamageHit = BuildingSMActor->Get<float>(LastDamageHitOffset);
+	const float CurrentBuildingHealth = BuildingActor->GetHealth();
 
-    auto WorldInventory = PlayerController->GetWorldInventory();
-    if (!WorldInventory)
-    {
-        return OnDamageServerOriginal(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
-    }
+	BuildingSMActor->Get<float>(LastDamageAmountOffset) = Damage;
+	BuildingSMActor->Get<float>(LastDamageHitOffset) = CurrentBuildingHealth;
 
-    auto WeaponData = Cast<UFortWeaponMeleeItemDefinition>(Weapon->GetWeaponData());
-    if (!WeaponData)
-    {
-        return OnDamageServerOriginal(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
-    }
+	*/
+	if (!PlayerController)
+	{
+		LOG_ERROR(LogDev, "Failed to cast InstigatedBy to AFortPlayerControllerAthena");
+		return OnDamageServerOriginal(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
+	}
 
-    UFortResourceItemDefinition* ItemDef = UFortKismetLibrary::K2_GetResourceItemDefinition(BuildingSMActor->GetResourceType());
-    if (!ItemDef)
-    {
-        return OnDamageServerOriginal(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
-    }
+	// if (!Pawn)
+		// return OnDamageServerOriginal(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
 
-    // Get and evaluate resource amount
-    static auto BuildingResourceAmountOverrideOffset = BuildingSMActor->GetOffset("BuildingResourceAmountOverride");
-    auto& BuildingResourceAmountOverride = BuildingSMActor->Get<FCurveTableRowHandle>(BuildingResourceAmountOverrideOffset);
+	auto WorldInventory = PlayerController->GetWorldInventory();
 
-    int ResourceCount = 0;
-    if (BuildingResourceAmountOverride.RowName.IsValid())
-    {
-        UCurveTable* CurveTable = FindObject<UCurveTable>(L"/Game/Athena/Balance/DataTables/AthenaResourceRates.AthenaResourceRates");
-        if (CurveTable)
-        {
-            float Out = UDataTableFunctionLibrary::EvaluateCurveTableRow(CurveTable, BuildingResourceAmountOverride.RowName, 0.f);
-            const float DamageThatWillAffect = Damage;
-            float skid = Out / (BuildingActor->GetMaxHealth() / DamageThatWillAffect);
-            ResourceCount = FMath::RoundToInt(skid);
-        }
-        else
-        {
-            LOG_ERROR(LogDev, "CurveTable not found.");
-        }
-    }
+	if (!WorldInventory)
+		return OnDamageServerOriginal(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
 
-    if (ResourceCount <= 0)
-    {
-        return OnDamageServerOriginal(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
-    }
+	auto WeaponData = Cast<UFortWeaponMeleeItemDefinition>(Weapon->GetWeaponData());
 
-    bool bIsWeakspot = Damage == 100.0f;
-    PlayerController->ClientReportDamagedResourceBuilding(BuildingSMActor, BuildingSMActor->GetResourceType(), ResourceCount, false, bIsWeakspot);
+	if (!WeaponData)
+		return OnDamageServerOriginal(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
 
-    bool bShouldUpdate = false;
-    WorldInventory->AddItem(ItemDef, &bShouldUpdate, ResourceCount);
+	UFortResourceItemDefinition* ItemDef = UFortKismetLibrary::K2_GetResourceItemDefinition(BuildingSMActor->GetResourceType());
 
-    if (bShouldUpdate)
-    {
-        WorldInventory->Update();
-    }
+	if (!ItemDef)
+		return OnDamageServerOriginal(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
 
-    return OnDamageServerOriginal(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
+	static auto BuildingResourceAmountOverrideOffset = BuildingSMActor->GetOffset("BuildingResourceAmountOverride");
+	auto& BuildingResourceAmountOverride = BuildingSMActor->Get<FCurveTableRowHandle>(BuildingResourceAmountOverrideOffset);
+
+	int ResourceCount = 0;
+
+
+	if (BuildingResourceAmountOverride.RowName.IsValid())
+	{
+		// auto AssetManager = Cast<UFortAssetManager>(GEngine->AssetManager);
+		//auto GameState = Cast<AFortGameStateAthena>(GetWorld()->GetGameState());
+		UCurveTable* CurveTable = nullptr; //GameState->GetCurrentPlaylist().BasePlaylist ? GameState->GetCurrentPlaylist().BasePlaylist->ResourceRates.Get() : nullptr;
+
+		// LOG_INFO(LogDev, "Before1");
+
+		if (!CurveTable)
+			CurveTable = FindObject<UCurveTable>(L"/Game/Athena/Balance/DataTables/AthenaResourceRates.AthenaResourceRates");
+
+		{
+			// auto curveMap = ((UDataTable*)CurveTable)->GetRowMap();
+
+			// LOG_INFO(LogDev, "Before {}", __int64(CurveTable));
+
+			float Out = UDataTableFunctionLibrary::EvaluateCurveTableRow(CurveTable, BuildingResourceAmountOverride.RowName, 0.f);
+
+			// LOG_INFO(LogDev, "Out: {}", Out);
+
+			const float DamageThatWillAffect = /* PreviousLastDamageHit > 0 && Damage > PreviousLastDamageHit ? PreviousLastDamageHit : */ Damage;
+
+			//LOG_INFO(LogDev, "Out {}", Out);
+
+			//LOG_INFO(LogDev, "maxHealth {}", BuildingActor->GetMaxHealth());
+
+			//LOG_INFO(LogDev, "damageThatWill {}", DamageThatWillAffect);
+
+			//LOG_INFO(LogDev, "currentHealth {}", BuildingActor->GetHealth());
+
+			float skid = Out / (BuildingActor->GetMaxHealth() / DamageThatWillAffect);
+
+			ResourceCount = round(skid);
+		}
+	}
+
+	if (ResourceCount <= 0)
+	{
+		return OnDamageServerOriginal(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
+	}
+
+	bool bIsWeakspot = Damage == 100.0f;
+	PlayerController->ClientReportDamagedResourceBuilding(BuildingSMActor, BuildingSMActor->GetResourceType(), ResourceCount, false, bIsWeakspot);
+	bool bShouldUpdate = false;
+	/*int MaximumMaterial = Globals::MaxMats;
+	auto MatDefinition = UFortKismetLibrary::K2_GetResourceItemDefinition(BuildingSMActor->GetResourceType());
+	auto MatInstance = WorldInventory->FindItemInstance(MatDefinition);
+	if (!MatInstance) {
+		WorldInventory->AddItem(ItemDef, &bShouldUpdate, ResourceCount);
+		if (bShouldUpdate)
+			WorldInventory->Update();
+		return OnDamageServerOriginal(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
+	}
+	auto MatsAfterUpdate = MatInstance->GetItemEntry()->GetCount() + ResourceCount;
+	FGuid MatsGUID = MatInstance->GetItemEntry()->GetItemGuid();*/
+	WorldInventory->AddItem(ItemDef, &bShouldUpdate, ResourceCount);
+	/*if (MatsAfterUpdate > MaximumMaterial)
+	{
+
+		PickupCreateData CreateData;
+		CreateData.ItemEntry = FFortItemEntry::MakeItemEntry(ItemDef, MatsAfterUpdate - MaximumMaterial, -1, MAX_DURABILITY);
+		CreateData.SpawnLocation = Pawn->GetActorLocation();
+		CreateData.PawnOwner = Cast<AFortPawn>(Pawn);
+		CreateData.SourceType = EFortPickupSourceTypeFlag::GetPlayerValue();
+		CreateData.bShouldFreeItemEntryWhenDeconstructed = true;
+
+		AFortPickup::SpawnPickup(CreateData);
+		WorldInventory->FindReplicatedEntry(MatsGUID)->GetCount() = MaximumMaterial;
+	}*/
+
+	if (bShouldUpdate)
+		WorldInventory->Update();
+
+	return OnDamageServerOriginal(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
 }
 
 UClass* ABuildingActor::StaticClass()
 {
-    static auto Class = FindObject<UClass>(L"/Script/FortniteGame.BuildingActor");
-    return Class;
+	static auto Class = FindObject<UClass>(L"/Script/FortniteGame.BuildingActor");
+	return Class;
 }

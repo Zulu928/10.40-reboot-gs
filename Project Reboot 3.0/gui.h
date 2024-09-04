@@ -485,6 +485,34 @@ static inline DWORD WINAPI PlayerJumpTimer(LPVOID)
 	return true;
 }
 
+static inline DWORD WINAPI LategameSwitch(LPVOID)
+{
+	auto GameMode = Cast<AFortGameModeAthena>(GetWorld()->GetGameMode());
+	auto GameState = Cast<AFortGameStateAthena>(GameMode->GetGameState());
+
+	int NumPlayers = GameState->GetPlayersLeft();
+
+	if (NumPlayers < 30 && Globals::bLateGame.load() == true)
+	{
+		bStartedBus == false;
+	}
+
+	if (NumPlayers >= 30 && bStartedBus == false)
+	{
+		const int MaxPlayers = 30;
+		auto GameSession = GameMode->GetOffset("GameSession");
+		auto GameSession2 = GameMode->Get<UClass*>("GameSession");
+		auto maxplayersOffset = GameSession2->GetOffset("MaxPlayers");
+		auto MaxPlayersValue = GameSession2->Get<int32>(MaxPlayers);
+		int NumPlayers = GameState->GetPlayersLeft();
+
+		if (MaxPlayersValue > Globals::bLateGame.load() == false)
+		{
+			LOG_WARN(LogLateGame, "full map switched.");
+		}
+	}
+}
+
 static inline DWORD WINAPI LateGameThread(LPVOID)
 {
 	if (bStartedBus == true)
@@ -513,7 +541,22 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 		const FVector ZoneCenterLocation = SafeZoneLocations.at(3);
 		FVector LocationToStartAircraft = ZoneCenterLocation;
 		LocationToStartAircraft.Z += 15000;
-		LocationToStartAircraft.X += 8000;
+		LocationToStartAircraft.X += 2000;
+
+		GET_PLAYLIST(GameState);
+
+		if (CurrentPlaylist)
+		{
+			bool bRespawning = CurrentPlaylist->GetRespawnType() == EAthenaRespawnType::InfiniteRespawn || CurrentPlaylist->GetRespawnType() == EAthenaRespawnType::InfiniteRespawnExceptStorm;
+
+			if (bRespawning == true)
+			{
+				const FVector ZoneCenterLocation = SafeZoneLocations.at(3);
+				FVector LocationToStartAircraft = ZoneCenterLocation;
+				LocationToStartAircraft.Z += 15000;
+				LocationToStartAircraft.X += -6000;
+			}
+		}
 
 		auto GetAircrafts = [&]() -> std::vector<AActor*>
 			{
@@ -749,36 +792,12 @@ static inline DWORD WINAPI LateGameThread(LPVOID)
 			UpdateSussy();
 		}
 
-		int NumPlayers = GameState->GetPlayersLeft();
-
-		if (NumPlayers == 1 && Globals::bStartedBus == false)
-		{
-			Globals::LateGame = true;
-		}
-
-		if (NumPlayers == 30 && Globals::bStartedBus == false)
-		{
-			const int MaxPlayers = 30;
-			auto GameSession = GameMode->GetOffset("GameSession");
-			auto GameSession2 = GameMode->Get<UClass*>("GameSession");
-			auto maxplayersOffset = GameSession2->GetOffset("MaxPlayers");
-			auto MaxPlayersValue = GameSession2->Get<int32>(MaxPlayers);
-			int NumPlayers = GameState->GetPlayersLeft();
-
-			if (MaxPlayersValue > Globals::bMaxPlayersForLategame)
-			{
-				Globals::LateGame = false;
-				LOG_WARN(LogLateGame, "full map switched.");
-			}
-		}
-
 		static auto SafeZonesStartTimeOffset = GameState->GetOffset("SafeZonesStartTime");
 		GameState->Get<float>(SafeZonesStartTimeOffset) = 0.001f;
 
 		return 0;
 	}
 }
-
 
 static inline DWORD WINAPI StartGameWithBusThread(LPVOID)
 {
