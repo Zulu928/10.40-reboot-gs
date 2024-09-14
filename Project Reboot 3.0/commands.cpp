@@ -195,7 +195,7 @@ void ServerCheatHook(AFortPlayerControllerAthena* PlayerController, FString Msg)
 		}
 		else if (Command == "killplayer")
 		{
-			std::string PlayerName = Arguments[1];
+			std::string& PlayerName = Arguments[1];
 			std::cout << "Searching for player..." << std::endl;
 			for (int Player = 0; Player < ClientConnections.Num(); Player++)
 			{
@@ -225,7 +225,7 @@ void ServerCheatHook(AFortPlayerControllerAthena* PlayerController, FString Msg)
 		}
 		else if (Command == "getnetworkaddress")
 		{
-			std::string PlayerName = Arguments[1];
+			std::string& PlayerName = Arguments[1];
 			std::cout << "Searching for player..." << std::endl;
 			for (int Player = 0; ClientConnections.Num() > Player; Player++)
 			{

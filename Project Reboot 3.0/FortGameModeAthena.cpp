@@ -782,6 +782,9 @@ bool AFortGameModeAthena::Athena_ReadyToStartMatchHook(AFortGameModeAthena* Game
 		static auto MaxPlayersOffset = GameSession->GetOffset("MaxPlayers");
 		GameSession->Get<int>(MaxPlayersOffset) = 100;
 
+		static auto SessionNameOffset = GameSession->GetOffset("SessionName");
+		GameSession->Get<std::string>(SessionNameOffset) = "GameSession";
+
 		GameState->OnRep_CurrentPlaylistInfo(); // ?
 		
 		// Calendar::SetSnow(1000);
