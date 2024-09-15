@@ -331,21 +331,16 @@ bool AFortGameModeAthena::Athena_ReadyToStartMatchHook(AFortGameModeAthena* Game
 			(*(int*)(__int64(CurrentPlaylistInfo) + PlaylistReplicationKeyOffset))++;
 			CurrentPlaylistInfo->MarkArrayDirty();
 
-			auto aeuh = *(UObject**)(__int64(CurrentPlaylistInfo) + BasePlaylistOffset);
+			int32 CurrentPlaylistId = GameMode->Get<int32>(GameMode->GetOffset("CurrentPlaylistId"));
+
+			UObject* aeuh = *(UObject**)(__int64(CurrentPlaylistInfo) + BasePlaylistOffset);
+
+
 
 			if (aeuh)
 			{
+				CurrentPlaylistId = aeuh->Get<int32>(aeuh->GetOffset("PlaylistId"));
 				GameMode->SetCurrentPlaylistName(aeuh);
-
-				/* if (Fortnite_Version >= 13)
-				{
-					static auto LastSafeZoneIndexOffset = aeuh->GetOffset("LastSafeZoneIndex");
-
-					if (LastSafeZoneIndexOffset != -1)
-					{
-						*(int*)(__int64(aeuh) + LastSafeZoneIndexOffset) = 0;
-					}
-				} */
 			}
 		}
 		else
@@ -360,12 +355,6 @@ bool AFortGameModeAthena::Athena_ReadyToStartMatchHook(AFortGameModeAthena* Game
 			GameState->OnRep_CurrentPlaylistInfo();
 	};
 
-	/* auto& LocalPlayers = GetLocalPlayers();
-
-	if (LocalPlayers.Num() && LocalPlayers.Data)
-	{
-		LocalPlayers.Remove(0);
-	} */
 
 	static int LastNum2 = 1;
 
@@ -374,40 +363,6 @@ bool AFortGameModeAthena::Athena_ReadyToStartMatchHook(AFortGameModeAthena* Game
 		LastNum2 = AmountOfRestarts;
 
 		LOG_INFO(LogDev, "Presetup!");
-
-		/*
-
-		static auto WorldManagerOffset = GameState->GetOffset("WorldManager", false);
-
-		if (WorldManagerOffset != -1) // needed?
-		{
-			auto WorldManager = GameState->Get(WorldManagerOffset);
-
-			if (WorldManager)
-			{
-				static auto WorldManagerStateOffset = WorldManager->GetOffset("WorldManagerState", false);
-
-				if (WorldManagerStateOffset != -1) // needed?
-				{
-					enum class EFortWorldManagerState : uint8_t
-					{
-						WMS_Created = 0,
-						WMS_QueryingWorld = 1,
-						WMS_WorldQueryComplete = 2,
-						WMS_CreatingNewWorld = 3,
-						WMS_LoadingExistingWorld = 4,
-						WMS_Running = 5,
-						WMS_Failed = 6,
-						WMS_MAX = 7
-					};
-
-					LOG_INFO(LogDev, "Old WorldManager State: {}", (int)WorldManager->Get<EFortWorldManagerState>(WorldManagerStateOffset));
-					WorldManager->Get<EFortWorldManagerState>(WorldManagerStateOffset) = EFortWorldManagerState::WMS_Running; // needed? right time?
-				}
-			}
-		}
-
-		*/
 
 		static auto CurrentPlaylistDataOffset = GameState->GetOffset("CurrentPlaylistData", false);
 
@@ -491,13 +446,6 @@ bool AFortGameModeAthena::Athena_ReadyToStartMatchHook(AFortGameModeAthena* Game
 			{
 				ShowFoundation(FindObject<AActor>("/Game/Athena/Apollo/Maps/Apollo_POI_Foundations.Apollo_POI_Foundations.PersistentLevel.Lobby_Foundation"));
 
-				// SpawnIsland->RepData->Soemthing = FoundationSetup->LobbyLocation;
-			}
-
-			if (Fortnite_Version == 14.60 && Globals::bGoingToPlayEvent)
-			{
-				// Auto with SetDynamicFoundationEnabled
-				// ShowFoundation(FindObject<AActor>(L"/Game/Athena/Apollo/Maps/Apollo_POI_Foundations.Apollo_POI_Foundations.PersistentLevel.Lobby_Foundation3")); // Aircraft Carrier
 			}
 
 			if (Fortnite_Version == 12.41)
@@ -531,28 +479,11 @@ bool AFortGameModeAthena::Athena_ReadyToStartMatchHook(AFortGameModeAthena* Game
 			if (CurrentPlaylist)
 			{
 				static auto AdditionalLevelsOffset = CurrentPlaylist->GetOffset("AdditionalLevels", false);
+				static auto AdditionalLevelsServerOnlyOffset = CurrentPlaylist->GetOffset("AdditionalLevelsServerOnly", false);
 
 				if (AdditionalLevelsOffset != -1)
 				{
 					auto& AdditionalLevels = CurrentPlaylist->Get<TArray<TSoftObjectPtr<UWorld>>>(AdditionalLevelsOffset);
-
-					static auto AdditionalLevelsServerOnlyOffset = CurrentPlaylist->GetOffset("AdditionalLevelsServerOnly", false);
-
-					if (AdditionalLevelsServerOnlyOffset != -1)
-					{
-						/* TArray<TSoftObjectPtr<UWorld>>& AdditionalLevelsServerOnly = CurrentPlaylist->Get<TArray<TSoftObjectPtr<UWorld>>>(AdditionalLevelsServerOnlyOffset);
-						LOG_INFO(LogPlaylist, "Loading {} playlist server levels.", AdditionalLevelsServerOnly.Num());
-
-						for (int i = 0; i < AdditionalLevelsServerOnly.Num(); i++)
-						{
-							FName LevelFName = AdditionalLevelsServerOnly.at(i).SoftObjectPtr.ObjectID.AssetPathName;
-							auto LevelNameStr = LevelFName.ToString();
-							LOG_INFO(LogPlaylist, "Loading server level {}.", LevelNameStr);
-							auto LevelNameWStr = std::wstring(LevelNameStr.begin(), LevelNameStr.end());
-
-							GameState->AddToAdditionalPlaylistLevelsStreamed(LevelFName, true);
-						} */
-					}
 
 					LOG_INFO(LogPlaylist, "Loading {} playlist levels.", AdditionalLevels.Num());
 
@@ -565,17 +496,6 @@ bool AFortGameModeAthena::Athena_ReadyToStartMatchHook(AFortGameModeAthena* Game
 
 						GameState->AddToAdditionalPlaylistLevelsStreamed(LevelFName);
 
-						/*
-
-						Alright so us calling the OnRep for the level to stream I believe is a bit scuffy, but it's fine.
-						On newer versions there is another array of ULevelStreaming, and this gets used to see if all the playlist levels are visible.
-						That array doesn't get filled with the OnRep as I think the array is server only.
-						I am not sure if this array does anything, but theres a function that checks the array and it gets used especially in mutators.
-						Funny thing, AFortGameModeAthena::ReadyToStartMatch does not return true unless all of the levels in the array is fully streamed in, but since it's empty it passes.
-
-						*/
-
-						// There is another array of the ULevelStreaming, and I don't think this gets filled by the OnRep (since really our way is hacky as the OnRep has the implementation)
 					}
 
 					static auto OnRep_AdditionalPlaylistLevelsStreamedFn = FindObject<UFunction>(L"/Script/FortniteGame.FortGameState.OnRep_AdditionalPlaylistLevelsStreamed");
@@ -583,6 +503,9 @@ bool AFortGameModeAthena::Athena_ReadyToStartMatchHook(AFortGameModeAthena* Game
 					if (OnRep_AdditionalPlaylistLevelsStreamedFn)
 						GameState->ProcessEvent(OnRep_AdditionalPlaylistLevelsStreamedFn);
 				}
+
+				static auto HandleAllPlaylistLevelsVisibleFn = FindObject<UFunction>("/Script/FortniteGame.FortGameModeAthena.HandleAllPlaylistLevelsVisible");
+				GameMode->ProcessEvent(HandleAllPlaylistLevelsVisibleFn);
 			}
 		}
 

@@ -19,10 +19,6 @@ void FFortItemEntry::SetStateValue(EFortItemEntryState StateType, int IntValue)
 	GetStateValues().AtPtr(idx, FFortItemEntryStateValue::GetStructSize())->GetIntValue() = IntValue;
 	GetStateValues().AtPtr(idx, FFortItemEntryStateValue::GetStructSize())->GetStateType() = StateType;
 	GetStateValues().AtPtr(idx, FFortItemEntryStateValue::GetStructSize())->GetNameValue() = FName(0);
-
-	// idk some parentinventory stuff here
-
-	// ItemEntry->bIsDirty = true;
 }
 
 FFortItemEntry* FFortItemEntry::MakeItemEntry(UFortItemDefinition* ItemDefinition, int Count, int LoadedAmmo, float Durability, int Level)
@@ -51,9 +47,12 @@ FFortItemEntry* FFortItemEntry::MakeItemEntry(UFortItemDefinition* ItemDefinitio
 	Entry->GetGameplayAbilitySpecHandle() = FGameplayAbilitySpecHandle(-1);
 	Entry->GetParentInventory().ObjectIndex = -1;
 	Entry->GetLevel() = Level;
-	// We want to add StateValues.Add(DurabilityInitialized); orwnatefc erwgearf yk
-	// CoCreateGuid((GUID*)&Entry->GetItemGuid());
-	// Entry->DoesUpdateStatsOnCollection() = true; // I think fortnite does this?
+	if (ItemDefinition->IsA(FindObject<UClass>("/Script/FortniteGame.FortAmmoItemDefinition")))
+	{
+		Entry->SetStateValue(EFortItemEntryState::ShouldShowItemToast, 1);
+		//Pickup notifications
+	}
+
 
 	return Entry;
 }
